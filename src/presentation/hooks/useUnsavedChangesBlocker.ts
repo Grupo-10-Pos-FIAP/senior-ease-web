@@ -1,31 +1,31 @@
-import { useBlocker } from 'react-router-dom'
+import { useBlocker } from "react-router-dom";
 
 interface UnsavedChangesBlockerOptions {
-  isDirty: boolean
-  message?: string
+  isDirty: boolean;
+  message?: string;
 }
 
 export function useUnsavedChangesBlocker({
   isDirty,
-  message = 'Você tem alterações não salvas. Deseja sair sem salvar?',
+  message = "Você tem alterações não salvas. Deseja sair sem salvar?",
 }: UnsavedChangesBlockerOptions) {
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) =>
       isDirty && currentLocation.pathname !== nextLocation.pathname,
-  )
+  );
 
   const confirmLeave = () => {
-    blocker.proceed?.()
-  }
+    blocker.proceed?.();
+  };
 
   const cancelLeave = () => {
-    blocker.reset?.()
-  }
+    blocker.reset?.();
+  };
 
   return {
-    showLeaveDialog: blocker.state === 'blocked',
+    showLeaveDialog: blocker.state === "blocked",
     leaveDialogMessage: message,
     confirmLeave,
     cancelLeave,
-  }
+  };
 }

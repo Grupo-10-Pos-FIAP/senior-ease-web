@@ -7,17 +7,16 @@ on:
     branches: [main]
 
 jobs:
-  # Pipeline: lint → test → build (habilitar na fase de implementação)
   ci:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: "22"
           cache: npm
-      # - run: npm ci
-      # - run: npm run lint
-      # - run: npm run test
-      # - run: npm run build
-      - run: echo "CI pipeline stub — descomente os passos acima quando pronto"
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run lint
+      - run: npm run test
+      - run: npm run build

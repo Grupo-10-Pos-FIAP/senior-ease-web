@@ -1,11 +1,11 @@
-import { Switch as RadixSwitch } from 'radix-ui'
-import type { ComponentPropsWithoutRef } from 'react'
-import './Switch.css'
+import { Switch as RadixSwitch } from "radix-ui";
+import type { ComponentPropsWithoutRef } from "react";
+import "./Switch.css";
 
 type SwitchProps = ComponentPropsWithoutRef<typeof RadixSwitch.Root> & {
-  id: string
-  label?: string
-}
+  id: string;
+  label?: string;
+};
 
 export function Switch({
   id,
@@ -13,14 +13,14 @@ export function Switch({
   checked,
   onCheckedChange,
   disabled,
-  'aria-label': ariaLabel,
-  'aria-labelledby': ariaLabelledBy,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
   ...props
 }: SwitchProps) {
   const nameProps =
     ariaLabelledBy != null
-      ? { 'aria-labelledby': ariaLabelledBy }
-      : { 'aria-label': label ?? ariaLabel }
+      ? { "aria-labelledby": ariaLabelledBy }
+      : { "aria-label": label ?? ariaLabel };
 
   return (
     <div className="se-switch">
@@ -41,5 +41,5 @@ export function Switch({
         </label>
       ) : null}
     </div>
-  )
+  );
 }

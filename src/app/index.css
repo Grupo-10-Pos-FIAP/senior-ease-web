@@ -1,4 +1,4 @@
-@import '@shared/ui/tokens/colors.css';
+@import "@shared/ui/tokens/colors.css";
 
 *,
 *::before,
@@ -11,7 +11,7 @@
   --se-spacing: 1rem;
   --se-contrast-bg: #ffffff;
   --se-contrast-fg: #1a1a1a;
-  --se-accent: #1D2D50;
+  --se-accent: #1d2d50;
 }
 
 html {
@@ -20,44 +20,49 @@ html {
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
   line-height: 1.5;
   background-color: var(--se-contrast-bg);
   color: var(--se-contrast-fg);
 }
 
-[data-interface-mode='basic'] {
+[data-interface-mode="basic"] {
   --se-spacing: calc(var(--se-spacing, 1rem) * 1.15);
 }
 
-[data-interface-mode='basic'] .app-layout__main {
+[data-interface-mode="basic"] .app-layout__main {
   padding: calc(var(--se-spacing, 1rem) * 1.5);
 }
 
-[data-interface-mode='basic'] .app-header__action--secondary,
-[data-interface-mode='basic'] .profile-tabs__tab--secondary {
+[data-interface-mode="basic"] .app-header__action--secondary,
+[data-interface-mode="basic"] .profile-tabs__tab--secondary {
   display: none;
 }
 
-[data-interface-mode='basic'] .dashboard-page__subtitle {
+[data-interface-mode="basic"] .dashboard-page__subtitle {
   display: none;
 }
 
-[data-reinforced-feedback='true'] a:focus-visible,
-[data-reinforced-feedback='true'] button:focus-visible,
-[data-reinforced-feedback='true'] [role='switch']:focus-visible {
+[data-reinforced-feedback="true"] a:focus-visible,
+[data-reinforced-feedback="true"] button:focus-visible,
+[data-reinforced-feedback="true"] [role="switch"]:focus-visible {
   outline-width: 4px;
   outline-offset: 3px;
 }
 
-[data-contrast-level='5'] a,
-[data-contrast-level='6'] a {
+[data-contrast-level="5"] a,
+[data-contrast-level="6"] a {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
-[data-contrast-level='5'] .segmented-control,
-[data-contrast-level='6'] .segmented-control {
+[data-contrast-level="5"] .segmented-control,
+[data-contrast-level="6"] .segmented-control {
   border: 2px solid var(--se-border);
 }
 

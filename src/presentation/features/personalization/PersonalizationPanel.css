@@ -112,6 +112,6 @@
   border: 0;
 }
 
-[data-interface-mode='basic'] .personalization-panel__divider {
+[data-interface-mode="basic"] .personalization-panel__divider {
   margin: calc(var(--se-spacing, 1rem) * 1.5) 0;
 }

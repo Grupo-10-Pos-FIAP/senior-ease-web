@@ -1,6 +1,6 @@
-import { NavLink } from 'react-router-dom'
-import { Button } from '@shared/ui/components/Button'
-import './AppHeader.css'
+import { NavLink } from "react-router-dom";
+import { Button } from "@shared/ui/components/Button";
+import "./AppHeader.css";
 
 export function AppHeader() {
   return (
@@ -12,15 +12,20 @@ export function AppHeader() {
         <NavLink
           to="/perfil"
           className={({ isActive }) =>
-            `app-header__link ${isActive ? 'app-header__link--active' : ''}`
+            `app-header__link ${isActive ? "app-header__link--active" : ""}`
           }
         >
           Meu perfil
         </NavLink>
-        <Button variant="ghost" className="app-header__action--secondary" aria-label="Sair (em breve)" disabled>
+        <Button
+          variant="ghost"
+          className="app-header__action--secondary"
+          aria-label="Sair (em breve)"
+          disabled
+        >
           Sair
         </Button>
       </nav>
     </header>
-  )
+  );
 }

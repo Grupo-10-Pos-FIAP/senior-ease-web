@@ -1,34 +1,28 @@
-import {
-  Button,
-  ConfirmDialog,
-  PreferenceRow,
-  SegmentedControl,
-  Switch,
-} from '@shared/ui'
-import type { InterfaceMode } from '@domain/value-objects/InterfaceMode'
-import { UnsavedChangesLeaveGuard } from '@presentation/features/personalization/UnsavedChangesLeaveGuard'
-import { useConfirmCriticalAction } from '@presentation/hooks/useConfirmCriticalAction'
-import { usePersonalizationForm } from '@presentation/hooks/usePersonalizationForm'
-import { useContext } from 'react'
-import { UNSAFE_DataRouterContext } from 'react-router-dom'
-import { getContrastLevelDescription } from '@shared/lib/accessibilityTokens'
+import { Button, ConfirmDialog, PreferenceRow, SegmentedControl, Switch } from "@shared/ui";
+import type { InterfaceMode } from "@domain/value-objects/InterfaceMode";
+import { UnsavedChangesLeaveGuard } from "@presentation/features/personalization/UnsavedChangesLeaveGuard";
+import { useConfirmCriticalAction } from "@presentation/hooks/useConfirmCriticalAction";
+import { usePersonalizationForm } from "@presentation/hooks/usePersonalizationForm";
+import { useContext } from "react";
+import { UNSAFE_DataRouterContext } from "react-router-dom";
+import { getContrastLevelDescription } from "@shared/lib/accessibilityTokens";
 import {
   getContrastOptions,
   getFontSizeOptions,
   getSpacingOptions,
   PANEL_INTRO,
   PREFERENCE_DESCRIPTIONS,
-} from '@shared/lib/preferenceLabels'
-import './PersonalizationPanel.css'
+} from "@shared/lib/preferenceLabels";
+import "./PersonalizationPanel.css";
 
-const FONT_SIZE_OPTIONS = getFontSizeOptions()
-const SPACING_OPTIONS = getSpacingOptions()
-const CONTRAST_OPTIONS = getContrastOptions()
+const FONT_SIZE_OPTIONS = getFontSizeOptions();
+const SPACING_OPTIONS = getSpacingOptions();
+const CONTRAST_OPTIONS = getContrastOptions();
 
 const INTERFACE_MODE_OPTIONS: { value: InterfaceMode; label: string; ariaLabel: string }[] = [
-  { value: 'simplified', label: 'Básico', ariaLabel: 'Modo básico — interface simplificada' },
-  { value: 'standard', label: 'Avançado', ariaLabel: 'Modo avançado — todas as opções visíveis' },
-]
+  { value: "simplified", label: "Básico", ariaLabel: "Modo básico — interface simplificada" },
+  { value: "standard", label: "Avançado", ariaLabel: "Modo avançado — todas as opções visíveis" },
+];
 
 export function PersonalizationPanel() {
   const {
@@ -41,30 +35,30 @@ export function PersonalizationPanel() {
     updateDraft,
     save,
     resetPersisted,
-  } = usePersonalizationForm()
+  } = usePersonalizationForm();
 
-  const { pending, runIfAllowed, confirm, cancel, isOpen } = useConfirmCriticalAction()
-  const dataRouter = useContext(UNSAFE_DataRouterContext)
+  const { pending, runIfAllowed, confirm, cancel, isOpen } = useConfirmCriticalAction();
+  const dataRouter = useContext(UNSAFE_DataRouterContext);
 
-  const isBasicMode = draft.interfaceMode === 'simplified'
+  const isBasicMode = draft.interfaceMode === "simplified";
 
   const handleResetClick = () => {
     runIfAllowed(
       () => {
-        resetPersisted()
+        resetPersisted();
       },
       {
-        title: 'Restaurar configurações padrões?',
+        title: "Restaurar configurações padrões?",
         description:
-          'Todas as preferências de personalização serão restauradas aos valores iniciais. Esta ação não pode ser desfeita.',
-        confirmLabel: 'Restaurar',
-        cancelLabel: 'Cancelar',
+          "Todas as preferências de personalização serão restauradas aos valores iniciais. Esta ação não pode ser desfeita.",
+        confirmLabel: "Restaurar",
+        cancelLabel: "Cancelar",
       },
-    )
-  }
+    );
+  };
 
   if (isLoading) {
-    return <p className="personalization-panel__loading">Carregando preferências…</p>
+    return <p className="personalization-panel__loading">Carregando preferências…</p>;
   }
 
   return (
@@ -77,11 +71,7 @@ export function PersonalizationPanel() {
       </header>
 
       {isDirty ? (
-        <div
-          className="personalization-panel__dirty-banner"
-          role="status"
-          aria-live="polite"
-        >
+        <div className="personalization-panel__dirty-banner" role="status" aria-live="polite">
           <p className="personalization-panel__dirty-text">Você tem alterações não salvas.</p>
           <Button
             variant="primary"
@@ -89,7 +79,7 @@ export function PersonalizationPanel() {
             onClick={save}
             disabled={isSaving}
           >
-            {isSaving ? 'Salvando…' : 'Salvar agora'}
+            {isSaving ? "Salvando…" : "Salvar agora"}
           </Button>
         </div>
       ) : null}
@@ -104,7 +94,9 @@ export function PersonalizationPanel() {
               name="font-size"
               value={draft.fontSize}
               options={FONT_SIZE_OPTIONS}
-              onChange={(fontSize) => updateDraft({ fontSize })}
+              onChange={(fontSize) => {
+                updateDraft({ fontSize });
+              }}
               labelledBy={legendId}
             />
           )}
@@ -118,7 +110,9 @@ export function PersonalizationPanel() {
               name="contrast"
               value={draft.contrast}
               options={CONTRAST_OPTIONS}
-              onChange={(contrast) => updateDraft({ contrast })}
+              onChange={(contrast) => {
+                updateDraft({ contrast });
+              }}
               labelledBy={legendId}
             />
           )}
@@ -132,7 +126,9 @@ export function PersonalizationPanel() {
               name="interface-mode"
               value={draft.interfaceMode}
               options={INTERFACE_MODE_OPTIONS}
-              onChange={(interfaceMode) => updateDraft({ interfaceMode })}
+              onChange={(interfaceMode) => {
+                updateDraft({ interfaceMode });
+              }}
               labelledBy={legendId}
             />
           )}
@@ -147,7 +143,9 @@ export function PersonalizationPanel() {
               name="spacing"
               value={draft.spacing}
               options={SPACING_OPTIONS}
-              onChange={(spacing) => updateDraft({ spacing })}
+              onChange={(spacing) => {
+                updateDraft({ spacing });
+              }}
               labelledBy={legendId}
             />
           )}
@@ -164,9 +162,9 @@ export function PersonalizationPanel() {
                   id="reinforced-feedback"
                   aria-labelledby={legendId}
                   checked={draft.reinforcedVisualFeedback}
-                  onCheckedChange={(reinforcedVisualFeedback) =>
-                    updateDraft({ reinforcedVisualFeedback })
-                  }
+                  onCheckedChange={(reinforcedVisualFeedback) => {
+                    updateDraft({ reinforcedVisualFeedback });
+                  }}
                 />
               )}
             />
@@ -179,9 +177,9 @@ export function PersonalizationPanel() {
                   id="confirm-critical"
                   aria-labelledby={legendId}
                   checked={draft.confirmCriticalActions}
-                  onCheckedChange={(confirmCriticalActions) =>
-                    updateDraft({ confirmCriticalActions })
-                  }
+                  onCheckedChange={(confirmCriticalActions) => {
+                    updateDraft({ confirmCriticalActions });
+                  }}
                 />
               )}
             />
@@ -192,7 +190,7 @@ export function PersonalizationPanel() {
       {feedback ? (
         <p
           className={`personalization-panel__feedback personalization-panel__feedback--${feedback.type}`}
-          role={feedback.type === 'error' ? 'alert' : 'status'}
+          role={feedback.type === "error" ? "alert" : "status"}
           aria-live="polite"
         >
           {feedback.message}
@@ -200,22 +198,18 @@ export function PersonalizationPanel() {
       ) : null}
 
       <footer className="personalization-panel__footer">
-        <Button
-          variant="secondary"
-          onClick={handleResetClick}
-          disabled={isResetting || isSaving}
-        >
+        <Button variant="secondary" onClick={handleResetClick} disabled={isResetting || isSaving}>
           Retornar configurações padrões
         </Button>
         <Button variant="primary" onClick={save} disabled={!isDirty || isSaving}>
-          {isSaving ? 'Salvando…' : 'Salvar mudanças'}
+          {isSaving ? "Salvando…" : "Salvar mudanças"}
         </Button>
       </footer>
 
       <ConfirmDialog
         open={isOpen}
-        title={pending?.options.title ?? ''}
-        description={pending?.options.description ?? ''}
+        title={pending?.options.title ?? ""}
+        description={pending?.options.description ?? ""}
         confirmLabel={pending?.options.confirmLabel}
         cancelLabel={pending?.options.cancelLabel}
         onConfirm={confirm}
@@ -224,5 +218,5 @@ export function PersonalizationPanel() {
 
       {dataRouter ? <UnsavedChangesLeaveGuard isDirty={isDirty} /> : null}
     </section>
-  )
+  );
 }

@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import './DashboardPage.css'
+import { Link } from "react-router-dom";
+import "./DashboardPage.css";
 
 export function DashboardPage() {
   return (
@@ -10,5 +10,5 @@ export function DashboardPage() {
         Ir para Meu perfil
       </Link>
     </section>
-  )
+  );
 }

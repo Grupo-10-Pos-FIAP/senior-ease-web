@@ -1,5 +1,5 @@
-import { NavLink } from 'react-router-dom'
-import './ProfileTabs.css'
+import { NavLink } from "react-router-dom";
+import "./ProfileTabs.css";
 
 export function ProfileTabs() {
   return (
@@ -8,7 +8,7 @@ export function ProfileTabs() {
         to="/perfil/personalizacao"
         role="tab"
         className={({ isActive }) =>
-          `profile-tabs__tab ${isActive ? 'profile-tabs__tab--active' : ''}`
+          `profile-tabs__tab ${isActive ? "profile-tabs__tab--active" : ""}`
         }
       >
         Personalização
@@ -17,11 +17,11 @@ export function ProfileTabs() {
         to="/perfil/conta"
         role="tab"
         className={({ isActive }) =>
-          `profile-tabs__tab profile-tabs__tab--secondary ${isActive ? 'profile-tabs__tab--active' : ''}`
+          `profile-tabs__tab profile-tabs__tab--secondary ${isActive ? "profile-tabs__tab--active" : ""}`
         }
       >
         Informações da conta
       </NavLink>
     </div>
-  )
+  );
 }

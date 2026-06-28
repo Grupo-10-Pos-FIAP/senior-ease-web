@@ -1,1 +1,1 @@
-export { PreferenceRow } from './PreferenceRow'
+export { PreferenceRow } from "./PreferenceRow";
