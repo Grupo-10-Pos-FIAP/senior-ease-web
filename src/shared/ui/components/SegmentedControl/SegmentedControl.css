@@ -1,0 +1,67 @@
+.segmented-control {
+  display: flex;
+  width: 100%;
+  gap: 0.25rem;
+  background-color: var(--se-surface-muted);
+  border-radius: 10px;
+  padding: 0.25rem;
+}
+
+.segmented-control__input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.segmented-control__option {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--se-touch-min, 44px);
+  min-height: var(--se-touch-min, 44px);
+  padding: 0 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: var(--se-font-size, 1rem);
+  font-weight: 600;
+  color: var(--se-navy);
+  user-select: none;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+.segmented-control__option--active {
+  background-color: var(--se-navy);
+  color: #ffffff;
+}
+
+.segmented-control__option:has(:focus-visible) {
+  outline: 3px solid var(--se-focus-ring);
+  outline-offset: 2px;
+}
+
+[data-reinforced-feedback='true'] .segmented-control__option--active {
+  box-shadow:
+    0 0 0 2px var(--se-contrast-bg),
+    0 0 0 5px var(--se-feedback-ring);
+}
+
+[data-reinforced-feedback='true'] .segmented-control__option:active {
+  transform: scale(0.97);
+}
+
+[data-reinforced-feedback='true'] .segmented-control__option:has(:focus-visible) {
+  outline-width: 4px;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .segmented-control__option {
+    transition: none;
+  }
+
+  [data-reinforced-feedback='true'] .segmented-control__option:active {
+    transform: none;
+  }
+}

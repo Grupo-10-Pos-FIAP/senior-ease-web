@@ -1,0 +1,48 @@
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--se-spacing, 1rem) 1.5rem;
+  background-color: var(--se-contrast-bg, #ffffff);
+  border-bottom: 1px solid var(--se-border);
+}
+
+.app-header__logo {
+  font-size: calc(var(--se-font-size, 1rem) * 1.25);
+  font-weight: 700;
+  color: var(--se-navy);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+
+.app-header__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--se-spacing, 1rem);
+}
+
+.app-header__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--se-touch-min, 44px);
+  padding: 0 1rem;
+  font-size: var(--se-font-size, 1rem);
+  font-weight: 600;
+  color: var(--se-navy);
+  text-decoration: none;
+  border-radius: 8px;
+}
+
+.app-header__link:hover {
+  background-color: var(--se-surface-muted);
+}
+
+.app-header__link--active {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.app-header__link:focus-visible {
+  outline: 3px solid var(--se-focus-ring);
+  outline-offset: 2px;
+}

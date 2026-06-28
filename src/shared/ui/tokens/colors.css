@@ -1,0 +1,15 @@
+:root {
+  --se-navy: #1D2D50;
+  --se-navy-dark: #152340;
+  --se-surface: #ffffff;
+  --se-surface-muted: #f4f6f9;
+  --se-border: #d8dee9;
+  --se-text-muted: #5a6478;
+  --se-active-bg: #1D2D50;
+  --se-active-fg: #ffffff;
+  --se-focus-ring: #1a1a1a;
+  --se-feedback-ring: #949494;
+  --se-feedback-inset: #ffffff;
+  --se-danger: #c0392b;
+  --se-touch-min: 44px;
+}

@@ -1,0 +1,36 @@
+.profile-tabs {
+  display: flex;
+  width: 100%;
+  border-bottom: 1px solid var(--se-border);
+  margin-bottom: calc(var(--se-spacing, 1rem) * 1.5);
+}
+
+.profile-tabs__tab {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--se-touch-min, 44px);
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  font-size: var(--se-font-size, 1rem);
+  font-weight: 600;
+  color: var(--se-text-muted);
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px;
+}
+
+.profile-tabs__tab:hover {
+  color: var(--se-navy);
+}
+
+.profile-tabs__tab--active {
+  color: var(--se-navy);
+  border-bottom-color: var(--se-navy);
+}
+
+.profile-tabs__tab:focus-visible {
+  outline: 3px solid var(--se-focus-ring);
+  outline-offset: 2px;
+}
