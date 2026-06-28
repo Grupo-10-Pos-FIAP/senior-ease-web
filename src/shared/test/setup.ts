@@ -3,12 +3,14 @@ import { cleanup } from '@testing-library/react'
 import { afterAll, afterEach, beforeAll } from 'vitest'
 import { server } from '@infrastructure/msw/server'
 import { resetPreferencesDb } from '@infrastructure/msw/db/preferences.db'
+import { resetTasksDb } from '@infrastructure/msw/db/tasks.db'
 
 beforeAll(() => server.listen())
 afterEach(() => {
   cleanup()
   server.resetHandlers()
   resetPreferencesDb()
+  resetTasksDb()
   localStorage.clear()
   delete document.documentElement.dataset.interfaceMode
   delete document.documentElement.dataset.reinforcedFeedback

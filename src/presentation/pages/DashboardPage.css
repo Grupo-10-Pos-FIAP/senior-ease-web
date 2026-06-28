@@ -1,33 +1,3 @@
 .dashboard-page {
-  text-align: center;
-  padding: calc(var(--se-spacing, 1rem) * 2);
-}
-
-.dashboard-page h1 {
-  font-size: calc(var(--se-font-size, 1rem) * 2);
-  color: var(--se-navy);
-}
-
-.dashboard-page p {
-  font-size: var(--se-font-size, 1rem);
-  color: var(--se-text-muted);
-}
-
-.dashboard-page__link {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--se-touch-min, 44px);
-  padding: 0.625rem 1.25rem;
-  margin-top: var(--se-spacing, 1rem);
-  font-size: var(--se-font-size, 1rem);
-  font-weight: 600;
-  color: #ffffff;
-  background-color: var(--se-navy);
-  text-decoration: none;
-  border-radius: 8px;
-}
-
-.dashboard-page__link:focus-visible {
-  outline: 3px solid var(--se-focus-ring);
-  outline-offset: 2px;
+  width: 100%;
 }

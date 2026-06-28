@@ -23,6 +23,14 @@ export class HttpClient {
     return this.request<T>('PUT', path, body)
   }
 
+  async post<T>(path: string, body: unknown): Promise<T> {
+    return this.request<T>('POST', path, body)
+  }
+
+  async patch<T>(path: string, body?: unknown): Promise<T> {
+    return this.request<T>('PATCH', path, body)
+  }
+
   private async request<T>(method: string, path: string, body?: unknown): Promise<T> {
     const url = `${this.options.baseUrl ?? ''}${path}`
     const response = await fetch(url, {

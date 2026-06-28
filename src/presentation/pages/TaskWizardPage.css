@@ -1,0 +1,30 @@
+.task-wizard-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: calc(var(--se-spacing, 1rem) * 2);
+}
+
+.task-wizard-page__title {
+  margin: 0 0 calc(var(--se-spacing, 1rem) * 1.25);
+  font-size: calc(var(--se-font-size, 1rem) * 1.5);
+  color: var(--se-navy);
+  line-height: 1.35;
+}
+
+.task-wizard-page__message {
+  margin: 0 0 calc(var(--se-spacing, 1rem) * 1.5);
+  font-size: var(--se-font-size, 1rem);
+  color: var(--se-text-muted);
+}
+
+.task-wizard-page__back {
+  display: inline-flex;
+  text-decoration: none;
+}
+
+.task-wizard-page__status {
+  padding: calc(var(--se-spacing, 1rem) * 2);
+  font-size: var(--se-font-size, 1rem);
+  color: var(--se-text-muted);
+  text-align: center;
+}

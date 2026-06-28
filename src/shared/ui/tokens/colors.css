@@ -12,4 +12,10 @@
   --se-feedback-inset: #ffffff;
   --se-danger: #c0392b;
   --se-touch-min: 44px;
+  --se-status-completed-bg: #e8f5e9;
+  --se-status-completed-fg: #2e7d32;
+  --se-status-completed-border: #a5d6a7;
+  --se-status-expired-bg: #ffebee;
+  --se-status-expired-fg: #c62828;
+  --se-status-expired-border: #ef9a9a;
 }
