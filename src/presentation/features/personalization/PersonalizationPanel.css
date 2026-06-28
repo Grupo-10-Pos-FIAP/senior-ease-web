@@ -77,12 +77,6 @@
   border-radius: 8px;
 }
 
-.personalization-panel__feedback--success {
-  color: var(--se-feedback-success-fg);
-  background-color: var(--se-feedback-success-bg);
-  border: 1px solid var(--se-feedback-success-border);
-}
-
 .personalization-panel__feedback--error {
   color: var(--se-feedback-error-fg);
   background-color: var(--se-feedback-error-bg);

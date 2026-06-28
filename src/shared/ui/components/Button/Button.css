@@ -64,6 +64,16 @@
   background-color: color-mix(in srgb, var(--se-danger) 8%, transparent);
 }
 
+.se-button--danger-filled {
+  background-color: var(--se-danger);
+  color: #ffffff;
+  border-color: var(--se-danger);
+}
+
+.se-button--danger-filled:hover:not(:disabled) {
+  background-color: color-mix(in srgb, var(--se-danger) 88%, #000000);
+}
+
 [data-reinforced-feedback="true"] .se-button:active:not(:disabled) {
   transform: scale(0.97);
   box-shadow:

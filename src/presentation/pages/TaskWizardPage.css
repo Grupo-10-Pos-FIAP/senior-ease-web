@@ -1,6 +1,5 @@
 .task-wizard-page {
-  max-width: 720px;
-  margin: 0 auto;
+  width: 100%;
   padding: calc(var(--se-spacing, 1rem) * 2);
 }
 

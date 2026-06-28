@@ -1,4 +1,4 @@
-import { Button, ConfirmDialog, PreferenceRow, SegmentedControl } from "@shared/ui";
+import { Button, ConfirmDialog, PreferenceRow, SegmentedControl, SuccessDialog } from "@shared/ui";
 import type { InterfaceMode } from "@domain/value-objects/InterfaceMode";
 import { UnsavedChangesLeaveGuard } from "@presentation/features/personalization/UnsavedChangesLeaveGuard";
 import { useConfirmCriticalAction } from "@presentation/hooks/useConfirmCriticalAction";
@@ -75,6 +75,7 @@ export function PersonalizationPanel() {
     updateDraft,
     save,
     resetPersisted,
+    clearFeedback,
   } = usePersonalizationForm();
 
   const { pending, runIfAllowed, confirm, cancel, isOpen } = useConfirmCriticalAction();
@@ -91,8 +92,9 @@ export function PersonalizationPanel() {
         title: "Restaurar configurações padrões?",
         description:
           "Todas as preferências de personalização serão restauradas aos valores iniciais. Esta ação não pode ser desfeita.",
-        confirmLabel: "Restaurar",
-        cancelLabel: "Cancelar",
+        confirmLabel: "Sim, restaurar padrões",
+        cancelLabel: "Não, manter como está",
+        alwaysConfirm: true,
       },
     );
   };
@@ -230,15 +232,21 @@ export function PersonalizationPanel() {
         ) : null}
       </div>
 
-      {feedback ? (
+      {feedback?.type === "error" ? (
         <p
-          className={`personalization-panel__feedback personalization-panel__feedback--${feedback.type}`}
-          role={feedback.type === "error" ? "alert" : "status"}
+          className="personalization-panel__feedback personalization-panel__feedback--error"
+          role="alert"
           aria-live="polite"
         >
           {feedback.message}
         </p>
       ) : null}
+
+      <SuccessDialog
+        open={feedback?.type === "success"}
+        description={feedback?.type === "success" ? feedback.message : ""}
+        onClose={clearFeedback}
+      />
 
       <footer className="personalization-panel__footer">
         <Button variant="secondary" onClick={handleResetClick} disabled={isResetting || isSaving}>
@@ -257,6 +265,7 @@ export function PersonalizationPanel() {
         description={pending?.options.description ?? ""}
         confirmLabel={pending?.options.confirmLabel}
         cancelLabel={pending?.options.cancelLabel}
+        confirmVariant={pending?.options.confirmVariant}
         onConfirm={confirm}
         onCancel={cancel}
       />

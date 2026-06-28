@@ -1,10 +1,17 @@
 .app-header {
+  background-color: var(--se-contrast-bg, #ffffff);
+  border-bottom: 1px solid var(--se-border);
+  padding-block: var(--se-spacing, 1rem);
+}
+
+.app-header__inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--se-spacing, 1rem) 1.5rem;
-  background-color: var(--se-contrast-bg, #ffffff);
-  border-bottom: 1px solid var(--se-border);
+  width: min(94%, var(--se-content-max-width, 1280px));
+  max-width: var(--se-content-max-width, 1280px);
+  margin-inline: auto;
+  padding-inline: calc(var(--se-spacing, 1rem) * 1.5);
 }
 
 .app-header__logo {

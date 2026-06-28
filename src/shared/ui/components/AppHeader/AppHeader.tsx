@@ -13,28 +13,30 @@ export function AppHeader() {
 
   return (
     <header className="app-header">
-      <NavLink to="/" className="app-header__logo" aria-label="SeniorEASE — início">
-        SeniorEASE
-      </NavLink>
-      <nav className="app-header__nav" aria-label="Navegação principal">
-        <NavLink
-          to="/perfil"
-          className={({ isActive }) =>
-            `app-header__link ${isActive ? "app-header__link--active" : ""}`
-          }
-        >
-          Meu perfil
+      <div className="app-header__inner">
+        <NavLink to="/" className="app-header__logo" aria-label="SeniorEASE — início">
+          SeniorEASE
         </NavLink>
-        <Button
-          variant="ghost"
-          className="app-header__action--secondary"
-          aria-label="Sair da conta"
-          disabled={status !== "authenticated"}
-          onClick={() => void handleSignOut()}
-        >
-          Sair
-        </Button>
-      </nav>
+        <nav className="app-header__nav" aria-label="Navegação principal">
+          <NavLink
+            to="/perfil"
+            className={({ isActive }) =>
+              `app-header__link ${isActive ? "app-header__link--active" : ""}`
+            }
+          >
+            Meu perfil
+          </NavLink>
+          <Button
+            variant="ghost"
+            className="app-header__action--secondary"
+            aria-label="Sair da conta"
+            disabled={status !== "authenticated"}
+            onClick={() => void handleSignOut()}
+          >
+            Sair
+          </Button>
+        </nav>
+      </div>
     </header>
   );
 }

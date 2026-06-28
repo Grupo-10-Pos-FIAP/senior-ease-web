@@ -105,7 +105,9 @@ describe("AccountInfoTab", () => {
 
     await user.click(within(tab).getByRole("button", { name: /salvar informações/i }));
 
-    expect(await within(tab).findByText(/informações salvas com sucesso/i)).toBeInTheDocument();
+    expect(
+      await screen.findByRole("alertdialog", { name: /salvo com sucesso/i }),
+    ).toHaveTextContent(/informações salvas com sucesso/i);
     expect(within(tab).getByText("Maria Souza")).toBeInTheDocument();
     expect(within(tab).queryByLabelText(/nome completo/i)).not.toBeInTheDocument();
   });
@@ -121,7 +123,7 @@ describe("AccountInfoTab", () => {
     await user.clear(nameInput);
     await user.type(nameInput, "Nome temporário");
 
-    await user.click(within(tab).getByRole("button", { name: /cancelar/i }));
+    await user.click(within(tab).getByRole("button", { name: /não, manter como está/i }));
 
     expect(within(tab).getByText("Antônio José Maria da Silva")).toBeInTheDocument();
     expect(within(tab).queryByLabelText(/nome completo/i)).not.toBeInTheDocument();
@@ -157,16 +159,18 @@ describe("AccountInfoTab", () => {
       await screen.findByRole("alertdialog", { name: /excluir conta permanentemente/i }),
     ).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: /excluir conta/i }));
+    await user.click(screen.getByRole("button", { name: /sim, excluir minha conta/i }));
 
     await waitFor(() => {
       expect(router.state.location.pathname).toBe("/");
     });
 
-    expect(await screen.findByRole("status")).toHaveTextContent(/conta excluída com sucesso/i);
+    expect(
+      await screen.findByRole("alertdialog", { name: /conta excluída/i }),
+    ).toHaveTextContent(/conta foi excluída permanentemente/i);
   });
 
-  it("deletar conta sem confirmação executa imediatamente", async () => {
+  it("deletar conta exige confirmação mesmo com preferência desligada", async () => {
     const user = userEvent.setup();
     updatePreferencesInDb(
       "demo-user",
@@ -178,10 +182,18 @@ describe("AccountInfoTab", () => {
 
     await user.click(within(tab).getByRole("button", { name: /deletar conta/i }));
 
+    expect(
+      await screen.findByRole("alertdialog", { name: /excluir conta permanentemente/i }),
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /sim, excluir minha conta/i }));
+
     await waitFor(() => {
       expect(router.state.location.pathname).toBe("/");
     });
 
-    expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
+    expect(
+      await screen.findByRole("alertdialog", { name: /conta excluída/i }),
+    ).toBeInTheDocument();
   });
 });

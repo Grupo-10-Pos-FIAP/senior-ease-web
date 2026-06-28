@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
+import { SuccessDialog } from '@shared/ui'
 import { TaskListPanel } from '@presentation/features/tasks/TaskListPanel'
-import './DashboardPage.css'
 
 export function DashboardPage() {
   const location = useLocation()
@@ -10,18 +10,21 @@ export function DashboardPage() {
   useEffect(() => {
     const state = location.state as { accountDeleted?: boolean } | null
     if (state?.accountDeleted) {
-      setDeletedMessage('Conta excluída com sucesso.')
+      setDeletedMessage('Sua conta foi excluída permanentemente.')
       window.history.replaceState({}, document.title)
     }
   }, [location.state])
 
   return (
     <div className="dashboard-page">
-      {deletedMessage ? (
-        <p className="dashboard-page__feedback" role="status" aria-live="polite">
-          {deletedMessage}
-        </p>
-      ) : null}
+      <SuccessDialog
+        open={deletedMessage !== null}
+        title="Conta excluída"
+        description={deletedMessage ?? ''}
+        onClose={() => {
+          setDeletedMessage(null)
+        }}
+      />
       <TaskListPanel />
     </div>
   )

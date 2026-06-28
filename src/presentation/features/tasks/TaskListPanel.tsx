@@ -87,8 +87,8 @@ export function TaskListPanel() {
       {
         title: 'Concluir atividade?',
         description: `Tem certeza de que deseja marcar "${title}" como concluída?`,
-        confirmLabel: 'Concluir atividade',
-        cancelLabel: 'Cancelar',
+        confirmLabel: 'Sim, concluir atividade',
+        cancelLabel: 'Não, manter em andamento',
       },
     )
   }
@@ -130,6 +130,7 @@ export function TaskListPanel() {
           description={pending.options.description}
           confirmLabel={pending.options.confirmLabel}
           cancelLabel={pending.options.cancelLabel}
+          confirmVariant={pending.options.confirmVariant}
           onConfirm={confirm}
           onCancel={cancel}
         />

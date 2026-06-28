@@ -14,8 +14,8 @@ export function UnsavedChangesLeaveGuard({ isDirty }: UnsavedChangesLeaveGuardPr
       open={showLeaveDialog}
       title="Sair sem salvar?"
       description={leaveDialogMessage}
-      confirmLabel="Sair sem salvar"
-      cancelLabel="Continuar editando"
+      confirmLabel="Sim, sair sem salvar"
+      cancelLabel="Não, continuar editando"
       onConfirm={confirmLeave}
       onCancel={cancelLeave}
     />

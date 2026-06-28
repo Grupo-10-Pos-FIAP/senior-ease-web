@@ -79,6 +79,10 @@ export function usePersonalizationForm() {
     });
   }, [resetMutation]);
 
+  const clearFeedback = useCallback(() => {
+    setFeedback(null);
+  }, []);
+
   return {
     draft,
     isDirty,
@@ -89,5 +93,6 @@ export function usePersonalizationForm() {
     updateDraft,
     save,
     resetPersisted,
+    clearFeedback,
   };
 }

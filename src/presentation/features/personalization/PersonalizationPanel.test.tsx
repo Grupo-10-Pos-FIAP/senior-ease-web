@@ -85,14 +85,14 @@ describe("PersonalizationPanel", () => {
       await screen.findByRole("alertdialog", { name: /restaurar configurações padrões/i }),
     ).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: /cancelar/i }));
+    await user.click(screen.getByRole("button", { name: /não, manter como está/i }));
 
     await waitFor(() => {
       expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
     });
   });
 
-  it("Reset imediato quando confirmação desligada", async () => {
+  it("Reset exige confirmação mesmo com preferência de confirmação desligada", async () => {
     const user = userEvent.setup();
     renderWithProviders(<PersonalizationPanel />);
     const panel = await findPanel();
@@ -107,6 +107,12 @@ describe("PersonalizationPanel", () => {
 
     await user.click(within(panel).getByRole("button", { name: /salvar mudanças/i }));
 
+    expect(
+      await screen.findByRole("alertdialog", { name: /salvo com sucesso/i }),
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /entendi/i }));
+
     await waitFor(() => {
       expect(within(panel).getByRole("button", { name: /salvar mudanças/i })).toBeDisabled();
     });
@@ -115,8 +121,19 @@ describe("PersonalizationPanel", () => {
       within(panel).getByRole("button", { name: /retornar configurações padrões/i }),
     );
 
+    expect(
+      await screen.findByRole("alertdialog", { name: /restaurar configurações padrões/i }),
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /sim, restaurar padrões/i }));
+
+    expect(
+      await screen.findByRole("alertdialog", { name: /salvo com sucesso/i }),
+    ).toHaveTextContent(/configurações padrões restauradas/i);
+
+    await user.click(screen.getByRole("button", { name: /entendi/i }));
+
     await waitFor(() => {
-      expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
       const group = within(panel).getByRole("radiogroup", { name: /tamanho da letra/i });
       expect(within(group).getByRole("radio", { name: /letra em tamanho normal/i })).toBeChecked();
     });
@@ -154,10 +171,11 @@ describe("PersonalizationPanel", () => {
 
     await user.click(within(panel).getByRole("button", { name: /salvar mudanças/i }));
 
-    expect(await within(panel).findByText(/preferências salvas com sucesso/i)).toHaveAttribute(
-      "role",
-      "status",
-    );
+    expect(
+      await screen.findByRole("alertdialog", { name: /salvo com sucesso/i }),
+    ).toHaveTextContent(/preferências salvas com sucesso/i);
+
+    await user.click(screen.getByRole("button", { name: /entendi/i }));
 
     await waitFor(() => {
       expect(within(panel).getByRole("button", { name: /salvar mudanças/i })).toBeDisabled();
@@ -180,6 +198,8 @@ describe("PersonalizationPanel", () => {
 
     await user.click(within(panel).getByRole("button", { name: /salvar mudanças/i }));
 
-    expect(await within(panel).findByText(/preferências salvas com sucesso/i)).toBeInTheDocument();
+    expect(
+      await screen.findByRole("alertdialog", { name: /salvo com sucesso/i }),
+    ).toHaveTextContent(/preferências salvas com sucesso/i);
   });
 });

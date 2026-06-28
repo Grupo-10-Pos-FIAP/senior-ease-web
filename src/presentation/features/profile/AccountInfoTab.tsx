@@ -8,7 +8,7 @@ import {
   formatBirthDateMask,
   isoToBirthDateDisplay,
 } from "@shared/lib/formatBirthDate";
-import { Button, ConfirmDialog } from "@shared/ui";
+import { Button, ConfirmDialog, SuccessDialog } from "@shared/ui";
 import { useConfirmCriticalAction } from "@presentation/hooks/useConfirmCriticalAction";
 import { useUserMutations, useUserQuery } from "@presentation/hooks/useUserProfile";
 import "./AccountInfoTab.css";
@@ -243,8 +243,10 @@ export function AccountInfoTab() {
         title: "Excluir conta permanentemente?",
         description:
           "Todos os seus dados serão removidos e não poderão ser recuperados. Esta ação é irreversível.",
-        confirmLabel: "Excluir conta",
-        cancelLabel: "Cancelar",
+        confirmLabel: "Sim, excluir minha conta",
+        cancelLabel: "Não, manter minha conta",
+        confirmVariant: "danger",
+        alwaysConfirm: true,
       },
     );
   };
@@ -336,7 +338,7 @@ export function AccountInfoTab() {
             )}
           </div>
 
-          <div className="account-info-tab__form-field">
+          <div className="account-info-tab__form-field account-info-tab__form-field--full">
             <label className="account-info-tab__label" htmlFor="account-registration">
               Matrícula
             </label>
@@ -442,7 +444,7 @@ export function AccountInfoTab() {
             <dt>Idade</dt>
             <dd>{formatUserAge(user.birthDate)}</dd>
           </div>
-          <div className="account-info-tab__field">
+          <div className="account-info-tab__field account-info-tab__field--full">
             <dt>Matrícula</dt>
             <dd>{user.registrationId}</dd>
           </div>
@@ -461,15 +463,23 @@ export function AccountInfoTab() {
         </dl>
       )}
 
-      {feedback ? (
+      {feedback?.type === "error" ? (
         <p
-          className={`account-info-tab__feedback account-info-tab__feedback--${feedback.type}`}
-          role={feedback.type === "error" ? "alert" : "status"}
+          className="account-info-tab__feedback account-info-tab__feedback--error"
+          role="alert"
           aria-live="polite"
         >
           {feedback.message}
         </p>
       ) : null}
+
+      <SuccessDialog
+        open={feedback?.type === "success"}
+        description={feedback?.type === "success" ? feedback.message : ""}
+        onClose={() => {
+          setFeedback(null);
+        }}
+      />
 
       <footer
         className={`account-info-tab__footer ${isEditing ? "account-info-tab__footer--editing" : "account-info-tab__footer--view"}`}
@@ -482,7 +492,7 @@ export function AccountInfoTab() {
               disabled={updateMutation.isPending}
             >
               <CancelIcon />
-              Cancelar
+              Não, manter como está
             </Button>
             <Button
               variant="primary"
@@ -517,6 +527,7 @@ export function AccountInfoTab() {
         description={pending?.options.description ?? ""}
         confirmLabel={pending?.options.confirmLabel}
         cancelLabel={pending?.options.cancelLabel}
+        confirmVariant={pending?.options.confirmVariant}
         onConfirm={confirm}
         onCancel={cancel}
       />

@@ -73,7 +73,7 @@ describe('TaskListPanel', () => {
     const dialog = await screen.findByRole('alertdialog')
     expect(within(dialog).getByText(/concluir atividade\?/i)).toBeInTheDocument()
 
-    await user.click(within(dialog).getByRole('button', { name: /concluir atividade/i }))
+    await user.click(within(dialog).getByRole('button', { name: /sim, concluir atividade/i }))
 
     await waitFor(() => {
       expect(

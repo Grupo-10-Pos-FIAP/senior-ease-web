@@ -39,8 +39,7 @@ body {
   padding: calc(var(--se-spacing, 1rem) * 1.5);
 }
 
-[data-interface-mode="basic"] .app-header__action--secondary,
-[data-interface-mode="basic"] .profile-tabs__tab--secondary {
+[data-interface-mode="basic"] .app-header__action--secondary {
   display: none;
 }
 

@@ -2,12 +2,15 @@ import { AlertDialog } from "radix-ui";
 import { Button } from "@shared/ui/components/Button";
 import "./ConfirmDialog.css";
 
+export type ConfirmDialogVariant = "primary" | "danger";
+
 interface ConfirmDialogProps {
   open: boolean;
   title: string;
   description: string;
   confirmLabel?: string;
   cancelLabel?: string;
+  confirmVariant?: ConfirmDialogVariant;
   onConfirm: () => void;
   onCancel: () => void;
 }
@@ -18,6 +21,7 @@ export function ConfirmDialog({
   description,
   confirmLabel = "Confirmar",
   cancelLabel = "Cancelar",
+  confirmVariant = "primary",
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
@@ -39,12 +43,16 @@ export function ConfirmDialog({
           </AlertDialog.Description>
           <div className="confirm-dialog__actions">
             <AlertDialog.Cancel asChild>
-              <Button variant="secondary" onClick={onCancel}>
+              <Button variant="secondary" className="confirm-dialog__button" onClick={onCancel}>
                 {cancelLabel}
               </Button>
             </AlertDialog.Cancel>
             <AlertDialog.Action asChild>
-              <Button variant="primary" onClick={onConfirm}>
+              <Button
+                variant={confirmVariant === "danger" ? "danger-filled" : "primary"}
+                className="confirm-dialog__button"
+                onClick={onConfirm}
+              >
                 {confirmLabel}
               </Button>
             </AlertDialog.Action>

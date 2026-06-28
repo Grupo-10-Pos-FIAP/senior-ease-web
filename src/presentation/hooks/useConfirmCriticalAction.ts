@@ -1,11 +1,15 @@
 import { useCallback, useState } from "react";
 import { useAccessibility } from "@app/providers/accessibilityContext";
+import type { ConfirmDialogVariant } from "@shared/ui/components/ConfirmDialog/ConfirmDialog";
 
 interface CriticalActionOptions {
   title: string;
   description: string;
   confirmLabel?: string;
   cancelLabel?: string;
+  /** Quando true, exige confirmação mesmo com a preferência de confirmação desligada. */
+  alwaysConfirm?: boolean;
+  confirmVariant?: ConfirmDialogVariant;
 }
 
 interface PendingAction {
@@ -19,7 +23,7 @@ export function useConfirmCriticalAction() {
 
   const runIfAllowed = useCallback(
     (action: () => void, options: CriticalActionOptions) => {
-      if (preferences.confirmCriticalActions) {
+      if (preferences.confirmCriticalActions || options.alwaysConfirm) {
         setPending({ action, options });
         return;
       }
