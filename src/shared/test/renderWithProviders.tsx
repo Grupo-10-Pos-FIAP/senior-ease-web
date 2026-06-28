@@ -2,7 +2,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, type RenderOptions } from "@testing-library/react";
 import { Suspense, type ReactElement, type ReactNode } from "react";
 import { MemoryRouter } from "react-router-dom";
+import { AuthContext } from "@app/providers/authContext";
 import { AccessibilityProvider } from "@app/providers/AccessibilityProvider";
+import { DEMO_USER_ID } from "@shared/constants/user";
 
 function createTestQueryClient() {
   return new QueryClient({
@@ -26,11 +28,18 @@ export function renderWithProviders(
   function Wrapper({ children }: { children: ReactNode }) {
     return (
       <QueryClientProvider client={queryClient}>
-        <AccessibilityProvider>
-          <MemoryRouter initialEntries={[route]}>
-            <Suspense fallback={<p>Carregando…</p>}>{children}</Suspense>
-          </MemoryRouter>
-        </AccessibilityProvider>
+        <AuthContext.Provider
+          value={{
+            user: { uid: DEMO_USER_ID, email: "antoniojose@seniorease.com.br" },
+            status: "authenticated",
+          }}
+        >
+          <AccessibilityProvider>
+            <MemoryRouter initialEntries={[route]}>
+              <Suspense fallback={<p>Carregando…</p>}>{children}</Suspense>
+            </MemoryRouter>
+          </AccessibilityProvider>
+        </AuthContext.Provider>
       </QueryClientProvider>
     );
   }

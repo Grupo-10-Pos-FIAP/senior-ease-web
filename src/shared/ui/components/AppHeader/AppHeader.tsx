@@ -1,8 +1,16 @@
 import { NavLink } from "react-router-dom";
+import { useAuth } from "@app/providers/authContext";
+import { signOutUser } from "@infrastructure/firebase/authService";
 import { Button } from "@shared/ui/components/Button";
 import "./AppHeader.css";
 
 export function AppHeader() {
+  const { status } = useAuth();
+
+  async function handleSignOut() {
+    await signOutUser();
+  }
+
   return (
     <header className="app-header">
       <NavLink to="/" className="app-header__logo" aria-label="SeniorEASE — início">
@@ -20,8 +28,9 @@ export function AppHeader() {
         <Button
           variant="ghost"
           className="app-header__action--secondary"
-          aria-label="Sair (em breve)"
-          disabled
+          aria-label="Sair da conta"
+          disabled={status !== "authenticated"}
+          onClick={() => void handleSignOut()}
         >
           Sair
         </Button>

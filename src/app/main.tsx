@@ -1,16 +1,12 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryProvider } from "@app/providers/QueryProvider";
+import { AuthProvider } from "@app/providers/AuthProvider";
 import { AccessibilityProvider } from "@app/providers/AccessibilityProvider";
 import App from "./App";
 import "./index.css";
 
-async function bootstrap() {
-  if (import.meta.env.DEV) {
-    const { startMswWorker } = await import("@infrastructure/msw/browser");
-    await startMswWorker();
-  }
-
+function bootstrap() {
   const root = document.getElementById("root");
   if (!root) {
     throw new Error("Root element #root not found");
@@ -19,12 +15,14 @@ async function bootstrap() {
   createRoot(root).render(
     <StrictMode>
       <QueryProvider>
-        <AccessibilityProvider>
-          <App />
-        </AccessibilityProvider>
+        <AuthProvider>
+          <AccessibilityProvider>
+            <App />
+          </AccessibilityProvider>
+        </AuthProvider>
       </QueryProvider>
     </StrictMode>,
   );
 }
 
-void bootstrap();
+bootstrap();

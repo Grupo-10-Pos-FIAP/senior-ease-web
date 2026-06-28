@@ -1,0 +1,45 @@
+.firebase-setup {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--se-spacing, 1rem) * 2);
+  background: var(--se-surface-muted);
+}
+
+.firebase-setup__card {
+  width: min(100%, 36rem);
+  padding: calc(var(--se-spacing, 1rem) * 2);
+  border: 1px solid var(--se-border);
+  border-radius: calc(var(--se-spacing, 1rem) * 0.75);
+  background: var(--se-surface);
+}
+
+.firebase-setup h1 {
+  margin: 0 0 calc(var(--se-spacing, 1rem) * 1.25);
+  font-size: calc(var(--se-font-size, 1rem) * 1.5);
+}
+
+.firebase-setup p {
+  margin: 0 0 calc(var(--se-spacing, 1rem) * 1.25);
+  font-size: var(--se-font-size, 1rem);
+  line-height: 1.6;
+}
+
+.firebase-setup__list {
+  margin: 0 0 calc(var(--se-spacing, 1rem) * 1.25);
+  padding-left: 1.25rem;
+}
+
+.firebase-setup__list li {
+  margin-bottom: calc(var(--se-spacing, 1rem) * 0.5);
+}
+
+.firebase-setup__hint {
+  color: var(--se-text-muted);
+}
+
+.firebase-setup code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9em;
+}

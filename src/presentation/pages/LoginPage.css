@@ -1,0 +1,91 @@
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--se-spacing, 1rem) * 2);
+  background: var(--se-surface-muted);
+}
+
+.login-page__card {
+  width: min(100%, 28rem);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--se-spacing, 1rem) * 1.25);
+  padding: calc(var(--se-spacing, 1rem) * 2);
+  border: 1px solid var(--se-border);
+  border-radius: calc(var(--se-spacing, 1rem) * 0.75);
+  background: var(--se-surface);
+}
+
+.login-page__brand {
+  margin: 0;
+  font-size: calc(var(--se-font-size, 1rem) * 1.125);
+  font-weight: 700;
+  color: var(--se-navy);
+}
+
+.login-page__title {
+  margin: 0;
+  font-size: calc(var(--se-font-size, 1rem) * 1.75);
+  color: var(--se-contrast-fg, #1a1a1a);
+}
+
+.login-page__subtitle {
+  margin: 0;
+  font-size: var(--se-font-size, 1rem);
+  color: var(--se-text-muted);
+}
+
+.login-page__form {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--se-spacing, 1rem) * 1.25);
+}
+
+.login-page__field {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--se-spacing, 1rem) * 0.5);
+}
+
+.login-page__label {
+  font-size: var(--se-font-size, 1rem);
+  font-weight: 600;
+  color: var(--se-contrast-fg, #1a1a1a);
+}
+
+.login-page__input {
+  min-height: var(--se-touch-min, 44px);
+  padding: calc(var(--se-spacing, 1rem) * 0.75);
+  font-size: var(--se-font-size, 1rem);
+  border: 1px solid var(--se-border);
+  border-radius: calc(var(--se-spacing, 1rem) * 0.5);
+  background: var(--se-surface);
+  color: var(--se-contrast-fg, #1a1a1a);
+}
+
+.login-page__input:focus-visible {
+  outline: 3px solid var(--se-focus-ring);
+  outline-offset: 2px;
+}
+
+.login-page__submit,
+.login-page__google {
+  width: 100%;
+  min-height: var(--se-touch-min, 44px);
+}
+
+.login-page__divider {
+  margin: 0;
+  text-align: center;
+  font-size: calc(var(--se-font-size, 1rem) * 0.875);
+  color: var(--se-text-muted);
+}
+
+.login-page__error {
+  margin: 0;
+  font-size: var(--se-font-size, 1rem);
+  font-weight: 600;
+  color: var(--se-danger);
+}
