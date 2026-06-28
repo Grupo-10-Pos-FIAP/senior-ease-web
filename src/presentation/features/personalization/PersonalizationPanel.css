@@ -53,17 +53,19 @@
 .personalization-panel__controls {
   display: flex;
   flex-direction: column;
+  gap: calc(var(--se-spacing, 1rem) * 1.5);
 }
 
 .personalization-panel__advanced {
   display: flex;
   flex-direction: column;
+  gap: calc(var(--se-spacing, 1rem) * 1.5);
 }
 
-.personalization-panel__divider {
-  height: 1px;
-  background-color: var(--se-border);
-  margin: var(--se-spacing, 1rem) 0;
+.personalization-panel .preference-row {
+  border-bottom: none;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .personalization-panel__footer {
@@ -112,6 +114,3 @@
   border: 0;
 }
 
-[data-interface-mode='basic'] .personalization-panel__divider {
-  margin: calc(var(--se-spacing, 1rem) * 1.5) 0;
-}
