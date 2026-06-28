@@ -1,13 +1,13 @@
-import { ConfirmDialog } from '@shared/ui'
-import { useUnsavedChangesBlocker } from '@presentation/hooks/useUnsavedChangesBlocker'
+import { ConfirmDialog } from "@shared/ui";
+import { useUnsavedChangesBlocker } from "@presentation/hooks/useUnsavedChangesBlocker";
 
 interface UnsavedChangesLeaveGuardProps {
-  isDirty: boolean
+  isDirty: boolean;
 }
 
 export function UnsavedChangesLeaveGuard({ isDirty }: UnsavedChangesLeaveGuardProps) {
   const { showLeaveDialog, leaveDialogMessage, confirmLeave, cancelLeave } =
-    useUnsavedChangesBlocker({ isDirty })
+    useUnsavedChangesBlocker({ isDirty });
 
   return (
     <ConfirmDialog
@@ -19,5 +19,5 @@ export function UnsavedChangesLeaveGuard({ isDirty }: UnsavedChangesLeaveGuardPr
       onConfirm={confirmLeave}
       onCancel={cancelLeave}
     />
-  )
+  );
 }

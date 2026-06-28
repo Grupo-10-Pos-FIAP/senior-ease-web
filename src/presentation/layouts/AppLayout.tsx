@@ -1,6 +1,6 @@
-import { Outlet } from 'react-router-dom'
-import { AppHeader } from '@shared/ui'
-import './AppLayout.css'
+import { Outlet } from "react-router-dom";
+import { AppHeader } from "@shared/ui";
+import "./AppLayout.css";
 
 export function AppLayout() {
   return (
@@ -10,5 +10,5 @@ export function AppLayout() {
         <Outlet />
       </main>
     </div>
-  )
+  );
 }

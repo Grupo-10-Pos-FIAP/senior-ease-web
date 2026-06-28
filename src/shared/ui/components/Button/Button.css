@@ -10,7 +10,9 @@
   border-radius: 8px;
   border: 2px solid transparent;
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .se-button:focus-visible {
@@ -52,7 +54,7 @@
   background-color: var(--se-surface-muted);
 }
 
-[data-reinforced-feedback='true'] .se-button:active:not(:disabled) {
+[data-reinforced-feedback="true"] .se-button:active:not(:disabled) {
   transform: scale(0.97);
   box-shadow:
     inset 0 0 0 3px var(--se-feedback-inset),
@@ -65,7 +67,7 @@
     transition: none;
   }
 
-  [data-reinforced-feedback='true'] .se-button:active:not(:disabled) {
+  [data-reinforced-feedback="true"] .se-button:active:not(:disabled) {
     transform: none;
   }
 }

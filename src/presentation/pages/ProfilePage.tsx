@@ -1,12 +1,12 @@
-import { Navigate, Outlet, useLocation } from 'react-router-dom'
-import { ProfileTabs } from '@shared/ui'
-import './ProfilePage.css'
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { ProfileTabs } from "@shared/ui";
+import "./ProfilePage.css";
 
 export function ProfilePage() {
-  const location = useLocation()
+  const location = useLocation();
 
-  if (location.pathname === '/perfil') {
-    return <Navigate to="/perfil/personalizacao" replace />
+  if (location.pathname === "/perfil") {
+    return <Navigate to="/perfil/personalizacao" replace />;
   }
 
   return (
@@ -14,5 +14,5 @@ export function ProfilePage() {
       <ProfileTabs />
       <Outlet />
     </div>
-  )
+  );
 }

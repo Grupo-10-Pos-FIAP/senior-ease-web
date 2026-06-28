@@ -5,7 +5,9 @@ import { server } from '@infrastructure/msw/server'
 import { resetPreferencesDb } from '@infrastructure/msw/db/preferences.db'
 import { resetTasksDb } from '@infrastructure/msw/db/tasks.db'
 
-beforeAll(() => server.listen())
+beforeAll(() => {
+  server.listen();
+});
 afterEach(() => {
   cleanup()
   server.resetHandlers()

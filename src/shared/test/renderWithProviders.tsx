@@ -1,8 +1,8 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { render, type RenderOptions } from '@testing-library/react'
-import { Suspense, type ReactElement, type ReactNode } from 'react'
-import { MemoryRouter } from 'react-router-dom'
-import { AccessibilityProvider } from '@app/providers/AccessibilityProvider'
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { render, type RenderOptions } from "@testing-library/react";
+import { Suspense, type ReactElement, type ReactNode } from "react";
+import { MemoryRouter } from "react-router-dom";
+import { AccessibilityProvider } from "@app/providers/AccessibilityProvider";
 
 function createTestQueryClient() {
   return new QueryClient({
@@ -10,18 +10,18 @@ function createTestQueryClient() {
       queries: { retry: false },
       mutations: { retry: false },
     },
-  })
+  });
 }
 
-interface RenderWithProvidersOptions extends Omit<RenderOptions, 'wrapper'> {
-  route?: string
+interface RenderWithProvidersOptions extends Omit<RenderOptions, "wrapper"> {
+  route?: string;
 }
 
 export function renderWithProviders(
   ui: ReactElement,
-  { route = '/', ...options }: RenderWithProvidersOptions = {},
+  { route = "/", ...options }: RenderWithProvidersOptions = {},
 ) {
-  const queryClient = createTestQueryClient()
+  const queryClient = createTestQueryClient();
 
   function Wrapper({ children }: { children: ReactNode }) {
     return (
@@ -32,8 +32,8 @@ export function renderWithProviders(
           </MemoryRouter>
         </AccessibilityProvider>
       </QueryClientProvider>
-    )
+    );
   }
 
-  return render(ui, { wrapper: Wrapper, ...options })
+  return render(ui, { wrapper: Wrapper, ...options });
 }

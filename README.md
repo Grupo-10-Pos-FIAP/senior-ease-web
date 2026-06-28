@@ -45,14 +45,14 @@ Repositório em **fase scaffold**: estrutura Clean Architecture, toolchain e con
 
 ## Stack
 
-| Área | Tecnologia |
-|------|------------|
-| Build | Vite 8 + TypeScript 6 (`strict: true`) |
-| UI | React 19, Radix UI (via `@shared/ui`), CSS + tokens |
-| Roteamento | React Router 7 |
-| Server state | TanStack Query 5 |
-| Testes | Vitest + Testing Library + MSW |
-| Lint | ESLint |
+| Área         | Tecnologia                                          |
+| ------------ | --------------------------------------------------- |
+| Build        | Vite 8 + TypeScript 6 (`strict: true`)              |
+| UI           | React 19, Radix UI (via `@shared/ui`), CSS + tokens |
+| Roteamento   | React Router 7                                      |
+| Server state | TanStack Query 5                                    |
+| Testes       | Vitest + Testing Library + MSW                      |
+| Lint         | ESLint                                              |
 
 ---
 
@@ -128,35 +128,35 @@ src/
 
 ## Camadas — responsabilidades
 
-| Camada | Pasta | Pode importar | Não pode | Exemplos |
-|--------|-------|---------------|----------|----------|
-| Domain | `domain/` | — (núcleo) | React, infrastructure | `Task.ts`, `ITaskRepository.ts` |
-| Application | `application/` | `@domain` | `@infrastructure`, React | `CompleteTaskStep.ts` |
-| Infrastructure | `infrastructure/` | `@domain`, `@shared` | `@application`, `@presentation` | `HttpTaskRepository.ts`, `task.mapper.ts` |
-| Presentation | `presentation/` | `@application`, `@domain`, `@shared`, `@app/composition` | `@infrastructure`, Radix direto | `TaskListPage.tsx`, `useTasks.ts` |
-| App | `app/` | Todas (wiring) | Regras de negócio | `composition/useCases.ts`, `router/` |
-| Shared | `shared/` | `radix-ui` (só em `ui/`) | Use cases, pages | `ui/components/Button/`, `test/setup.ts` |
+| Camada         | Pasta             | Pode importar                                            | Não pode                        | Exemplos                                  |
+| -------------- | ----------------- | -------------------------------------------------------- | ------------------------------- | ----------------------------------------- |
+| Domain         | `domain/`         | — (núcleo)                                               | React, infrastructure           | `Task.ts`, `ITaskRepository.ts`           |
+| Application    | `application/`    | `@domain`                                                | `@infrastructure`, React        | `CompleteTaskStep.ts`                     |
+| Infrastructure | `infrastructure/` | `@domain`, `@shared`                                     | `@application`, `@presentation` | `HttpTaskRepository.ts`, `task.mapper.ts` |
+| Presentation   | `presentation/`   | `@application`, `@domain`, `@shared`, `@app/composition` | `@infrastructure`, Radix direto | `TaskListPage.tsx`, `useTasks.ts`         |
+| App            | `app/`            | Todas (wiring)                                           | Regras de negócio               | `composition/useCases.ts`, `router/`      |
+| Shared         | `shared/`         | `radix-ui` (só em `ui/`)                                 | Use cases, pages                | `ui/components/Button/`, `test/setup.ts`  |
 
 ---
 
 ## Módulos de domínio
 
-| Módulo | Port | Entidades / VOs | Use cases previstos |
-|--------|------|-----------------|---------------------|
-| **Accessibility** | `IPreferencesRepository` | `AccessibilityPreferences`, `FontSizeLevel`, `ContrastLevel` | Get/Update/Reset preferences |
-| **Tasks** | `ITaskRepository` | `Task`, `TaskStep`, `ActivityHistoryEntry` | List, Get, Create, CompleteStep, Complete, History |
-| **Profile** | `IUserRepository` | `User`, prefs de notificação | Get/Update perfil |
+| Módulo            | Port                     | Entidades / VOs                                              | Use cases previstos                                |
+| ----------------- | ------------------------ | ------------------------------------------------------------ | -------------------------------------------------- |
+| **Accessibility** | `IPreferencesRepository` | `AccessibilityPreferences`, `FontSizeLevel`, `ContrastLevel` | Get/Update/Reset preferences                       |
+| **Tasks**         | `ITaskRepository`        | `Task`, `TaskStep`, `ActivityHistoryEntry`                   | List, Get, Create, CompleteStep, Complete, History |
+| **Profile**       | `IUserRepository`        | `User`, prefs de notificação                                 | Get/Update perfil                                  |
 
 **Rotas previstas (presentation):**
 
-| Rota | Página |
-|------|--------|
-| `/` | Dashboard |
+| Rota              | Página                   |
+| ----------------- | ------------------------ |
+| `/`               | Dashboard                |
 | `/personalizacao` | Painel de personalização |
-| `/tarefas` | Lista de tarefas |
-| `/tarefas/:id` | Fluxo guiado (wizard) |
-| `/historico` | Histórico |
-| `/perfil` | Perfil e configurações |
+| `/tarefas`        | Lista de tarefas         |
+| `/tarefas/:id`    | Fluxo guiado (wizard)    |
+| `/historico`      | Histórico                |
+| `/perfil`         | Perfil e configurações   |
 
 **API REST (v1, simulada via MSW):** `GET/PATCH /api/users/:id`, `GET/PUT /api/users/:id/preferences`, `GET/POST /api/tasks`, `GET /api/tasks/:id`, `PATCH /api/tasks/:id/steps/:stepId`, `PATCH /api/tasks/:id/complete`, `GET /api/activities/history`. MVP usa `userId` fixo `"demo-user"`.
 
@@ -179,11 +179,11 @@ src/
 
 ### Estado
 
-| Tipo | Onde |
-|------|------|
-| Server state (API) | TanStack Query — não duplicar em `useState` |
-| Prefs globais de a11y | `AccessibilityProvider` (Context) |
-| UI local | `useState` / `useReducer` na feature |
+| Tipo                  | Onde                                        |
+| --------------------- | ------------------------------------------- |
+| Server state (API)    | TanStack Query — não duplicar em `useState` |
+| Prefs globais de a11y | `AccessibilityProvider` (Context)           |
+| UI local              | `useState` / `useReducer` na feature        |
 
 ### UI e acessibilidade
 
@@ -206,27 +206,27 @@ Autenticação real, backend real, i18n, PWA, Tailwind, Redux/Zustand, CQRS, mic
 
 ## Onde colocar código novo
 
-| O quê | Onde |
-|-------|------|
-| Entidade, VO, port, erro de domínio | `domain/` |
-| Caso de uso | `application/{accessibility,tasks,profile}/` |
-| HTTP, mapper, repo, handler MSW | `infrastructure/` |
-| Page, feature, hook, layout | `presentation/` |
-| Provider, router, factory/wiring | `app/` |
-| Componente UI, wrapper Radix, helper de teste | `shared/` |
+| O quê                                         | Onde                                         |
+| --------------------------------------------- | -------------------------------------------- |
+| Entidade, VO, port, erro de domínio           | `domain/`                                    |
+| Caso de uso                                   | `application/{accessibility,tasks,profile}/` |
+| HTTP, mapper, repo, handler MSW               | `infrastructure/`                            |
+| Page, feature, hook, layout                   | `presentation/`                              |
+| Provider, router, factory/wiring              | `app/`                                       |
+| Componente UI, wrapper Radix, helper de teste | `shared/`                                    |
 
 ---
 
 ## Aliases TypeScript
 
-| Alias | Caminho |
-|-------|---------|
-| `@domain/*` | `src/domain/*` |
-| `@application/*` | `src/application/*` |
+| Alias               | Caminho                |
+| ------------------- | ---------------------- |
+| `@domain/*`         | `src/domain/*`         |
+| `@application/*`    | `src/application/*`    |
 | `@infrastructure/*` | `src/infrastructure/*` |
-| `@presentation/*` | `src/presentation/*` |
-| `@shared/*` | `src/shared/*` |
-| `@app/*` | `src/app/*` |
+| `@presentation/*`   | `src/presentation/*`   |
+| `@shared/*`         | `src/shared/*`         |
+| `@app/*`            | `src/app/*`            |
 
 Configurados em `tsconfig.app.json`, `vite.config.ts` e `vitest.config.ts`.
 
