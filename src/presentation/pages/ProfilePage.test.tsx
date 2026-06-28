@@ -5,9 +5,11 @@ import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AccessibilityProvider } from "@app/providers/AccessibilityProvider";
+import { AuthContext } from "@app/providers/authContext";
 import { AppLayout } from "@presentation/layouts/AppLayout";
 import { DashboardPage } from "@presentation/pages/DashboardPage";
 import { ProfilePage } from "@presentation/pages/ProfilePage";
+import { AccountInfoTab } from "@presentation/features/profile/AccountInfoTab";
 import { PersonalizationPanel } from "@presentation/features/personalization/PersonalizationPanel";
 
 function renderApp(initialRoute = "/") {
@@ -25,7 +27,10 @@ function renderApp(initialRoute = "/") {
           {
             path: "perfil",
             element: <ProfilePage />,
-            children: [{ path: "personalizacao", element: <PersonalizationPanel /> }],
+            children: [
+              { path: "personalizacao", element: <PersonalizationPanel /> },
+              { path: "conta", element: <AccountInfoTab /> },
+            ],
           },
         ],
       },
@@ -35,11 +40,18 @@ function renderApp(initialRoute = "/") {
 
   return render(
     <QueryClientProvider client={queryClient}>
-      <AccessibilityProvider>
-        <Suspense fallback={<p>Carregando…</p>}>
-          <RouterProvider router={router} />
-        </Suspense>
-      </AccessibilityProvider>
+      <AuthContext.Provider
+        value={{
+          user: { uid: "demo-user", email: "antoniojose@seniorease.com.br" },
+          status: "authenticated",
+        }}
+      >
+        <AccessibilityProvider>
+          <Suspense fallback={<p>Carregando…</p>}>
+            <RouterProvider router={router} />
+          </Suspense>
+        </AccessibilityProvider>
+      </AuthContext.Provider>
     </QueryClientProvider>,
   );
 }
@@ -67,5 +79,28 @@ describe("ProfilePage", () => {
     await waitFor(() => {
       expect(document.documentElement.style.getPropertyValue("--se-font-size")).toBe("1.25rem");
     });
+  });
+
+  it("navega para Informações da conta e exibe dados do usuário", async () => {
+    const user = userEvent.setup();
+    renderApp("/perfil/conta");
+
+    expect(await screen.findByRole("tab", { name: /informações da conta/i })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByText(/carregando informações/i)).not.toBeInTheDocument();
+    });
+
+    expect(screen.getByText("Antônio José Maria da Silva")).toBeInTheDocument();
+    expect(screen.getByText("67 anos")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /editar informações/i })).toBeInTheDocument();
+
+    await user.click(screen.getByRole("tab", { name: /personalização/i }));
+    expect(
+      screen.getByRole("heading", { name: /personalização da experiência/i }),
+    ).toBeInTheDocument();
   });
 });
