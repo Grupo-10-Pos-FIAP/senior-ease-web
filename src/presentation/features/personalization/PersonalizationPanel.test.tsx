@@ -34,7 +34,7 @@ describe("PersonalizationPanel", () => {
     expect(screen.getByText(/as mudanças são mostradas na hora/i)).toBeInTheDocument();
   });
 
-  it("usa fieldset com legend para cada preferência", async () => {
+  it("agrupa cada preferência com role=group", async () => {
     renderWithProviders(<PersonalizationPanel />);
     const panel = await findPanel();
 

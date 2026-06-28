@@ -1,12 +1,12 @@
 .preference-row {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  gap: calc(var(--se-spacing, 1rem) * 0.75);
+  gap: calc(var(--se-spacing, 1rem) * 0.35);
   margin: 0;
   padding: calc(var(--se-spacing, 1rem) * 0.75) 0;
   border: none;
   border-bottom: 1px solid var(--se-border);
+  min-width: 0;
 }
 
 .preference-row__legend {
@@ -15,7 +15,6 @@
   gap: calc(var(--se-spacing, 1rem) * 0.75);
   min-width: 0;
   padding: 0;
-  float: left;
   width: 100%;
 }
 

@@ -9,12 +9,12 @@ interface PreferenceRowProps {
 }
 
 export function PreferenceRow({ icon, label, description, control }: PreferenceRowProps) {
-  const legendId = useId();
-  const resolvedControl = typeof control === "function" ? control(legendId) : control;
+  const labelId = useId();
+  const resolvedControl = typeof control === "function" ? control(labelId) : control;
 
   return (
-    <fieldset className="preference-row">
-      <legend id={legendId} className="preference-row__legend">
+    <div className="preference-row" role="group" aria-labelledby={labelId}>
+      <div id={labelId} className="preference-row__legend">
         <span className="preference-row__icon" aria-hidden="true">
           {icon}
         </span>
@@ -22,8 +22,8 @@ export function PreferenceRow({ icon, label, description, control }: PreferenceR
           <span className="preference-row__label">{label}</span>
           {description ? <span className="preference-row__description">{description}</span> : null}
         </span>
-      </legend>
+      </div>
       <div className="preference-row__control">{resolvedControl}</div>
-    </fieldset>
+    </div>
   );
 }

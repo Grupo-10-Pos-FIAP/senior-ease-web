@@ -27,6 +27,43 @@ const INTERFACE_MODE_OPTIONS: { value: InterfaceMode; label: string; ariaLabel: 
   { value: "standard", label: "Avançado", ariaLabel: "Modo avançado — todas as opções visíveis" },
 ];
 
+function RestoreIcon() {
+  return (
+    <svg
+      className="personalization-panel__icon"
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      aria-hidden="true"
+    >
+      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+      <path d="M3 3v5h5" />
+    </svg>
+  );
+}
+
+function SaveIcon() {
+  return (
+    <svg
+      className="personalization-panel__icon"
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      aria-hidden="true"
+    >
+      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+      <path d="M17 21v-8H7v8" />
+      <path d="M7 3v5h8" />
+    </svg>
+  );
+}
+
 export function PersonalizationPanel() {
   const {
     draft,
@@ -82,6 +119,7 @@ export function PersonalizationPanel() {
             onClick={save}
             disabled={isSaving}
           >
+            <SaveIcon />
             {isSaving ? "Salvando…" : "Salvar agora"}
           </Button>
         </div>
@@ -204,9 +242,11 @@ export function PersonalizationPanel() {
 
       <footer className="personalization-panel__footer">
         <Button variant="secondary" onClick={handleResetClick} disabled={isResetting || isSaving}>
+          <RestoreIcon />
           Retornar configurações padrões
         </Button>
         <Button variant="primary" onClick={save} disabled={!isDirty || isSaving}>
+          <SaveIcon />
           {isSaving ? "Salvando…" : "Salvar mudanças"}
         </Button>
       </footer>

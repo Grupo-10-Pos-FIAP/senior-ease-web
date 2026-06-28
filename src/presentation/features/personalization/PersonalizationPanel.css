@@ -1,7 +1,9 @@
 .personalization-panel {
   display: flex;
   flex-direction: column;
-  gap: var(--se-spacing, 1rem);
+  gap: calc(var(--se-spacing, 1rem) * 1.5);
+  width: 100%;
+  min-width: 0;
 }
 
 .personalization-panel__loading {
@@ -47,39 +49,24 @@
 }
 
 .personalization-panel__dirty-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   width: 100%;
 }
 
-.personalization-panel__controls {
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--se-spacing, 1rem) * 1.5);
-}
-
+.personalization-panel__controls,
 .personalization-panel__advanced {
   display: flex;
   flex-direction: column;
-  gap: calc(var(--se-spacing, 1rem) * 1.5);
+  gap: calc(var(--se-spacing, 1rem) * 1.25);
 }
 
 .personalization-panel .preference-row {
+  gap: calc(var(--se-spacing, 1rem) * 0.35);
+  padding: 0;
   border-bottom: none;
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-.personalization-panel__footer {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: var(--se-spacing, 1rem);
-  margin-top: calc(var(--se-spacing, 1rem) * 2);
-  padding-top: calc(var(--se-spacing, 1rem) * 1.5);
-  border-top: 1px solid var(--se-border);
-}
-
-.personalization-panel__footer .se-button {
-  width: 100%;
 }
 
 .personalization-panel__feedback {
@@ -100,6 +87,41 @@
   color: var(--se-feedback-error-fg);
   background-color: var(--se-feedback-error-bg);
   border: 1px solid var(--se-feedback-error-border);
+}
+
+.personalization-panel__footer {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--se-spacing, 1rem);
+  margin-top: calc(var(--se-spacing, 1rem) * 0.5);
+  padding-top: calc(var(--se-spacing, 1rem) * 1.5);
+  border-top: 1px solid var(--se-border);
+}
+
+.personalization-panel__footer .se-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .personalization-panel__footer {
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .personalization-panel__footer .se-button {
+    width: auto;
+    min-width: 11rem;
+  }
+}
+
+.personalization-panel__icon {
+  flex-shrink: 0;
 }
 
 .visually-hidden {

@@ -54,6 +54,16 @@
   background-color: var(--se-surface-muted);
 }
 
+.se-button--danger {
+  background-color: transparent;
+  color: var(--se-danger);
+  border-color: var(--se-danger);
+}
+
+.se-button--danger:hover:not(:disabled) {
+  background-color: color-mix(in srgb, var(--se-danger) 8%, transparent);
+}
+
 [data-reinforced-feedback="true"] .se-button:active:not(:disabled) {
   transform: scale(0.97);
   box-shadow:
