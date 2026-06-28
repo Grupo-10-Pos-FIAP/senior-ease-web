@@ -31,6 +31,10 @@ export class HttpClient {
     return this.request<T>('PATCH', path, body)
   }
 
+  async delete(path: string): Promise<void> {
+    await this.request<void>('DELETE', path)
+  }
+
   private async request<T>(method: string, path: string, body?: unknown): Promise<T> {
     const url = `${this.options.baseUrl ?? ''}${path}`
     const response = await fetch(url, {
@@ -41,6 +45,10 @@ export class HttpClient {
 
     if (!response.ok) {
       throw new HttpError(`HTTP ${response.status}: ${response.statusText}`, response.status)
+    }
+
+    if (response.status === 204) {
+      return undefined as T
     }
 
     return response.json() as Promise<T>
