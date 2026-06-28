@@ -59,6 +59,19 @@
   outline-offset: 3px;
 }
 
+@media (max-width: 639px) {
+  .segmented-control {
+    flex-direction: column;
+    gap: calc(var(--se-spacing, 1rem) * 0.5);
+    padding: calc(var(--se-spacing, 1rem) * 0.5);
+  }
+
+  .segmented-control__option {
+    flex: none;
+    width: 100%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .segmented-control__option {
     transition: none;

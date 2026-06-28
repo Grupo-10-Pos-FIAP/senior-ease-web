@@ -63,6 +63,21 @@ export function getContrastOptions(): PreferenceOption<ContrastLevel>[] {
   }));
 }
 
+export type YesNoValue = "sim" | "nao";
+
+export const YES_NO_OPTIONS: PreferenceOption<YesNoValue>[] = [
+  { value: "sim", label: "Sim", ariaLabel: "Sim" },
+  { value: "nao", label: "Não", ariaLabel: "Não" },
+];
+
+export function booleanToYesNo(value: boolean): YesNoValue {
+  return value ? "sim" : "nao";
+}
+
+export function yesNoToBoolean(value: YesNoValue): boolean {
+  return value === "sim";
+}
+
 export const PREFERENCE_DESCRIPTIONS = {
   fontSize: "Deixe o texto no tamanho mais confortável para ler.",
   contrast:
