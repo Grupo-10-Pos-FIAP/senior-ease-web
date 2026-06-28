@@ -95,10 +95,10 @@ describe('PersonalizationPanel', () => {
     renderWithProviders(<PersonalizationPanel />)
     const panel = await findPanel()
 
-    const confirmSwitch = within(panel).getByRole('switch', {
+    const confirmGroup = within(panel).getByRole('radiogroup', {
       name: /confirmação em ações críticas/i,
     })
-    await user.click(confirmSwitch)
+    await user.click(within(confirmGroup).getByRole('radio', { name: /^não$/i }))
 
     const fontSizeGroup = within(panel).getByRole('radiogroup', { name: /tamanho da letra/i })
     await user.click(within(fontSizeGroup).getByRole('radio', { name: /letra muito grande/i }))
@@ -126,7 +126,7 @@ describe('PersonalizationPanel', () => {
     const panel = await findPanel()
 
     expect(
-      within(panel).getByRole('switch', { name: /feedback visual reforçado/i }),
+      within(panel).getByRole('radiogroup', { name: /feedback visual reforçado/i }),
     ).toBeInTheDocument()
 
     const modeGroup = within(panel).getByRole('radiogroup', { name: /modo de navegação/i })
@@ -134,10 +134,10 @@ describe('PersonalizationPanel', () => {
 
     await waitFor(() => {
       expect(
-        within(panel).queryByRole('switch', { name: /feedback visual reforçado/i }),
+        within(panel).queryByRole('radiogroup', { name: /feedback visual reforçado/i }),
       ).not.toBeInTheDocument()
       expect(
-        within(panel).queryByRole('switch', { name: /confirmação em ações críticas/i }),
+        within(panel).queryByRole('radiogroup', { name: /confirmação em ações críticas/i }),
       ).not.toBeInTheDocument()
     })
   })

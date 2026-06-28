@@ -3,7 +3,6 @@ import {
   ConfirmDialog,
   PreferenceRow,
   SegmentedControl,
-  Switch,
 } from '@shared/ui'
 import type { InterfaceMode } from '@domain/value-objects/InterfaceMode'
 import { UnsavedChangesLeaveGuard } from '@presentation/features/personalization/UnsavedChangesLeaveGuard'
@@ -18,6 +17,9 @@ import {
   getSpacingOptions,
   PANEL_INTRO,
   PREFERENCE_DESCRIPTIONS,
+  YES_NO_OPTIONS,
+  booleanToYesNo,
+  yesNoToBoolean,
 } from '@shared/lib/preferenceLabels'
 import './PersonalizationPanel.css'
 
@@ -160,13 +162,14 @@ export function PersonalizationPanel() {
               label="Feedback visual reforçado"
               description={PREFERENCE_DESCRIPTIONS.reinforcedVisualFeedback}
               control={(legendId) => (
-                <Switch
-                  id="reinforced-feedback"
-                  aria-labelledby={legendId}
-                  checked={draft.reinforcedVisualFeedback}
-                  onCheckedChange={(reinforcedVisualFeedback) =>
-                    updateDraft({ reinforcedVisualFeedback })
+                <SegmentedControl
+                  name="reinforced-feedback"
+                  value={booleanToYesNo(draft.reinforcedVisualFeedback)}
+                  options={YES_NO_OPTIONS}
+                  onChange={(value) =>
+                    updateDraft({ reinforcedVisualFeedback: yesNoToBoolean(value) })
                   }
+                  labelledBy={legendId}
                 />
               )}
             />
@@ -175,13 +178,14 @@ export function PersonalizationPanel() {
               label="Confirmação em ações críticas"
               description={PREFERENCE_DESCRIPTIONS.confirmCriticalActions}
               control={(legendId) => (
-                <Switch
-                  id="confirm-critical"
-                  aria-labelledby={legendId}
-                  checked={draft.confirmCriticalActions}
-                  onCheckedChange={(confirmCriticalActions) =>
-                    updateDraft({ confirmCriticalActions })
+                <SegmentedControl
+                  name="confirm-critical"
+                  value={booleanToYesNo(draft.confirmCriticalActions)}
+                  options={YES_NO_OPTIONS}
+                  onChange={(value) =>
+                    updateDraft({ confirmCriticalActions: yesNoToBoolean(value) })
                   }
+                  labelledBy={legendId}
                 />
               )}
             />
