@@ -3,8 +3,19 @@ import { TaskNotFoundError } from "@domain/errors/TaskNotFoundError";
 import type { ITaskRepository } from "@domain/repositories/ITaskRepository";
 import type { HttpClient } from "@infrastructure/api/HttpClient";
 import { HttpError } from "@infrastructure/api/HttpClient";
+import { isFirebaseConfigured } from "@infrastructure/firebase/client";
 import { getCurrentAuthUser } from "@infrastructure/firebase/authService";
 import { fromTaskDto, toTaskDto, type TaskDto } from "@infrastructure/mappers/task.mapper";
+
+const DEFAULT_HTTP_USER_ID = "demo-user";
+
+function resolveHttpUserId(): string {
+  if (!isFirebaseConfigured()) {
+    return DEFAULT_HTTP_USER_ID;
+  }
+
+  return getCurrentAuthUser()?.uid ?? DEFAULT_HTTP_USER_ID;
+}
 
 export class HttpTaskRepository implements ITaskRepository {
   constructor(private readonly httpClient: HttpClient) {}
@@ -30,7 +41,7 @@ export class HttpTaskRepository implements ITaskRepository {
 
   async complete(taskId: string): Promise<Task> {
     try {
-      const userId = getCurrentAuthUser()?.uid ?? "demo-user";
+      const userId = resolveHttpUserId();
       const dto = await this.httpClient.patch<TaskDto>(
         `/api/tasks/${taskId}/complete?userId=${encodeURIComponent(userId)}`,
       );
