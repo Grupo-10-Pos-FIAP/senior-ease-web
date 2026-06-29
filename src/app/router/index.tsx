@@ -7,6 +7,8 @@ import { ProfilePage } from "@presentation/pages/ProfilePage";
 import { TaskWizardPage } from "@presentation/pages/TaskWizardPage";
 import { ActivityGuidePage } from "@presentation/features/tasks/guide/ActivityGuidePage";
 import { StepTutorialPage } from "@presentation/features/tasks/guide/StepTutorialPage";
+import { ActivityStepPage } from "@presentation/features/tasks/execution/ActivityStepPage";
+import { ActivityCompletedPage } from "@presentation/features/tasks/execution/ActivityCompletedPage";
 import { PersonalizationPanel } from "@presentation/features/personalization/PersonalizationPanel";
 import { AccountInfoTab } from "@presentation/features/profile/AccountInfoTab";
 
@@ -24,6 +26,8 @@ export const router = createBrowserRouter([
         element: <AppLayout />,
         children: [
           { index: true, element: <DashboardPage /> },
+          { path: "tarefas/:id/passo/:stepId", element: <ActivityStepPage /> },
+          { path: "tarefas/:id/concluida", element: <ActivityCompletedPage /> },
           { path: "tarefas/:id/guia/:stepId", element: <StepTutorialPage /> },
           { path: "tarefas/:id/guia", element: <ActivityGuidePage /> },
           { path: "tarefas/:id", element: <TaskWizardPage /> },

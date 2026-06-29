@@ -5,8 +5,12 @@ import { DeleteUser } from "@application/profile/DeleteUser";
 import { GetUser } from "@application/profile/GetUser";
 import { UpdateUser } from "@application/profile/UpdateUser";
 import { CompleteTask } from "@application/tasks/CompleteTask";
+import { CompleteTaskStep } from "@application/tasks/CompleteTaskStep";
 import { GetTask } from "@application/tasks/GetTask";
 import { ListTasks } from "@application/tasks/ListTasks";
+import { ResetActivity } from "@application/tasks/ResetActivity";
+import { StartActivity } from "@application/tasks/StartActivity";
+import { UpdateCurrentStep } from "@application/tasks/UpdateCurrentStep";
 import {
   preferencesRepository,
   taskRepository,
@@ -20,6 +24,10 @@ export const resetPreferences = new ResetPreferences(preferencesRepository);
 export const listTasks = new ListTasks(taskRepository);
 export const getTask = new GetTask(taskRepository);
 export const completeTask = new CompleteTask(taskRepository);
+export const startActivity = new StartActivity(taskRepository);
+export const completeTaskStep = new CompleteTaskStep(taskRepository);
+export const updateCurrentStep = new UpdateCurrentStep(taskRepository);
+export const resetActivity = new ResetActivity(taskRepository);
 
 export const getUser = new GetUser(userRepository);
 export const updateUser = new UpdateUser(userRepository);

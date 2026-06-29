@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useResetActivityMutation } from "@app/hooks/useTasks";
 import { useConfirmCriticalAction } from "@presentation/hooks/useConfirmCriticalAction";
 import { ConfirmDialog } from "@shared/ui";
 import "@shared/ui/components/Button/Button.css";
@@ -33,13 +34,18 @@ export function ActivityRedoAction({
   className = "se-button se-button--secondary activity-card__link",
 }: ActivityRedoActionProps) {
   const navigate = useNavigate();
+  const resetActivity = useResetActivityMutation();
   const { pending, runIfAllowed, confirm, cancel, isOpen } = useConfirmCriticalAction();
   const ariaLabel = `Refazer atividade: ${taskTitle}`;
 
   const handleRedo = () => {
     runIfAllowed(
       () => {
-        void navigate(`/tarefas/${taskId}`);
+        resetActivity.mutate(taskId, {
+          onSuccess: () => {
+            void navigate(`/tarefas/${taskId}`);
+          },
+        });
       },
       {
         title: "Refazer esta atividade?",
