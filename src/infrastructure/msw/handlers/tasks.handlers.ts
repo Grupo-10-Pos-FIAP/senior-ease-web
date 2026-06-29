@@ -1,11 +1,10 @@
 import { http, HttpResponse } from "msw";
 import { completeTaskInDb, getTaskFromDb, getTasksFromDb } from "@infrastructure/msw/db/tasks.db";
-import { toTaskDto } from "@infrastructure/mappers/task.mapper";
-import { createTask } from "@domain/entities/Task";
+import { fromTaskDto, toTaskDto } from "@infrastructure/mappers/task.mapper";
 
 export const tasksHandlers = [
   http.get("/api/tasks", () => {
-    const tasks = getTasksFromDb().map((dto) => createTask(dto));
+    const tasks = getTasksFromDb().map((dto) => fromTaskDto(dto));
     return HttpResponse.json(tasks.map((task) => toTaskDto(task)));
   }),
 
