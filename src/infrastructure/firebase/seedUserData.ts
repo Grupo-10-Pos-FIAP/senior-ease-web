@@ -33,6 +33,54 @@ function cloneSeedTasks(): TaskDto[] {
   }));
 }
 
+function mergeTaskFromSeed(existing: TaskDto, seed: TaskDto): TaskDto {
+  const completedByStepId = new Map(existing.steps.map((step) => [step.id, step.completed]));
+
+  return {
+    ...seed,
+    status: existing.status,
+    steps: seed.steps.map((step) => ({
+      ...step,
+      completed: completedByStepId.get(step.id) ?? step.completed,
+    })),
+  };
+}
+
+function taskDtoEquals(left: TaskDto, right: TaskDto): boolean {
+  return JSON.stringify(left) === JSON.stringify(right);
+}
+
+async function syncTasksFromSeed(firestore: Firestore, uid: string): Promise<void> {
+  const tasksRef = collection(firestore, "users", uid, "tasks");
+  const snapshot = await getDocs(tasksRef);
+  const existingById = new Map(
+    snapshot.docs.map((taskDoc) => [taskDoc.id, taskDoc.data() as TaskDto]),
+  );
+
+  const batch = writeBatch(firestore);
+  let hasChanges = false;
+
+  for (const seedTask of cloneSeedTasks()) {
+    const existing = existingById.get(seedTask.id);
+
+    if (!existing) {
+      batch.set(doc(tasksRef, seedTask.id), seedTask);
+      hasChanges = true;
+      continue;
+    }
+
+    const merged = mergeTaskFromSeed(existing, seedTask);
+    if (!taskDtoEquals(existing, merged)) {
+      batch.set(doc(tasksRef, seedTask.id), merged);
+      hasChanges = true;
+    }
+  }
+
+  if (hasChanges) {
+    await batch.commit();
+  }
+}
+
 function createNewUserDocument(uid: string, email: string | null): UserDocument {
   return {
     id: uid,
@@ -82,6 +130,7 @@ export async function ensureUserDocument(uid: string, email: string | null): Pro
 
   if (snapshot.exists()) {
     await migrateLegacyUserDocument(userRef, snapshot.data());
+    await syncTasksFromSeed(firestore, uid);
     return;
   }
 

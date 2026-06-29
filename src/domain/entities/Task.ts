@@ -1,8 +1,14 @@
+import {
+  createTaskStepType,
+  type TaskStepType,
+} from "@domain/value-objects/TaskStepType";
+
 export type TaskStatus = "active" | "completed" | "expired";
 
 export interface TaskStep {
   id: string;
   label: string;
+  type: TaskStepType;
   completed: boolean;
   order: number;
 }
@@ -26,11 +32,12 @@ function isValidIsoDate(value: string): boolean {
 }
 
 function createTaskStep(
-  input: Partial<TaskStep> & Pick<TaskStep, "id" | "label" | "order">,
+  input: Partial<TaskStep> & Pick<TaskStep, "id" | "label" | "order" | "type">,
 ): TaskStep {
   return {
     id: input.id,
     label: input.label.trim(),
+    type: createTaskStepType(input.type),
     completed: input.completed ?? false,
     order: input.order,
   };
