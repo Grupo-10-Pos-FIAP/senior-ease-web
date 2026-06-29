@@ -182,7 +182,7 @@ describe("TaskListPanel", () => {
     expect(screen.queryByRole("button", { name: /concluir atividade/i })).not.toBeInTheDocument();
   });
 
-  it("exibe layout de atividades expiradas com badge e refazer", async () => {
+  it("exibe layout de atividades expiradas com badge e mensagem de prazo", async () => {
     const user = userEvent.setup();
     renderWithProviders(<TaskListPanel />);
     await waitForTasksLoaded();
@@ -196,31 +196,6 @@ describe("TaskListPanel", () => {
     expect(
       screen.getAllByText("O prazo para essa atividade já se expirou.").length,
     ).toBeGreaterThanOrEqual(1);
-    expect(
-      screen.getAllByRole("button", { name: /refazer atividade/i }).length,
-    ).toBeGreaterThanOrEqual(1);
-  });
-
-  it("pede confirmação antes de refazer atividade expirada", async () => {
-    const user = userEvent.setup();
-    renderWithProviders(<TaskListPanel />);
-    await waitForTasksLoaded();
-
-    await user.click(screen.getByRole("tab", { name: /atividades expiradas/i }));
-
-    await user.click(
-      await screen.findByRole("button", {
-        name: /refazer atividade: simulação de situações reais/i,
-      }),
-    );
-
-    expect(
-      await screen.findByRole("alertdialog", { name: /refazer esta atividade/i }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        /o prazo desta atividade já expirou\. você está prestes a refazer "simulação de situações reais"/i,
-      ),
-    ).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /refazer atividade/i })).not.toBeInTheDocument();
   });
 });

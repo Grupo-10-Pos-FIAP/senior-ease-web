@@ -5,7 +5,6 @@ import { useTasksQuery } from "@app/hooks/useTasks";
 import { ACTIVITY_TAB_OPTIONS, EMPTY_STATE_MESSAGES } from "@shared/lib/taskLabels";
 import { sortActiveTasksByDeadline } from "@shared/lib/taskDeadline";
 import { ActivityPrimaryAction } from "./ActivityPrimaryAction";
-import { ActivityRedoAction } from "./ActivityRedoAction";
 import "./TaskListPanel.css";
 
 function filterTasksByStatus(tasks: Task[], status: TaskStatus): Task[] {
@@ -64,7 +63,6 @@ function TaskListContent({
                 progress={getActivityProgress(task)}
               />
             }
-            redoAction={<ActivityRedoAction taskId={task.id} taskTitle={task.title} />}
           />
         </li>
       ))}

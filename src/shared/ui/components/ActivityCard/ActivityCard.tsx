@@ -12,7 +12,6 @@ interface ActivityCardProps {
   endDate: string;
   status: TaskStatus;
   primaryAction?: ReactNode;
-  redoAction?: ReactNode;
 }
 
 function CalendarIcon() {
@@ -67,7 +66,6 @@ export function ActivityCard({
   endDate,
   status,
   primaryAction,
-  redoAction,
 }: ActivityCardProps) {
   const titleId = `activity-title-${id}`;
   const descriptionId = `activity-description-${id}`;
@@ -110,7 +108,6 @@ export function ActivityCard({
             O prazo para essa atividade já se expirou.
           </p>
         </div>
-        <div className="activity-card__actions">{redoAction}</div>
       </article>
     );
   }
