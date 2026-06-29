@@ -377,6 +377,16 @@
   .step-tutorial--immersive .step-tutorial__bottom-bar {
     padding-inline: var(--se-spacing, 1rem);
   }
+
+  .step-tutorial__bottom-bar {
+    flex-direction: column;
+  }
+
+  .step-tutorial__bottom-bar .back-link,
+  .step-tutorial__bottom-bar .step-tutorial__complete {
+    width: 100%;
+    flex: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
