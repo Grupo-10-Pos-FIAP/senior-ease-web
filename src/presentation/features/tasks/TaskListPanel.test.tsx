@@ -92,7 +92,9 @@ describe("TaskListPanel", () => {
       await screen.findByRole("alertdialog", { name: /iniciar esta atividade/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/você está prestes a começar a atividade "oficina "primeiros passos no digital""/i),
+      screen.getByText(
+        /você está prestes a começar a atividade "oficina "primeiros passos no digital""/i,
+      ),
     ).toBeInTheDocument();
   });
 

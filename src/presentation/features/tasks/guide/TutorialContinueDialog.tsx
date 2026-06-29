@@ -40,11 +40,7 @@ export function TutorialContinueDialog({
               : "Você pode voltar para a lista de tarefas desta atividade."}
           </AlertDialog.Description>
           <div className="confirm-dialog__actions">
-            <Button
-              variant="secondary"
-              className="confirm-dialog__button"
-              onClick={onBackToList}
-            >
+            <Button variant="secondary" className="confirm-dialog__button" onClick={onBackToList}>
               Voltar para a lista de tarefas
             </Button>
             {hasNextStep ? (

@@ -121,7 +121,10 @@ export function StepTutorialPage() {
   }
 
   return (
-    <section className="step-tutorial step-tutorial--immersive" aria-labelledby="step-tutorial-title">
+    <section
+      className="step-tutorial step-tutorial--immersive"
+      aria-labelledby="step-tutorial-title"
+    >
       <h1 id="step-tutorial-title" className="visually-hidden">
         {step.label}
       </h1>

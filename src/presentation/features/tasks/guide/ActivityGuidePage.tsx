@@ -1,10 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useTaskQuery } from "@app/hooks/useTasks";
 import { getActivityProgress } from "@domain/entities/Task";
-import {
-  getTaskStepGuideActionLabel,
-  getTaskStepTypeLabel,
-} from "@shared/lib/taskStepLabels";
+import { getTaskStepGuideActionLabel, getTaskStepTypeLabel } from "@shared/lib/taskStepLabels";
 import { ActivityPrimaryAction } from "@presentation/features/tasks/ActivityPrimaryAction";
 import { BackToTasksLink } from "./BackToTasksLink";
 import "@shared/ui/components/Button/Button.css";

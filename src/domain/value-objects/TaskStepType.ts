@@ -1,8 +1,5 @@
 export type TaskStepType =
-  | "multiple_choice"
-  | "open_question"
-  | "content_reading"
-  | "watch_content";
+  "multiple_choice" | "open_question" | "content_reading" | "watch_content";
 
 const VALID_TYPES: readonly TaskStepType[] = [
   "multiple_choice",

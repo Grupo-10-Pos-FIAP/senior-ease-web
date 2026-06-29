@@ -14,10 +14,7 @@ export function BackToTasksLink({
   className = "",
 }: BackToTasksLinkProps) {
   return (
-    <Link
-      to={to}
-      className={`se-button se-button--secondary back-link ${className}`.trim()}
-    >
+    <Link to={to} className={`se-button se-button--secondary back-link ${className}`.trim()}>
       <BackIcon />
       {label}
     </Link>

@@ -65,7 +65,9 @@ describe("StepTutorialPage", () => {
     ).toBeInTheDocument();
     expect(screen.getByText(/quiz de múltipla escolha/i)).toBeInTheDocument();
     expect(screen.getByText(/botões redondos/i)).toBeInTheDocument();
-    expect(screen.getByRole("radio", { name: /pedir ajuda quando tiver dúvida/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("radio", { name: /pedir ajuda quando tiver dúvida/i }),
+    ).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: /voltar para as tarefas/i })).toHaveLength(2);
     expect(
       screen.getByRole("button", { name: /confirmar que já aprendeu a escolher uma resposta/i }),
@@ -133,18 +135,16 @@ describe("StepTutorialPage", () => {
     expect(
       screen.getByRole("heading", { level: 2, name: /conhecendo o mundo digital/i }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByText(/leia o texto com calma, do começo ao fim/i),
-    ).toBeInTheDocument();
-    expect(
-      screen.getAllByRole("link", { name: /voltar para as tarefas/i }),
-    ).toHaveLength(2);
+    expect(screen.getByText(/leia o texto com calma, do começo ao fim/i)).toBeInTheDocument();
+    expect(screen.getAllByRole("link", { name: /voltar para as tarefas/i })).toHaveLength(2);
     expect(
       screen.getByRole("button", { name: /confirmar que terminou de ler o texto/i }),
     ).toBeInTheDocument();
     expect(screen.queryByText(/perfeito! na atividade real/i)).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: /confirmar que terminou de ler o texto/i }));
+    await user.click(
+      screen.getByRole("button", { name: /confirmar que terminou de ler o texto/i }),
+    );
 
     expect(await screen.findByRole("alertdialog")).toBeInTheDocument();
     expect(screen.getByText(/quiz: hábitos seguros na internet/i)).toBeInTheDocument();

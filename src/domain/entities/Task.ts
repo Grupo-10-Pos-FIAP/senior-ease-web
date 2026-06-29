@@ -1,7 +1,4 @@
-import {
-  createTaskStepType,
-  type TaskStepType,
-} from "@domain/value-objects/TaskStepType";
+import { createTaskStepType, type TaskStepType } from "@domain/value-objects/TaskStepType";
 
 export type TaskStatus = "active" | "completed" | "expired";
 

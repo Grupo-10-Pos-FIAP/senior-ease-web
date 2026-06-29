@@ -20,8 +20,8 @@ export function ContentReadingTutorial({ stepLabel, backToTasksPath }: StepTutor
         </p>
         <p>
           Na internet, você encontra textos para estudar, vídeos explicativos, perguntas para
-          refletir e quizzes para fixar o que aprendeu. O importante é ler com atenção, assistir
-          com calma e pedir ajuda quando algo não estiver claro.
+          refletir e quizzes para fixar o que aprendeu. O importante é ler com atenção, assistir com
+          calma e pedir ajuda quando algo não estiver claro.
         </p>
         <p>
           Errar faz parte do aprendizado. Com prática e paciência, o digital pode se tornar um
