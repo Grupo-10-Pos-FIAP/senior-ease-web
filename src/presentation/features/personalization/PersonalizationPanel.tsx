@@ -95,6 +95,7 @@ export function PersonalizationPanel() {
         confirmLabel: "Sim, restaurar padrões",
         cancelLabel: "Não, manter como está",
         alwaysConfirm: true,
+        confirmVariant: "warning",
       },
     );
   };
