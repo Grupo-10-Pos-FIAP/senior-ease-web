@@ -1,12 +1,12 @@
-export { Button } from './components/Button'
-export { AppHeader } from './components/AppHeader'
-export { ProfileTabs } from './components/ProfileTabs'
-export { ActivityTabs } from './components/ActivityTabs'
-export { ActivityCard } from './components/ActivityCard'
-export { PreferenceRow } from './components/PreferenceRow'
-export { SegmentedControl } from './components/SegmentedControl'
-export { ConfirmDialog } from './components/ConfirmDialog'
-export type { ConfirmDialogVariant } from './components/ConfirmDialog/ConfirmDialog'
-export { SuccessDialog } from './components/SuccessDialog'
-export { Switch } from './primitives/Switch'
-export { Tabs } from './primitives/Tabs'
+export { Button } from "./components/Button";
+export { AppHeader } from "./components/AppHeader";
+export { ProfileTabs } from "./components/ProfileTabs";
+export { ActivityTabs } from "./components/ActivityTabs";
+export { ActivityCard } from "./components/ActivityCard";
+export { PreferenceRow } from "./components/PreferenceRow";
+export { SegmentedControl } from "./components/SegmentedControl";
+export { ConfirmDialog } from "./components/ConfirmDialog";
+export type { ConfirmDialogVariant } from "./components/ConfirmDialog/ConfirmDialog";
+export { SuccessDialog } from "./components/SuccessDialog";
+export { Switch } from "./primitives/Switch";
+export { Tabs } from "./primitives/Tabs";

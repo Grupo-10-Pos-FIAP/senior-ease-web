@@ -1,39 +1,39 @@
-import { createUser, type User } from '@domain/entities/User'
+import { createUser, type User } from "@domain/entities/User";
 
 export interface UserDto {
-  id: string
-  fullName: string
-  birthDate?: string
+  id: string;
+  fullName: string;
+  birthDate?: string;
   /** Campo legado do Firestore — convertido para birthDate na leitura. */
-  age?: number
-  registrationId: string
-  disability: string | null
-  email: string
-  phone: string
+  age?: number;
+  registrationId: string;
+  disability: string | null;
+  email: string;
+  phone: string;
 }
 
 export function ageToBirthDate(age: number): string {
-  const year = new Date().getFullYear() - age
-  return `${year}-01-01`
+  const year = new Date().getFullYear() - age;
+  return `${String(year)}-01-01`;
 }
 
-function resolveBirthDate(dto: Pick<UserDto, 'birthDate' | 'age'>): string {
-  const birthDate = dto.birthDate?.trim()
-  if (birthDate) return birthDate
+function resolveBirthDate(dto: Pick<UserDto, "birthDate" | "age">): string {
+  const birthDate = dto.birthDate?.trim();
+  if (birthDate) return birthDate;
 
-  if (typeof dto.age === 'number' && dto.age >= 1 && dto.age <= 120) {
-    return ageToBirthDate(dto.age)
+  if (typeof dto.age === "number" && dto.age >= 1 && dto.age <= 120) {
+    return ageToBirthDate(dto.age);
   }
 
-  return ''
+  return "";
 }
 
 function normalizePhoneFromStorage(phone: string | undefined): string {
-  const value = phone?.trim() ?? ''
-  if (!value || value === '-') return ''
-  const digits = value.replace(/\D/g, '')
-  if (digits.length < 10) return ''
-  return value
+  const value = phone?.trim() ?? "";
+  if (!value || value === "-") return "";
+  const digits = value.replace(/\D/g, "");
+  if (digits.length < 10) return "";
+  return value;
 }
 
 /**
@@ -43,13 +43,13 @@ function normalizePhoneFromStorage(phone: string | undefined): string {
 export function fromUserDto(dto: UserDto): User {
   return {
     id: dto.id,
-    fullName: dto.fullName?.trim() || 'Complete seu perfil',
+    fullName: dto.fullName.trim() || "Complete seu perfil",
     birthDate: resolveBirthDate(dto),
-    registrationId: dto.registrationId?.trim() || '-',
+    registrationId: dto.registrationId.trim() || "-",
     disability: dto.disability ?? null,
-    email: dto.email?.trim() ?? '',
+    email: dto.email.trim() || "",
     phone: normalizePhoneFromStorage(dto.phone),
-  }
+  };
 }
 
 export function toUserDto(user: User): UserDto {
@@ -61,10 +61,10 @@ export function toUserDto(user: User): UserDto {
     disability: user.disability,
     email: user.email,
     phone: user.phone,
-  }
+  };
 }
 
 export function toValidatedUser(dto: UserDto): User {
-  const mapped = fromUserDto(dto)
-  return createUser(mapped)
+  const mapped = fromUserDto(dto);
+  return createUser(mapped);
 }

@@ -6,6 +6,14 @@ const AUTH_ERROR_MESSAGES: Record<string, string> = {
   "auth/email-already-in-use": "Este e-mail já está em uso. Tente entrar.",
   "auth/weak-password": "A senha precisa ter pelo menos 6 caracteres.",
   "auth/popup-closed-by-user": "Login com Google cancelado.",
+  "auth/popup-blocked":
+    "O navegador bloqueou a janela do Google. Permita pop-ups para este site e tente de novo.",
+  "auth/cancelled-popup-request":
+    "Aguarde o login anterior terminar ou tente de novo em instantes.",
+  "auth/unauthorized-domain":
+    "Este domínio não está autorizado no Firebase. Adicione a URL da Vercel em Authentication → Settings → Authorized domains.",
+  "auth/operation-not-allowed":
+    "Login com Google não está ativado no Firebase. Ative em Authentication → Sign-in method → Google.",
   "auth/too-many-requests": "Muitas tentativas. Aguarde um momento e tente de novo.",
 };
 

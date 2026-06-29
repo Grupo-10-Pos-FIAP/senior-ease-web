@@ -21,8 +21,7 @@ export function useUserQuery() {
       return getUser.execute(userId);
     },
     enabled: status === "authenticated" && Boolean(userId),
-    retry: (failureCount, error) =>
-      error instanceof UserNotFoundError && failureCount < 5,
+    retry: (failureCount, error) => error instanceof UserNotFoundError && failureCount < 5,
     retryDelay: (attempt) => Math.min(500 * 2 ** attempt, 4000),
   });
 }

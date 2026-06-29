@@ -28,7 +28,7 @@
   color: var(--se-navy);
 }
 
-.activity-tabs__tab[data-state='active'] {
+.activity-tabs__tab[data-state="active"] {
   color: var(--se-navy);
   border-bottom-color: var(--se-navy);
 }

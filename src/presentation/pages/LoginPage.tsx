@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useState, type SubmitEvent } from "react";
 import {
   signInWithEmail,
   signInWithGoogle,
@@ -20,7 +20,7 @@ export function LoginPage() {
 
   const isLoading = isSubmitting || isGoogleLoading;
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     setErrorMessage(null);
 
@@ -93,7 +93,7 @@ export function LoginPage() {
               autoComplete="email"
               value={email}
               onChange={(event) => {
-                setEmail(event.target.value)
+                setEmail(event.target.value);
               }}
               required
               disabled={isLoading}
@@ -111,7 +111,7 @@ export function LoginPage() {
               autoComplete={mode === "sign-in" ? "current-password" : "new-password"}
               value={password}
               onChange={(event) => {
-                setPassword(event.target.value)
+                setPassword(event.target.value);
               }}
               required
               minLength={6}

@@ -1,1 +1,1 @@
-export { ActivityTabs } from './ActivityTabs'
+export { ActivityTabs } from "./ActivityTabs";

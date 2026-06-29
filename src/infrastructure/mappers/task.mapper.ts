@@ -1,19 +1,19 @@
-import { createTask, type Task, type TaskStatus } from '@domain/entities/Task'
+import { createTask, type Task, type TaskStatus } from "@domain/entities/Task";
 
 export interface TaskStepDto {
-  id: string
-  label: string
-  completed: boolean
-  order: number
+  id: string;
+  label: string;
+  completed: boolean;
+  order: number;
 }
 
 export interface TaskDto {
-  id: string
-  title: string
-  startDate: string
-  endDate: string
-  status: TaskStatus
-  steps: TaskStepDto[]
+  id: string;
+  title: string;
+  startDate: string;
+  endDate: string;
+  status: TaskStatus;
+  steps: TaskStepDto[];
 }
 
 export function toTaskDto(task: Task): TaskDto {
@@ -29,7 +29,7 @@ export function toTaskDto(task: Task): TaskDto {
       completed: step.completed,
       order: step.order,
     })),
-  }
+  };
 }
 
 export function fromTaskDto(dto: TaskDto): Task {
@@ -40,5 +40,5 @@ export function fromTaskDto(dto: TaskDto): Task {
     endDate: dto.endDate,
     status: dto.status,
     steps: dto.steps,
-  })
+  });
 }

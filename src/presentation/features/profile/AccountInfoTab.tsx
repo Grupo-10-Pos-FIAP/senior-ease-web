@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUser, formatUserAge, formatUserDisability, type User } from "@domain/entities/User";
 import type { UserUpdateInput } from "@domain/repositories/IUserRepository";
@@ -60,14 +60,14 @@ function validateForm(state: UserFormState): { data: UserUpdateInput | null; err
       });
     }
 
-    if (Object.keys(errors).length > 0) {
+    if (Object.keys(errors).length > 0 || !birthDateIso) {
       return { data: null, errors };
     }
 
     return {
       data: {
         fullName: state.fullName.trim(),
-        birthDate: birthDateIso!,
+        birthDate: birthDateIso,
         registrationId: state.registrationId.trim(),
         disability: state.disability.trim() || null,
         email: state.email.trim(),
@@ -171,12 +171,6 @@ export function AccountInfoTab() {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [feedback, setFeedback] = useState<FormFeedback | null>(null);
 
-  useEffect(() => {
-    if (user) {
-      setFormState(userToFormState(user));
-    }
-  }, [user]);
-
   const updateField = useCallback((field: keyof UserFormState, value: string) => {
     setFieldErrors((current) => ({ ...current, [field]: undefined }));
     setFeedback(null);
@@ -229,7 +223,7 @@ export function AccountInfoTab() {
       () => {
         deleteMutation.mutate(undefined, {
           onSuccess: () => {
-            navigate("/", { state: { accountDeleted: true }, replace: true });
+            void navigate("/", { state: { accountDeleted: true }, replace: true });
           },
           onError: () => {
             setFeedback({
@@ -255,12 +249,16 @@ export function AccountInfoTab() {
     return <p className="account-info-tab__loading">Carregando informações…</p>;
   }
 
-  if (isError || !user || !formState) {
+  if (isError || !user) {
     return (
       <p className="account-info-tab__error" role="alert">
         Não foi possível carregar suas informações. Tente novamente mais tarde.
       </p>
     );
+  }
+
+  if (isEditing && !formState) {
+    return <p className="account-info-tab__loading">Carregando informações…</p>;
   }
 
   return (
@@ -270,11 +268,12 @@ export function AccountInfoTab() {
           Informações da conta
         </h2>
         <p className="account-info-tab__intro">
-          Consulte e atualize seus dados pessoais. A idade é calculada a partir da data de nascimento.
+          Consulte e atualize seus dados pessoais. A idade é calculada a partir da data de
+          nascimento.
         </p>
       </header>
 
-      {isEditing ? (
+      {isEditing && formState ? (
         <form
           className="account-info-tab__form"
           onSubmit={(event) => {
@@ -300,7 +299,11 @@ export function AccountInfoTab() {
               autoComplete="name"
             />
             {fieldErrors.fullName ? (
-              <p id="account-full-name-error" className="account-info-tab__field-error" role="alert">
+              <p
+                id="account-full-name-error"
+                className="account-info-tab__field-error"
+                role="alert"
+              >
                 {fieldErrors.fullName}
               </p>
             ) : null}
@@ -328,7 +331,11 @@ export function AccountInfoTab() {
               maxLength={10}
             />
             {fieldErrors.birthDate ? (
-              <p id="account-birth-date-error" className="account-info-tab__field-error" role="alert">
+              <p
+                id="account-birth-date-error"
+                className="account-info-tab__field-error"
+                role="alert"
+              >
                 {fieldErrors.birthDate}
               </p>
             ) : (
@@ -486,30 +493,18 @@ export function AccountInfoTab() {
       >
         {isEditing ? (
           <>
-            <Button
-              variant="secondary"
-              onClick={handleCancel}
-              disabled={updateMutation.isPending}
-            >
+            <Button variant="secondary" onClick={handleCancel} disabled={updateMutation.isPending}>
               <CancelIcon />
               Não, manter como está
             </Button>
-            <Button
-              variant="primary"
-              onClick={handleSave}
-              disabled={updateMutation.isPending}
-            >
+            <Button variant="primary" onClick={handleSave} disabled={updateMutation.isPending}>
               <SaveIcon />
               {updateMutation.isPending ? "Salvando…" : "Salvar informações"}
             </Button>
           </>
         ) : (
           <>
-            <Button
-              variant="danger"
-              onClick={handleDelete}
-              disabled={deleteMutation.isPending}
-            >
+            <Button variant="danger" onClick={handleDelete} disabled={deleteMutation.isPending}>
               <TrashIcon />
               {deleteMutation.isPending ? "Excluindo…" : "Excluir minha conta"}
             </Button>

@@ -1,3 +1,3 @@
-import { Tabs as RadixTabs } from 'radix-ui'
+import { Tabs as RadixTabs } from "radix-ui";
 
-export const Tabs = RadixTabs
+export const Tabs = RadixTabs;

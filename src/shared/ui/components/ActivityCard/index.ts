@@ -1,1 +1,1 @@
-export { ActivityCard } from './ActivityCard'
+export { ActivityCard } from "./ActivityCard";

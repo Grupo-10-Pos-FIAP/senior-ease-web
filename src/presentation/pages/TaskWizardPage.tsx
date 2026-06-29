@@ -1,14 +1,14 @@
-import { Link, useParams } from 'react-router-dom'
-import { useTaskQuery } from '@app/hooks/useTasks'
-import '@shared/ui/components/Button/Button.css'
-import './TaskWizardPage.css'
+import { Link, useParams } from "react-router-dom";
+import { useTaskQuery } from "@app/hooks/useTasks";
+import "@shared/ui/components/Button/Button.css";
+import "./TaskWizardPage.css";
 
 export function TaskWizardPage() {
-  const { id = '' } = useParams()
-  const { data: task, isLoading, isError } = useTaskQuery(id)
+  const { id = "" } = useParams();
+  const { data: task, isLoading, isError } = useTaskQuery(id);
 
   if (isLoading) {
-    return <p className="task-wizard-page__status">Carregando atividade…</p>
+    return <p className="task-wizard-page__status">Carregando atividade…</p>;
   }
 
   if (isError || !task) {
@@ -24,7 +24,7 @@ export function TaskWizardPage() {
           Voltar para Minhas atividades
         </Link>
       </section>
-    )
+    );
   }
 
   return (
@@ -37,5 +37,5 @@ export function TaskWizardPage() {
         Voltar para Minhas atividades
       </Link>
     </section>
-  )
+  );
 }

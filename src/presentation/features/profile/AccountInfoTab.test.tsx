@@ -165,9 +165,9 @@ describe("AccountInfoTab", () => {
       expect(router.state.location.pathname).toBe("/");
     });
 
-    expect(
-      await screen.findByRole("alertdialog", { name: /conta excluída/i }),
-    ).toHaveTextContent(/conta foi excluída permanentemente/i);
+    expect(await screen.findByRole("alertdialog", { name: /conta excluída/i })).toHaveTextContent(
+      /conta foi excluída permanentemente/i,
+    );
   });
 
   it("deletar conta exige confirmação mesmo com preferência desligada", async () => {
@@ -192,8 +192,6 @@ describe("AccountInfoTab", () => {
       expect(router.state.location.pathname).toBe("/");
     });
 
-    expect(
-      await screen.findByRole("alertdialog", { name: /conta excluída/i }),
-    ).toBeInTheDocument();
+    expect(await screen.findByRole("alertdialog", { name: /conta excluída/i })).toBeInTheDocument();
   });
 });

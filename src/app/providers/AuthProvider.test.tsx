@@ -2,6 +2,7 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import { AuthProvider } from "@app/providers/AuthProvider";
 import { useAuth } from "@app/providers/authContext";
+import type { AuthUser } from "@infrastructure/firebase/authService";
 
 const authMocks = vi.hoisted(() => ({
   subscribeToAuthState: vi.fn(),
@@ -35,10 +36,12 @@ describe("AuthProvider", () => {
   });
 
   it("mantém usuário autenticado mesmo se o seed do Firestore falhar", async () => {
-    authMocks.subscribeToAuthState.mockImplementation((callback) => {
-      callback({ uid: "user-1", email: "test@example.com" });
-      return () => undefined;
-    });
+    authMocks.subscribeToAuthState.mockImplementation(
+      (callback: (user: AuthUser | null) => void) => {
+        callback({ uid: "user-1", email: "test@example.com" });
+        return () => undefined;
+      },
+    );
 
     render(
       <AuthProvider>
