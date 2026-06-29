@@ -1,5 +1,6 @@
+import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { getActivityProgress, type TaskStatus, type TaskStep } from "@domain/entities/Task";
+import { type TaskStatus } from "@domain/entities/Task";
 import { formatTaskDateRange } from "@shared/lib/formatTaskDate";
 import "./ActivityCard.css";
 
@@ -9,7 +10,7 @@ interface ActivityCardProps {
   startDate: string;
   endDate: string;
   status: TaskStatus;
-  steps: TaskStep[];
+  primaryAction?: ReactNode;
 }
 
 function CalendarIcon() {
@@ -52,24 +53,6 @@ function HowToIcon() {
   );
 }
 
-function PlayIcon() {
-  return (
-    <svg
-      className="activity-card__action-icon"
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path
-        fill="currentColor"
-        d="M4.5 2.75a1 1 0 0 1 1.52-.85l7 4.5a1 1 0 0 1 0 1.7l-7 4.5A1 1 0 0 1 4.5 11.5v-8.75Z"
-      />
-    </svg>
-  );
-}
-
 function RedoIcon() {
   return (
     <svg
@@ -93,12 +76,14 @@ const STATUS_BADGE: Record<Exclude<TaskStatus, "active">, string> = {
   expired: "Atividade expirada!",
 };
 
-const PRIMARY_ACTION_LABEL = {
-  not_started: "Iniciar a atividade",
-  in_progress: "Continuar a atividade",
-} as const;
-
-export function ActivityCard({ id, title, startDate, endDate, status, steps }: ActivityCardProps) {
+export function ActivityCard({
+  id,
+  title,
+  startDate,
+  endDate,
+  status,
+  primaryAction,
+}: ActivityCardProps) {
   const titleId = `activity-title-${id}`;
   const descriptionId = `activity-description-${id}`;
   const dateLabel = formatTaskDateRange(startDate, endDate);
@@ -151,9 +136,6 @@ export function ActivityCard({ id, title, startDate, endDate, status, steps }: A
     );
   }
 
-  const progress = getActivityProgress({ id, title, startDate, endDate, status, steps });
-  const primaryLabel = progress ? PRIMARY_ACTION_LABEL[progress] : PRIMARY_ACTION_LABEL.not_started;
-
   return (
     <article className="activity-card activity-card--active" aria-labelledby={titleId}>
       <div className="activity-card__content">
@@ -167,21 +149,14 @@ export function ActivityCard({ id, title, startDate, endDate, status, steps }: A
       </div>
       <div className="activity-card__actions">
         <Link
-          to={`/tarefas/${id}?visao=guia`}
+          to={`/tarefas/${id}/guia`}
           className="se-button se-button--secondary activity-card__link"
           aria-label={`Como fazer essa atividade: ${title}`}
         >
           <HowToIcon />
           Como fazer essa atividade?
         </Link>
-        <Link
-          to={`/tarefas/${id}`}
-          className="se-button se-button--primary activity-card__link activity-card__primary-link"
-          aria-label={`${primaryLabel}: ${title}`}
-        >
-          <PlayIcon />
-          {primaryLabel}
-        </Link>
+        {primaryAction}
       </div>
     </article>
   );

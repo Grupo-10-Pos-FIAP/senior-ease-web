@@ -102,6 +102,26 @@
   margin-top: auto;
 }
 
+@media (max-width: 639px) {
+  .activity-card {
+    padding: var(--se-spacing, 1rem);
+  }
+
+  .activity-card__actions {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: calc(var(--se-spacing, 1rem) * 0.75);
+  }
+
+  .activity-card__link {
+    width: 100%;
+    justify-content: center;
+    min-height: calc(var(--se-touch-min, 44px) * 1.2);
+    padding-block: 0.875rem;
+  }
+}
+
 @media (min-width: 640px) {
   .activity-card--active {
     flex-direction: row;

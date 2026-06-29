@@ -5,6 +5,8 @@ import { DashboardPage } from "@presentation/pages/DashboardPage";
 import { LoginPage } from "@presentation/pages/LoginPage";
 import { ProfilePage } from "@presentation/pages/ProfilePage";
 import { TaskWizardPage } from "@presentation/pages/TaskWizardPage";
+import { ActivityGuidePage } from "@presentation/features/tasks/guide/ActivityGuidePage";
+import { StepTutorialPage } from "@presentation/features/tasks/guide/StepTutorialPage";
 import { PersonalizationPanel } from "@presentation/features/personalization/PersonalizationPanel";
 import { AccountInfoTab } from "@presentation/features/profile/AccountInfoTab";
 
@@ -22,6 +24,8 @@ export const router = createBrowserRouter([
         element: <AppLayout />,
         children: [
           { index: true, element: <DashboardPage /> },
+          { path: "tarefas/:id/guia/:stepId", element: <StepTutorialPage /> },
+          { path: "tarefas/:id/guia", element: <ActivityGuidePage /> },
           { path: "tarefas/:id", element: <TaskWizardPage /> },
           {
             path: "perfil",

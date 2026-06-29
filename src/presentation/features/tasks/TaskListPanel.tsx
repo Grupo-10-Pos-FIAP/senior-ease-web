@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
-import type { Task, TaskStatus } from "@domain/entities/Task";
+import { getActivityProgress, type Task, type TaskStatus } from "@domain/entities/Task";
 import { ActivityCard, ActivityTabs } from "@shared/ui";
 import { useTasksQuery } from "@app/hooks/useTasks";
 import { ACTIVITY_TAB_OPTIONS, EMPTY_STATE_MESSAGES } from "@shared/lib/taskLabels";
+import { ActivityPrimaryAction } from "./ActivityPrimaryAction";
 import "./TaskListPanel.css";
 
 function filterTasksByStatus(tasks: Task[], status: TaskStatus): Task[] {
@@ -48,7 +49,13 @@ function TaskListContent({
             startDate={task.startDate}
             endDate={task.endDate}
             status={task.status}
-            steps={task.steps}
+            primaryAction={
+              <ActivityPrimaryAction
+                taskId={task.id}
+                taskTitle={task.title}
+                progress={getActivityProgress(task)}
+              />
+            }
           />
         </li>
       ))}

@@ -63,7 +63,7 @@ describe("TaskListPanel", () => {
 
     const links = screen.getAllByRole("link", { name: /como fazer essa atividade/i });
     expect(links.length).toBeGreaterThanOrEqual(4);
-    expect(links[0]).toHaveAttribute("href", "/tarefas/task-1?visao=guia");
+    expect(links[0]).toHaveAttribute("href", "/tarefas/task-1/guia");
   });
 
   it("exibe iniciar a atividade quando nenhuma tarefa foi concluída", async () => {
@@ -71,10 +71,29 @@ describe("TaskListPanel", () => {
     await waitForTasksLoaded();
 
     expect(
-      screen.getByRole("link", {
+      screen.getByRole("button", {
         name: /iniciar a atividade: oficina "primeiros passos no digital"/i,
       }),
-    ).toHaveAttribute("href", "/tarefas/task-1");
+    ).toBeInTheDocument();
+  });
+
+  it("pede confirmação antes de iniciar a atividade", async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<TaskListPanel />);
+    await waitForTasksLoaded();
+
+    await user.click(
+      screen.getByRole("button", {
+        name: /iniciar a atividade: oficina "primeiros passos no digital"/i,
+      }),
+    );
+
+    expect(
+      await screen.findByRole("alertdialog", { name: /iniciar esta atividade/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/você está prestes a começar a atividade "oficina "primeiros passos no digital""/i),
+    ).toBeInTheDocument();
   });
 
   it("exibe continuar a atividade quando há progresso parcial", async () => {

@@ -1,5 +1,6 @@
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useTaskQuery } from "@app/hooks/useTasks";
+import { BackToTasksLink } from "@presentation/features/tasks/guide/BackToTasksLink";
 import "@shared/ui/components/Button/Button.css";
 import "./TaskWizardPage.css";
 
@@ -20,9 +21,11 @@ export function TaskWizardPage() {
         <p className="task-wizard-page__message">
           Não encontramos esta atividade. Volte para a lista e tente novamente.
         </p>
-        <Link to="/" className="se-button se-button--secondary task-wizard-page__back">
-          Voltar para Minhas atividades
-        </Link>
+        <BackToTasksLink
+          to="/"
+          label="Voltar para Minhas atividades"
+          className="task-wizard-page__back"
+        />
       </section>
     );
   }
@@ -33,9 +36,11 @@ export function TaskWizardPage() {
         {task.title}
       </h1>
       <p className="task-wizard-page__message">Passo a passo em breve.</p>
-      <Link to="/" className="se-button se-button--secondary task-wizard-page__back">
-        Voltar para Minhas atividades
-      </Link>
+      <BackToTasksLink
+        to="/"
+        label="Voltar para Minhas atividades"
+        className="task-wizard-page__back"
+      />
     </section>
   );
 }
