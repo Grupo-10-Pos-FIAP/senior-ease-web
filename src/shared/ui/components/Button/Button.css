@@ -75,14 +75,14 @@
 }
 
 .se-button--warning-filled {
-  background-color: var(--se-warning);
-  color: #ffffff;
-  border-color: var(--se-warning);
+  background-color: var(--se-warning-bg);
+  color: var(--se-warning-fg);
+  border-color: var(--se-warning-border);
 }
 
 .se-button--warning-filled:hover:not(:disabled) {
-  background-color: var(--se-warning-dark);
-  border-color: var(--se-warning-dark);
+  background-color: var(--se-warning-bg-hover);
+  border-color: var(--se-warning);
 }
 
 [data-reinforced-feedback="true"] .se-button:active:not(:disabled) {
