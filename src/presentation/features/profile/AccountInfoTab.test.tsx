@@ -153,7 +153,7 @@ describe("AccountInfoTab", () => {
 
     const tab = await findAccountTab();
 
-    await user.click(within(tab).getByRole("button", { name: /deletar conta/i }));
+    await user.click(within(tab).getByRole("button", { name: /excluir minha conta/i }));
 
     expect(
       await screen.findByRole("alertdialog", { name: /excluir conta permanentemente/i }),
@@ -180,7 +180,7 @@ describe("AccountInfoTab", () => {
     const { router } = renderAccountApp();
     const tab = await findAccountTab();
 
-    await user.click(within(tab).getByRole("button", { name: /deletar conta/i }));
+    await user.click(within(tab).getByRole("button", { name: /excluir minha conta/i }));
 
     expect(
       await screen.findByRole("alertdialog", { name: /excluir conta permanentemente/i }),

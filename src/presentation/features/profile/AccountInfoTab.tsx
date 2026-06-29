@@ -511,7 +511,7 @@ export function AccountInfoTab() {
               disabled={deleteMutation.isPending}
             >
               <TrashIcon />
-              {deleteMutation.isPending ? "Excluindo…" : "Deletar conta"}
+              {deleteMutation.isPending ? "Excluindo…" : "Excluir minha conta"}
             </Button>
             <Button variant="primary" onClick={handleEdit}>
               <PencilIcon />
