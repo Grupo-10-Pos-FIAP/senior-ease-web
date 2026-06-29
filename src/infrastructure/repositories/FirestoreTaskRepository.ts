@@ -1,52 +1,92 @@
-import type { Task } from "@domain/entities/Task";
+import { mergeActivityWithProgress } from "@application/tasks/mergeActivityWithProgress";
+import { createDefaultActivityProgress } from "@domain/entities/ActivityProgress";
+import { isTaskActive, type Task } from "@domain/entities/Task";
+import { TaskNotCompletableError } from "@domain/errors/TaskNotCompletableError";
 import { TaskNotFoundError } from "@domain/errors/TaskNotFoundError";
+import type { IActivityCatalogRepository } from "@domain/repositories/IActivityCatalogRepository";
+import type { IActivityProgressRepository } from "@domain/repositories/IActivityProgressRepository";
 import type { ITaskRepository } from "@domain/repositories/ITaskRepository";
+import { DEFAULT_COURSE_ID } from "@domain/constants/course";
+import { createActivityProgress } from "@domain/entities/ActivityProgress";
 import { getFirestoreDb } from "@infrastructure/firebase/client";
-import { fromTaskDto, toTaskDto, type TaskDto } from "@infrastructure/mappers/task.mapper";
-import { collection, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 
 export class FirestoreTaskRepository implements ITaskRepository {
-  constructor(private readonly getCurrentUserId: () => string) {}
+  constructor(
+    private readonly getCurrentUserId: () => string,
+    private readonly catalogRepository: IActivityCatalogRepository,
+    private readonly progressRepository: IActivityProgressRepository,
+  ) {}
 
-  private tasksCollection(userId: string) {
-    return collection(getFirestoreDb(), "users", userId, "tasks");
+  private async getEnrolledCourseId(userId: string): Promise<string> {
+    const snapshot = await getDoc(doc(getFirestoreDb(), "users", userId));
+
+    if (!snapshot.exists()) {
+      return DEFAULT_COURSE_ID;
+    }
+
+    const { enrolledCourseId } = snapshot.data() as { enrolledCourseId?: unknown };
+    return typeof enrolledCourseId === "string" && enrolledCourseId.trim()
+      ? enrolledCourseId
+      : DEFAULT_COURSE_ID;
+  }
+
+  private async mergeTasksForUser(userId: string): Promise<Task[]> {
+    const courseId = await this.getEnrolledCourseId(userId);
+    const activities = await this.catalogRepository.listActivities(courseId);
+    const progressList = await this.progressRepository.listProgress(userId);
+    const progressByActivityId = new Map(
+      progressList.map((progress) => [progress.activityId, progress]),
+    );
+
+    return activities.map((activity) =>
+      mergeActivityWithProgress(
+        activity,
+        progressByActivityId.get(activity.id) ?? createDefaultActivityProgress(activity.id),
+      ),
+    );
   }
 
   async list(userId: string): Promise<Task[]> {
-    const snapshot = await getDocs(this.tasksCollection(userId));
-    return snapshot.docs.map((taskDoc) => fromTaskDto(taskDoc.data() as TaskDto));
+    return this.mergeTasksForUser(userId);
   }
 
   async getById(id: string): Promise<Task> {
     const userId = this.getCurrentUserId();
-    const snapshot = await getDoc(doc(getFirestoreDb(), "users", userId, "tasks", id));
+    const courseId = await this.getEnrolledCourseId(userId);
 
-    if (!snapshot.exists()) {
-      throw new TaskNotFoundError(id);
+    try {
+      const activity = await this.catalogRepository.getActivity(courseId, id);
+      const progress =
+        (await this.progressRepository.getProgress(userId, id)) ??
+        createDefaultActivityProgress(id);
+
+      return mergeActivityWithProgress(activity, progress);
+    } catch (error) {
+      if (error instanceof TaskNotFoundError) {
+        throw error;
+      }
+      throw error;
     }
-
-    return fromTaskDto(snapshot.data() as TaskDto);
   }
 
   async complete(taskId: string): Promise<Task> {
     const userId = this.getCurrentUserId();
-    const taskRef = doc(getFirestoreDb(), "users", userId, "tasks", taskId);
-    const snapshot = await getDoc(taskRef);
+    const task = await this.getById(taskId);
 
-    if (!snapshot.exists()) {
-      throw new TaskNotFoundError(taskId);
+    if (!isTaskActive(task)) {
+      throw new TaskNotCompletableError(taskId);
     }
 
-    const current = snapshot.data() as TaskDto;
-    const completed: TaskDto = {
-      ...current,
+    const courseId = await this.getEnrolledCourseId(userId);
+    const activity = await this.catalogRepository.getActivity(courseId, taskId);
+    const completedProgress = createActivityProgress({
+      activityId: taskId,
       status: "completed",
-      steps: current.steps.map((step) => ({ ...step, completed: true })),
-    };
+      completedStepIds: activity.steps.map((step) => step.id),
+    });
 
-    await updateDoc(taskRef, completed as unknown as Record<string, unknown>);
-    return fromTaskDto(completed);
+    await this.progressRepository.saveProgress(userId, completedProgress);
+    return mergeActivityWithProgress(activity, completedProgress);
   }
 }
-
-export { toTaskDto };

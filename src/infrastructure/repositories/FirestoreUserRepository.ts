@@ -3,7 +3,7 @@ import { UserNotFoundError } from "@domain/errors/UserNotFoundError";
 import type { IUserRepository, UserUpdateInput } from "@domain/repositories/IUserRepository";
 import { deleteAuthUser } from "@infrastructure/firebase/authService";
 import { getFirestoreDb } from "@infrastructure/firebase/client";
-import { deleteUserTasks } from "@infrastructure/firebase/seedUserData";
+import { deleteUserLearningData } from "@infrastructure/firebase/seedUserData";
 import { fromUserDto, type UserDto } from "@infrastructure/mappers/user.mapper";
 import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 
@@ -42,7 +42,7 @@ export class FirestoreUserRepository implements IUserRepository {
       throw new UserNotFoundError(userId);
     }
 
-    await deleteUserTasks(firestore, userId);
+    await deleteUserLearningData(firestore, userId);
     await deleteDoc(userRef);
     await deleteAuthUser();
   }

@@ -2,15 +2,22 @@ import { http, HttpResponse } from "msw";
 import { completeTaskInDb, getTaskFromDb, getTasksFromDb } from "@infrastructure/msw/db/tasks.db";
 import { fromTaskDto, toTaskDto } from "@infrastructure/mappers/task.mapper";
 
+function resolveUserId(request: Request): string {
+  const url = new URL(request.url);
+  return url.searchParams.get("userId") ?? "demo-user";
+}
+
 export const tasksHandlers = [
-  http.get("/api/tasks", () => {
-    const tasks = getTasksFromDb().map((dto) => fromTaskDto(dto));
+  http.get("/api/tasks", ({ request }) => {
+    const userId = resolveUserId(request);
+    const tasks = getTasksFromDb(userId).map((dto) => fromTaskDto(dto));
     return HttpResponse.json(tasks.map((task) => toTaskDto(task)));
   }),
 
-  http.get("/api/tasks/:id", ({ params }) => {
+  http.get("/api/tasks/:id", ({ params, request }) => {
     const id = params.id as string;
-    const dto = getTaskFromDb(id);
+    const userId = resolveUserId(request);
+    const dto = getTaskFromDb(id, userId);
 
     if (!dto) {
       return HttpResponse.json({ message: "Atividade não encontrada" }, { status: 404 });
@@ -19,9 +26,10 @@ export const tasksHandlers = [
     return HttpResponse.json(dto);
   }),
 
-  http.patch("/api/tasks/:id/complete", ({ params }) => {
+  http.patch("/api/tasks/:id/complete", ({ params, request }) => {
     const id = params.id as string;
-    const dto = getTaskFromDb(id);
+    const userId = resolveUserId(request);
+    const dto = getTaskFromDb(id, userId);
 
     if (!dto) {
       return HttpResponse.json({ message: "Atividade não encontrada" }, { status: 404 });
@@ -34,7 +42,7 @@ export const tasksHandlers = [
       );
     }
 
-    const completed = completeTaskInDb(id);
+    const completed = completeTaskInDb(id, userId);
     return HttpResponse.json(completed);
   }),
 ];

@@ -12,8 +12,10 @@ describe("tasks MSW handlers", () => {
     const repo = new HttpTaskRepository(new HttpClient());
     const tasks = await repo.list("demo-user");
 
-    expect(tasks.length).toBeGreaterThanOrEqual(4);
-    expect(tasks.filter((task) => task.status === "active").length).toBe(4);
+    expect(tasks.length).toBe(13);
+    expect(tasks.filter((task) => task.status === "active").length).toBe(9);
+    expect(tasks.filter((task) => task.status === "completed").length).toBe(2);
+    expect(tasks.filter((task) => task.status === "expired").length).toBe(2);
   });
 
   it("GET /api/tasks/:id retorna detalhe", async () => {

@@ -1,6 +1,8 @@
 import { httpClient } from "@app/composition/httpClient";
 import { getCurrentAuthUser } from "@infrastructure/firebase/authService";
 import { FallbackPreferencesRepository } from "@infrastructure/repositories/FallbackPreferencesRepository";
+import { FirestoreActivityCatalogRepository } from "@infrastructure/repositories/FirestoreActivityCatalogRepository";
+import { FirestoreActivityProgressRepository } from "@infrastructure/repositories/FirestoreActivityProgressRepository";
 import { FirestorePreferencesRepository } from "@infrastructure/repositories/FirestorePreferencesRepository";
 import { FirestoreTaskRepository } from "@infrastructure/repositories/FirestoreTaskRepository";
 import { FirestoreUserRepository } from "@infrastructure/repositories/FirestoreUserRepository";
@@ -36,7 +38,11 @@ function createRepositories() {
 
   return {
     preferencesRepository: new FirestorePreferencesRepository(),
-    taskRepository: new FirestoreTaskRepository(getCurrentUserId),
+    taskRepository: new FirestoreTaskRepository(
+      getCurrentUserId,
+      new FirestoreActivityCatalogRepository(),
+      new FirestoreActivityProgressRepository(),
+    ),
     userRepository: new FirestoreUserRepository(),
   };
 }

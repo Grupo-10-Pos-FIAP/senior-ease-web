@@ -1,9 +1,17 @@
+import { DEFAULT_COURSE_ID } from "@domain/constants/course";
 import { createDefaultPreferences } from "@domain/entities/AccessibilityPreferences";
 import { getFirestoreDb } from "@infrastructure/firebase/client";
 import { ageToBirthDate } from "@infrastructure/mappers/user.mapper";
 import { toPreferencesDto } from "@infrastructure/mappers/preferences.mapper";
+import type { ActivityDto, ActivityProgressDto } from "@infrastructure/mappers/activity.mapper";
 import type { TaskDto } from "@infrastructure/mappers/task.mapper";
-import { TASK_SEED_DATA } from "@infrastructure/msw/db/tasks.db";
+import {
+  applyCatalogExpiration,
+  buildDefaultProgressForCatalog,
+  cloneActivityCatalogSeed,
+  DEFAULT_COURSE_SEED,
+  getDemoProgressForUser,
+} from "@infrastructure/seed/activityCatalog.seed";
 import {
   collection,
   deleteField,
@@ -24,54 +32,133 @@ export interface UserDocument {
   email: string;
   phone: string;
   preferences: ReturnType<typeof toPreferencesDto>;
+  enrolledCourseId: string;
 }
 
-function cloneSeedTasks(): TaskDto[] {
-  return TASK_SEED_DATA.map((task) => ({
-    ...task,
-    steps: task.steps.map((step) => ({ ...step })),
-  }));
+/** Em produção, o catálogo é gerenciado pelo script Admin / Firebase Console. */
+export function isTaskSeedSyncEnabled(): boolean {
+  return !import.meta.env.PROD;
 }
 
-function mergeTaskFromSeed(existing: TaskDto, seed: TaskDto): TaskDto {
-  const completedByStepId = new Map(existing.steps.map((step) => [step.id, step.completed]));
-
-  return {
-    ...seed,
-    status: existing.status,
-    steps: seed.steps.map((step) => ({
-      ...step,
-      completed: completedByStepId.get(step.id) ?? step.completed,
-    })),
-  };
+function cloneCatalogSeed(): ActivityDto[] {
+  return cloneActivityCatalogSeed(new Date());
 }
 
-function taskDtoEquals(left: TaskDto, right: TaskDto): boolean {
+function activityDtoEquals(left: ActivityDto, right: ActivityDto): boolean {
   return JSON.stringify(left) === JSON.stringify(right);
 }
 
-async function syncTasksFromSeed(firestore: Firestore, uid: string): Promise<void> {
-  const tasksRef = collection(firestore, "users", uid, "tasks");
-  const snapshot = await getDocs(tasksRef);
+function progressDtoEquals(left: ActivityProgressDto, right: ActivityProgressDto): boolean {
+  return JSON.stringify(left) === JSON.stringify(right);
+}
+
+function mergeProgressFromSeed(
+  existing: ActivityProgressDto,
+  seed: ActivityProgressDto,
+): ActivityProgressDto {
+  return {
+    activityId: existing.activityId,
+    status: existing.status,
+    completedStepIds:
+      existing.completedStepIds.length > 0
+        ? [...existing.completedStepIds]
+        : [...seed.completedStepIds],
+  };
+}
+
+function legacyTaskToProgress(task: TaskDto): ActivityProgressDto {
+  const completedStepIds = task.steps.filter((step) => step.completed).map((step) => step.id);
+
+  return {
+    activityId: task.id,
+    status: task.status === "completed" ? "completed" : "active",
+    completedStepIds,
+  };
+}
+
+async function syncCourseCatalog(firestore: Firestore): Promise<void> {
+  const courseRef = doc(firestore, "courses", DEFAULT_COURSE_ID);
+  const activitiesRef = collection(firestore, "courses", DEFAULT_COURSE_ID, "activities");
+  const snapshot = await getDocs(activitiesRef);
   const existingById = new Map(
-    snapshot.docs.map((taskDoc) => [taskDoc.id, taskDoc.data() as TaskDto]),
+    snapshot.docs.map((activityDoc) => [activityDoc.id, activityDoc.data() as ActivityDto]),
+  );
+
+  const batch = writeBatch(firestore);
+
+  batch.set(courseRef, DEFAULT_COURSE_SEED, { merge: true });
+
+  for (const seedActivity of cloneCatalogSeed()) {
+    const existing = existingById.get(seedActivity.id);
+
+    if (!existing) {
+      batch.set(doc(activitiesRef, seedActivity.id), seedActivity);
+      continue;
+    }
+
+    if (!activityDtoEquals(existing, seedActivity)) {
+      batch.set(doc(activitiesRef, seedActivity.id), seedActivity);
+    }
+  }
+
+  await batch.commit();
+}
+
+async function listCatalogActivityIds(firestore: Firestore): Promise<string[]> {
+  const snapshot = await getDocs(collection(firestore, "courses", DEFAULT_COURSE_ID, "activities"));
+  return snapshot.docs.map((activityDoc) => activityDoc.id);
+}
+
+async function syncActivityProgressForUser(
+  firestore: Firestore,
+  uid: string,
+  seedProgress: ActivityProgressDto[] = [],
+): Promise<void> {
+  const activityIds = await listCatalogActivityIds(firestore);
+  if (activityIds.length === 0) {
+    return;
+  }
+
+  const progressRef = collection(firestore, "users", uid, "activityProgress");
+  const snapshot = await getDocs(progressRef);
+  const existingById = new Map(
+    snapshot.docs.map((progressDoc) => [progressDoc.id, progressDoc.data() as ActivityProgressDto]),
+  );
+
+  const seedById = new Map(seedProgress.map((progress) => [progress.activityId, progress]));
+  const mergedProgress = buildDefaultProgressForCatalog(
+    activityIds,
+    activityIds.map((activityId) => {
+      const existing = existingById.get(activityId);
+      const seed = seedById.get(activityId);
+
+      if (existing && seed) {
+        return mergeProgressFromSeed(existing, seed);
+      }
+
+      if (existing) {
+        return existing;
+      }
+
+      if (seed) {
+        return seed;
+      }
+
+      return {
+        activityId,
+        status: "active" as const,
+        completedStepIds: [],
+      };
+    }),
   );
 
   const batch = writeBatch(firestore);
   let hasChanges = false;
 
-  for (const seedTask of cloneSeedTasks()) {
-    const existing = existingById.get(seedTask.id);
-
-    if (!existing) {
-      batch.set(doc(tasksRef, seedTask.id), seedTask);
-      hasChanges = true;
-      continue;
-    }
-
-    const merged = mergeTaskFromSeed(existing, seedTask);
-    if (!taskDtoEquals(existing, merged)) {
-      batch.set(doc(tasksRef, seedTask.id), merged);
+  for (const progress of mergedProgress) {
+    const existing = existingById.get(progress.activityId);
+    if (!existing || !progressDtoEquals(existing, progress)) {
+      batch.set(doc(progressRef, progress.activityId), progress);
       hasChanges = true;
     }
   }
@@ -79,6 +166,26 @@ async function syncTasksFromSeed(firestore: Firestore, uid: string): Promise<voi
   if (hasChanges) {
     await batch.commit();
   }
+}
+
+async function migrateLegacyTasksToProgress(firestore: Firestore, uid: string): Promise<void> {
+  const legacyTasksRef = collection(firestore, "users", uid, "tasks");
+  const snapshot = await getDocs(legacyTasksRef);
+
+  if (snapshot.empty) {
+    return;
+  }
+
+  const progressRef = collection(firestore, "users", uid, "activityProgress");
+  const batch = writeBatch(firestore);
+
+  snapshot.docs.forEach((taskDoc) => {
+    const legacyTask = taskDoc.data() as TaskDto;
+    batch.set(doc(progressRef, taskDoc.id), legacyTaskToProgress(legacyTask));
+    batch.delete(taskDoc.ref);
+  });
+
+  await batch.commit();
 }
 
 function createNewUserDocument(uid: string, email: string | null): UserDocument {
@@ -91,6 +198,7 @@ function createNewUserDocument(uid: string, email: string | null): UserDocument 
     email: email ?? "",
     phone: "",
     preferences: toPreferencesDto(createDefaultPreferences()),
+    enrolledCourseId: DEFAULT_COURSE_ID,
   };
 }
 
@@ -107,6 +215,10 @@ async function migrateLegacyUserDocument(
 
   if (data.phone === "-") {
     patch.phone = "";
+  }
+
+  if (!data.enrolledCourseId) {
+    patch.enrolledCourseId = DEFAULT_COURSE_ID;
   }
 
   const isIncompleteProfile =
@@ -127,33 +239,67 @@ export async function ensureUserDocument(uid: string, email: string | null): Pro
   const firestore = getFirestoreDb();
   const userRef = doc(firestore, "users", uid);
   const snapshot = await getDoc(userRef);
+  const seedProgress = isTaskSeedSyncEnabled() ? getDemoProgressForUser(uid) : [];
 
   if (snapshot.exists()) {
     await migrateLegacyUserDocument(userRef, snapshot.data());
-    await syncTasksFromSeed(firestore, uid);
+    await migrateLegacyTasksToProgress(firestore, uid);
+
+    if (isTaskSeedSyncEnabled()) {
+      await syncCourseCatalog(firestore);
+    }
+
+    await syncActivityProgressForUser(firestore, uid, seedProgress);
     return;
   }
 
   const batch = writeBatch(firestore);
   batch.set(userRef, createNewUserDocument(uid, email));
+  await batch.commit();
 
-  for (const task of cloneSeedTasks()) {
-    batch.set(doc(collection(firestore, "users", uid, "tasks"), task.id), task);
+  if (isTaskSeedSyncEnabled()) {
+    await syncCourseCatalog(firestore);
   }
 
-  await batch.commit();
+  await syncActivityProgressForUser(firestore, uid, seedProgress);
 }
 
-export async function deleteUserTasks(firestore: Firestore, uid: string): Promise<void> {
-  const tasksSnapshot = await getDocs(collection(firestore, "users", uid, "tasks"));
+export async function deleteUserActivityProgress(firestore: Firestore, uid: string): Promise<void> {
+  const progressSnapshot = await getDocs(collection(firestore, "users", uid, "activityProgress"));
 
-  if (tasksSnapshot.empty) {
+  if (progressSnapshot.empty) {
     return;
   }
 
   const batch = writeBatch(firestore);
-  tasksSnapshot.docs.forEach((taskDoc) => {
+  progressSnapshot.docs.forEach((progressDoc) => {
+    batch.delete(progressDoc.ref);
+  });
+  await batch.commit();
+}
+
+export async function deleteUserLearningData(firestore: Firestore, uid: string): Promise<void> {
+  await deleteUserActivityProgress(firestore, uid);
+
+  const legacyTasksSnapshot = await getDocs(collection(firestore, "users", uid, "tasks"));
+  if (legacyTasksSnapshot.empty) {
+    return;
+  }
+
+  const batch = writeBatch(firestore);
+  legacyTasksSnapshot.docs.forEach((taskDoc) => {
     batch.delete(taskDoc.ref);
   });
   await batch.commit();
 }
+
+/** @deprecated Use `deleteUserLearningData`. Mantido para compatibilidade durante migração. */
+export async function deleteUserTasks(firestore: Firestore, uid: string): Promise<void> {
+  await deleteUserLearningData(firestore, uid);
+}
+
+export async function syncCourseCatalogForDev(firestore: Firestore): Promise<void> {
+  await syncCourseCatalog(firestore);
+}
+
+export { applyCatalogExpiration, cloneActivityCatalogSeed };
