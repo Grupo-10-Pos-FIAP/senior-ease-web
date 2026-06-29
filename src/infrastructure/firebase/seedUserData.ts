@@ -63,6 +63,9 @@ function mergeProgressFromSeed(
       existing.completedStepIds.length > 0
         ? [...existing.completedStepIds]
         : [...seed.completedStepIds],
+    startedAt: existing.startedAt ?? seed.startedAt,
+    currentStepId: existing.currentStepId ?? seed.currentStepId,
+    stepAnswers: existing.stepAnswers ?? seed.stepAnswers,
   };
 }
 

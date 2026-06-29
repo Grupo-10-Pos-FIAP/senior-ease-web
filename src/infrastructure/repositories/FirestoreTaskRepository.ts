@@ -1,5 +1,10 @@
 import { mergeActivityWithProgress } from "@application/tasks/mergeActivityWithProgress";
-import { createDefaultActivityProgress } from "@domain/entities/ActivityProgress";
+import type { Activity } from "@domain/entities/Activity";
+import {
+  createActivityProgress,
+  createDefaultActivityProgress,
+  type ActivityProgress,
+} from "@domain/entities/ActivityProgress";
 import { isTaskActive, type Task } from "@domain/entities/Task";
 import { TaskNotCompletableError } from "@domain/errors/TaskNotCompletableError";
 import { TaskNotFoundError } from "@domain/errors/TaskNotFoundError";
@@ -7,7 +12,7 @@ import type { IActivityCatalogRepository } from "@domain/repositories/IActivityC
 import type { IActivityProgressRepository } from "@domain/repositories/IActivityProgressRepository";
 import type { ITaskRepository } from "@domain/repositories/ITaskRepository";
 import { DEFAULT_COURSE_ID } from "@domain/constants/course";
-import { createActivityProgress } from "@domain/entities/ActivityProgress";
+import type { StepCompletionPayload } from "@domain/value-objects/ActivityStepContent";
 import { getFirestoreDb } from "@infrastructure/firebase/client";
 import { doc, getDoc } from "firebase/firestore";
 
@@ -47,6 +52,28 @@ export class FirestoreTaskRepository implements ITaskRepository {
     );
   }
 
+  private async getActivityAndProgress(
+    userId: string,
+    taskId: string,
+  ): Promise<{ activity: Activity; progress: ActivityProgress; courseId: string }> {
+    const courseId = await this.getEnrolledCourseId(userId);
+    const activity = await this.catalogRepository.getActivity(courseId, taskId);
+    const progress =
+      (await this.progressRepository.getProgress(userId, taskId)) ??
+      createDefaultActivityProgress(taskId);
+
+    return { activity, progress, courseId };
+  }
+
+  private async saveMergedProgress(
+    userId: string,
+    activity: Activity,
+    progress: ActivityProgress,
+  ): Promise<Task> {
+    await this.progressRepository.saveProgress(userId, progress);
+    return mergeActivityWithProgress(activity, progress);
+  }
+
   async list(userId: string): Promise<Task[]> {
     return this.mergeTasksForUser(userId);
   }
@@ -78,15 +105,79 @@ export class FirestoreTaskRepository implements ITaskRepository {
       throw new TaskNotCompletableError(taskId);
     }
 
-    const courseId = await this.getEnrolledCourseId(userId);
-    const activity = await this.catalogRepository.getActivity(courseId, taskId);
+    const { activity, progress } = await this.getActivityAndProgress(userId, taskId);
     const completedProgress = createActivityProgress({
       activityId: taskId,
       status: "completed",
       completedStepIds: activity.steps.map((step) => step.id),
+      startedAt: progress.startedAt,
+      currentStepId: progress.currentStepId,
+      stepAnswers: progress.stepAnswers,
     });
 
-    await this.progressRepository.saveProgress(userId, completedProgress);
-    return mergeActivityWithProgress(activity, completedProgress);
+    return this.saveMergedProgress(userId, activity, completedProgress);
+  }
+
+  async startActivity(taskId: string, stepId: string): Promise<Task> {
+    const userId = this.getCurrentUserId();
+    const { activity, progress } = await this.getActivityAndProgress(userId, taskId);
+
+    const nextProgress = createActivityProgress({
+      ...progress,
+      startedAt: progress.startedAt ?? new Date().toISOString(),
+      currentStepId: stepId,
+    });
+
+    return this.saveMergedProgress(userId, activity, nextProgress);
+  }
+
+  async completeStep(
+    taskId: string,
+    stepId: string,
+    payload?: StepCompletionPayload,
+  ): Promise<Task> {
+    const userId = this.getCurrentUserId();
+    const { activity, progress } = await this.getActivityAndProgress(userId, taskId);
+
+    const completedStepIds = [...new Set([...progress.completedStepIds, stepId])];
+    const stepAnswers = { ...progress.stepAnswers };
+
+    if (payload?.answer) {
+      stepAnswers[stepId] = payload.answer;
+    }
+
+    const allCompleted = activity.steps.every((step) => completedStepIds.includes(step.id));
+
+    const nextProgress = createActivityProgress({
+      activityId: taskId,
+      status: allCompleted ? "completed" : "active",
+      completedStepIds,
+      startedAt: progress.startedAt ?? new Date().toISOString(),
+      currentStepId: stepId,
+      stepAnswers,
+    });
+
+    return this.saveMergedProgress(userId, activity, nextProgress);
+  }
+
+  async updateCurrentStep(taskId: string, stepId: string): Promise<Task> {
+    const userId = this.getCurrentUserId();
+    const { activity, progress } = await this.getActivityAndProgress(userId, taskId);
+
+    const nextProgress = createActivityProgress({
+      ...progress,
+      startedAt: progress.startedAt ?? new Date().toISOString(),
+      currentStepId: stepId,
+    });
+
+    return this.saveMergedProgress(userId, activity, nextProgress);
+  }
+
+  async resetActivity(taskId: string): Promise<Task> {
+    const userId = this.getCurrentUserId();
+    const { activity } = await this.getActivityAndProgress(userId, taskId);
+    const resetProgress = createDefaultActivityProgress(taskId);
+
+    return this.saveMergedProgress(userId, activity, resetProgress);
   }
 }

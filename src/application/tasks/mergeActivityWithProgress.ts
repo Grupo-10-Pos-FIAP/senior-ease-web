@@ -31,12 +31,16 @@ export function mergeActivityWithProgress(
     startDate: activity.startDate,
     endDate: activity.endDate,
     status,
+    startedAt: progress.startedAt,
+    currentStepId: progress.currentStepId,
     steps: activity.steps.map((step) => ({
       id: step.id,
       label: step.label,
       type: step.type,
       order: step.order,
+      content: step.content,
       completed: completedStepIds.has(step.id),
+      answer: progress.stepAnswers?.[step.id],
     })),
   });
 }

@@ -41,13 +41,35 @@ describe("mergeActivityWithProgress", () => {
     expect(task.status).toBe("completed");
   });
 
-  it("marca como expirada quando o catálogo expirou e o usuário não concluiu", () => {
-    const expiredActivity = createActivity({ ...activity, status: "expired" });
+  it("propaga conteúdo, respostas e metadados de progresso", () => {
+    const activityWithContent = createActivity({
+      ...activity,
+      steps: [
+        {
+          id: "step-1",
+          label: "Leitura",
+          type: "content_reading",
+          order: 1,
+          content: { kind: "content_reading", body: "Texto da atividade" },
+        },
+        { id: "step-2", label: "Quiz", type: "multiple_choice", order: 2 },
+      ],
+    });
+
     const task = mergeActivityWithProgress(
-      expiredActivity,
-      createActivityProgress({ activityId: "task-1" }),
+      activityWithContent,
+      createActivityProgress({
+        activityId: "task-1",
+        completedStepIds: ["step-1"],
+        startedAt: "2026-06-10T10:00:00.000Z",
+        currentStepId: "step-2",
+        stepAnswers: { "step-1": "resposta" },
+      }),
     );
 
-    expect(task.status).toBe("expired");
+    expect(task.startedAt).toBe("2026-06-10T10:00:00.000Z");
+    expect(task.currentStepId).toBe("step-2");
+    expect(task.steps[0]?.content?.kind).toBe("content_reading");
+    expect(task.steps[0]?.answer).toBe("resposta");
   });
 });

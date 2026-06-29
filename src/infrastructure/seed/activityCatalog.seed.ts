@@ -1,5 +1,6 @@
 import { DEFAULT_COURSE_ID, DEFAULT_COURSE_TITLE } from "../../domain/constants/course";
 import type { ActivityDto, ActivityProgressDto } from "@infrastructure/mappers/activity.mapper";
+import { enrichActivityStepsWithContent } from "@infrastructure/seed/activityStepContent.seed";
 
 /**
  * Data de referência do demo. Os prazos das atividades ativas foram definidos
@@ -355,10 +356,12 @@ export function applyCatalogExpiration(
 }
 
 export function cloneActivityCatalogSeed(referenceDate?: Date): ActivityDto[] {
-  const activities = ACTIVITY_CATALOG_SEED.map((activity) => ({
-    ...activity,
-    steps: activity.steps.map((step) => ({ ...step })),
-  }));
+  const activities = ACTIVITY_CATALOG_SEED.map((activity) =>
+    enrichActivityStepsWithContent({
+      ...activity,
+      steps: activity.steps.map((step) => ({ ...step })),
+    }),
+  );
 
   return referenceDate ? applyCatalogExpiration(activities, referenceDate) : activities;
 }
@@ -382,6 +385,7 @@ export function buildDefaultProgressForCatalog(
       return {
         ...current,
         completedStepIds: [...current.completedStepIds],
+        stepAnswers: current.stepAnswers ? { ...current.stepAnswers } : undefined,
       };
     }
 

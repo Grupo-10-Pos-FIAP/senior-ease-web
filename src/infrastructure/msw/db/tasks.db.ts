@@ -74,6 +74,142 @@ export function getTaskFromDb(id: string, userId = "demo-user"): TaskDto | undef
   return getTasksFromDb(userId).find((task) => task.id === id);
 }
 
+function upsertUserProgress(userId: string, progress: ActivityProgressDto): void {
+  const currentProgressList = getUserProgressList(userId);
+  const nextProgress = buildDefaultProgressForCatalog(
+    catalogDb.map((activity) => activity.id),
+    [...currentProgressList.filter((item) => item.activityId !== progress.activityId), progress],
+  );
+
+  setUserProgressList(userId, nextProgress);
+}
+
+function getActivityDto(id: string): ActivityDto | undefined {
+  return catalogDb.find((activity) => activity.id === id);
+}
+
+export function startActivityInDb(
+  id: string,
+  stepId: string,
+  userId = "demo-user",
+): TaskDto | undefined {
+  const activityDto = getActivityDto(id);
+  if (!activityDto) return undefined;
+
+  const activity = fromActivityDto(activityDto);
+  const currentProgressList = getUserProgressList(userId);
+  const currentProgress = currentProgressList.find((item) => item.activityId === id);
+  const progress = currentProgress
+    ? fromActivityProgressDto(currentProgress)
+    : createDefaultActivityProgress(id);
+
+  const merged = mergeActivityWithProgress(activity, progress);
+  if (merged.status !== "active") {
+    return undefined;
+  }
+
+  const nextProgress: ActivityProgressDto = {
+    activityId: id,
+    status: "active",
+    completedStepIds: [...progress.completedStepIds],
+    startedAt: progress.startedAt ?? new Date().toISOString(),
+    currentStepId: stepId,
+    stepAnswers: progress.stepAnswers ? { ...progress.stepAnswers } : undefined,
+  };
+
+  upsertUserProgress(userId, nextProgress);
+  return getTaskFromDb(id, userId);
+}
+
+export function completeStepInDb(
+  id: string,
+  stepId: string,
+  userId = "demo-user",
+  answer?: string,
+): TaskDto | undefined {
+  const activityDto = getActivityDto(id);
+  if (!activityDto) return undefined;
+
+  const activity = fromActivityDto(activityDto);
+  const currentProgressList = getUserProgressList(userId);
+  const currentProgress = currentProgressList.find((item) => item.activityId === id);
+  const progress = currentProgress
+    ? fromActivityProgressDto(currentProgress)
+    : createDefaultActivityProgress(id);
+
+  const merged = mergeActivityWithProgress(activity, progress);
+  if (merged.status !== "active") {
+    return undefined;
+  }
+
+  const completedStepIds = [...new Set([...progress.completedStepIds, stepId])];
+  const stepAnswers = { ...progress.stepAnswers };
+  if (answer) {
+    stepAnswers[stepId] = answer;
+  }
+
+  const allCompleted = activity.steps.every((step) => completedStepIds.includes(step.id));
+
+  const nextProgress: ActivityProgressDto = {
+    activityId: id,
+    status: allCompleted ? "completed" : "active",
+    completedStepIds,
+    startedAt: progress.startedAt ?? new Date().toISOString(),
+    currentStepId: stepId,
+    stepAnswers: Object.keys(stepAnswers).length > 0 ? stepAnswers : undefined,
+  };
+
+  upsertUserProgress(userId, nextProgress);
+  return getTaskFromDb(id, userId);
+}
+
+export function updateCurrentStepInDb(
+  id: string,
+  stepId: string,
+  userId = "demo-user",
+): TaskDto | undefined {
+  const activityDto = getActivityDto(id);
+  if (!activityDto) return undefined;
+
+  const activity = fromActivityDto(activityDto);
+  const currentProgressList = getUserProgressList(userId);
+  const currentProgress = currentProgressList.find((item) => item.activityId === id);
+  const progress = currentProgress
+    ? fromActivityProgressDto(currentProgress)
+    : createDefaultActivityProgress(id);
+
+  const merged = mergeActivityWithProgress(activity, progress);
+  if (merged.status !== "active") {
+    return undefined;
+  }
+
+  const nextProgress: ActivityProgressDto = {
+    activityId: id,
+    status: "active",
+    completedStepIds: [...progress.completedStepIds],
+    startedAt: progress.startedAt ?? new Date().toISOString(),
+    currentStepId: stepId,
+    stepAnswers: progress.stepAnswers ? { ...progress.stepAnswers } : undefined,
+  };
+
+  upsertUserProgress(userId, nextProgress);
+  return getTaskFromDb(id, userId);
+}
+
+export function resetActivityInDb(id: string, userId = "demo-user"): TaskDto | undefined {
+  const activityDto = getActivityDto(id);
+  if (!activityDto) return undefined;
+
+  const nextProgress: ActivityProgressDto = {
+    activityId: id,
+    status: "active",
+    completedStepIds: [],
+  };
+
+  upsertUserProgress(userId, nextProgress);
+  return getTaskFromDb(id, userId);
+}
+
 export function completeTaskInDb(id: string, userId = "demo-user"): TaskDto | undefined {
   const activityDto = catalogDb.find((activity) => activity.id === id);
   if (!activityDto) return undefined;
@@ -94,14 +230,12 @@ export function completeTaskInDb(id: string, userId = "demo-user"): TaskDto | un
     activityId: id,
     status: "completed",
     completedStepIds: activity.steps.map((step) => step.id),
+    startedAt: currentProgress?.startedAt,
+    currentStepId: currentProgress?.currentStepId,
+    stepAnswers: currentProgress?.stepAnswers,
   };
 
-  const nextProgress = buildDefaultProgressForCatalog(
-    catalogDb.map((activity) => activity.id),
-    [...currentProgressList.filter((item) => item.activityId !== id), completedProgress],
-  );
-
-  setUserProgressList(userId, nextProgress);
+  upsertUserProgress(userId, completedProgress);
   return getTaskFromDb(id, userId);
 }
 

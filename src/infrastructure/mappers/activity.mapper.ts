@@ -7,12 +7,14 @@ import {
   type TaskStepType,
 } from "@domain/value-objects/TaskStepType";
 import type { CatalogActivityStatus } from "@domain/entities/Activity";
+import type { ActivityStepContent } from "@domain/value-objects/ActivityStepContent";
 
 export interface ActivityStepDto {
   id: string;
   label: string;
   type?: TaskStepType;
   order: number;
+  content?: ActivityStepContent;
 }
 
 export interface ActivityDto {
@@ -28,6 +30,9 @@ export interface ActivityProgressDto {
   activityId: string;
   status: "active" | "completed";
   completedStepIds: string[];
+  startedAt?: string;
+  currentStepId?: string;
+  stepAnswers?: Record<string, string>;
 }
 
 export interface CourseDto {
@@ -47,6 +52,7 @@ export function fromActivityDto(dto: ActivityDto): Activity {
       label: step.label,
       type: step.type ? createTaskStepType(step.type) : DEFAULT_TASK_STEP_TYPE,
       order: step.order,
+      content: step.content,
     })),
   });
 }
@@ -63,6 +69,7 @@ export function toActivityDto(activity: Activity): ActivityDto {
       label: step.label,
       type: step.type,
       order: step.order,
+      content: step.content,
     })),
   };
 }
@@ -72,6 +79,9 @@ export function fromActivityProgressDto(dto: ActivityProgressDto): ActivityProgr
     activityId: dto.activityId,
     status: dto.status,
     completedStepIds: dto.completedStepIds,
+    startedAt: dto.startedAt,
+    currentStepId: dto.currentStepId,
+    stepAnswers: dto.stepAnswers,
   });
 }
 
@@ -80,6 +90,9 @@ export function toActivityProgressDto(progress: ActivityProgress): ActivityProgr
     activityId: progress.activityId,
     status: progress.status,
     completedStepIds: [...progress.completedStepIds],
+    startedAt: progress.startedAt,
+    currentStepId: progress.currentStepId,
+    stepAnswers: progress.stepAnswers ? { ...progress.stepAnswers } : undefined,
   };
 }
 
