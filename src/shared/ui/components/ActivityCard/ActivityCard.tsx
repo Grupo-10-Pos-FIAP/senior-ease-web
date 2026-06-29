@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { type TaskStatus } from "@domain/entities/Task";
 import { formatTaskDateRange } from "@shared/lib/formatTaskDate";
+import { getTaskDeadlineBadgeLabel, getTaskDeadlineBadgeTone } from "@shared/lib/taskDeadline";
 import "./ActivityCard.css";
 
 interface ActivityCardProps {
@@ -11,6 +12,7 @@ interface ActivityCardProps {
   endDate: string;
   status: TaskStatus;
   primaryAction?: ReactNode;
+  redoAction?: ReactNode;
 }
 
 function CalendarIcon() {
@@ -53,24 +55,6 @@ function HowToIcon() {
   );
 }
 
-function RedoIcon() {
-  return (
-    <svg
-      className="activity-card__action-icon"
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path
-        fill="currentColor"
-        d="M8 3a5 5 0 1 0 4.546 2.914.75.75 0 1 1 1.364-.632A6.5 6.5 0 1 1 8 1.5V3a.75.75 0 0 1-1.5 0V0A.75.75 0 0 1 8 .75V3Z"
-      />
-    </svg>
-  );
-}
-
 const STATUS_BADGE: Record<Exclude<TaskStatus, "active">, string> = {
   completed: "Atividade concluída",
   expired: "Atividade expirada!",
@@ -83,10 +67,13 @@ export function ActivityCard({
   endDate,
   status,
   primaryAction,
+  redoAction,
 }: ActivityCardProps) {
   const titleId = `activity-title-${id}`;
   const descriptionId = `activity-description-${id}`;
   const dateLabel = formatTaskDateRange(startDate, endDate);
+  const deadlineBadgeLabel = status === "active" ? getTaskDeadlineBadgeLabel(endDate) : null;
+  const deadlineBadgeTone = status === "active" ? getTaskDeadlineBadgeTone(endDate) : null;
 
   if (status === "completed") {
     return (
@@ -123,15 +110,7 @@ export function ActivityCard({
             O prazo para essa atividade já se expirou.
           </p>
         </div>
-        <div className="activity-card__actions">
-          <Link
-            to={`/tarefas/${id}`}
-            className="se-button se-button--secondary activity-card__link"
-          >
-            <RedoIcon />
-            Refazer atividade
-          </Link>
-        </div>
+        <div className="activity-card__actions">{redoAction}</div>
       </article>
     );
   }
@@ -139,6 +118,13 @@ export function ActivityCard({
   return (
     <article className="activity-card activity-card--active" aria-labelledby={titleId}>
       <div className="activity-card__content">
+        {deadlineBadgeLabel && deadlineBadgeTone ? (
+          <span
+            className={`activity-card__badge activity-card__badge--deadline activity-card__badge--deadline-${deadlineBadgeTone}`}
+          >
+            {deadlineBadgeLabel}
+          </span>
+        ) : null}
         <h3 id={titleId} className="activity-card__title">
           {title}
         </h3>

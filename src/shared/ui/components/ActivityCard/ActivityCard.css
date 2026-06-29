@@ -38,6 +38,24 @@
   border: 1px solid var(--se-status-expired-border);
 }
 
+.activity-card__badge--deadline {
+  color: var(--se-warning-fg);
+  background-color: var(--se-warning-bg);
+  border: 1px solid var(--se-warning-border);
+}
+
+.activity-card__badge--deadline-today {
+  color: var(--se-status-expired-fg);
+  background-color: var(--se-status-expired-bg);
+  border: 1px solid var(--se-status-expired-border);
+}
+
+.activity-card__badge--deadline-week {
+  color: var(--se-status-completed-fg);
+  background-color: var(--se-status-completed-bg);
+  border: 1px solid var(--se-status-completed-border);
+}
+
 .activity-card__title {
   margin: 0;
   font-size: calc(var(--se-font-size, 1rem) * 1.125);

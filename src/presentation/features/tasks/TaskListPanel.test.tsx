@@ -1,9 +1,9 @@
-import { describe, expect, it, beforeEach } from "vitest";
+import { describe, expect, it, beforeEach, afterEach, vi } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createDefaultPreferences } from "@domain/entities/AccessibilityPreferences";
 import { TaskListPanel } from "@presentation/features/tasks/TaskListPanel";
-import { resetTasksDb } from "@infrastructure/msw/db/tasks.db";
+import { resetTasksDb, TASK_MOCK_REFERENCE_DATE } from "@infrastructure/msw/db/tasks.db";
 import { applyAccessibilityTokens } from "@shared/lib/accessibilityTokens";
 import { renderWithProviders } from "@shared/test/renderWithProviders";
 
@@ -13,10 +13,19 @@ async function waitForTasksLoaded() {
   });
 }
 
+function useMockReferenceDate() {
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(new Date(`${TASK_MOCK_REFERENCE_DATE}T12:00:00`));
+}
+
 describe("TaskListPanel", () => {
   beforeEach(() => {
     resetTasksDb();
     applyAccessibilityTokens(createDefaultPreferences());
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it("exibe abas de filtro por status", async () => {
@@ -29,6 +38,7 @@ describe("TaskListPanel", () => {
   });
 
   it("lista atividades ativas do mockup", async () => {
+    useMockReferenceDate();
     renderWithProviders(<TaskListPanel />);
     await waitForTasksLoaded();
 
@@ -38,6 +48,60 @@ describe("TaskListPanel", () => {
     expect(screen.getByRole("heading", { name: /como usar e-mail/i })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /videochamadas sem medo/i })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /segurança digital/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /planejando o orçamento mensal/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("ordena atividades ativas pela data final mais próxima", async () => {
+    useMockReferenceDate();
+    renderWithProviders(<TaskListPanel />);
+    await waitForTasksLoaded();
+
+    const titles = screen
+      .getAllByRole("heading", { level: 3 })
+      .map((heading) => heading.textContent);
+
+    expect(titles).toEqual([
+      'Oficina "Primeiros Passos no Digital"',
+      'Curso "Como usar E-mail"',
+      'Atividade "Videochamadas sem Medo"',
+      "Oficina de Segurança Digital",
+      'Atividade "Organizando Arquivos no Computador"',
+      'Curso "Pesquisando na Internet com Segurança"',
+      'Oficina "Usando o Teclado com Confiança"',
+      'Atividade "Introdução ao WhatsApp"',
+      'Oficina "Planejando o Orçamento Mensal"',
+    ]);
+  });
+
+  it("exibe badges de prazo para todos os cenários de até 7 dias", async () => {
+    useMockReferenceDate();
+    renderWithProviders(<TaskListPanel />);
+    await waitForTasksLoaded();
+
+    expect(screen.getByText("Prazo termina hoje")).toBeInTheDocument();
+    expect(screen.getByText("Prazo termina daqui 1 dia")).toBeInTheDocument();
+    expect(screen.getByText("Prazo termina daqui 2 dias")).toBeInTheDocument();
+    expect(screen.getByText("Prazo termina daqui 3 dias")).toBeInTheDocument();
+    expect(screen.getByText("Prazo termina daqui 4 dias")).toBeInTheDocument();
+    expect(screen.getByText("Prazo termina daqui 5 dias")).toBeInTheDocument();
+    expect(screen.getByText("Prazo termina daqui 6 dias")).toBeInTheDocument();
+    expect(screen.getByText("Prazo termina daqui 7 dias")).toBeInTheDocument();
+  });
+
+  it("não exibe badge de prazo para atividades com mais de 7 dias para vencer", async () => {
+    useMockReferenceDate();
+    renderWithProviders(<TaskListPanel />);
+    await waitForTasksLoaded();
+
+    const budgetCard = screen
+      .getByRole("heading", { name: /planejando o orçamento mensal/i })
+      .closest("article");
+
+    expect(budgetCard).toBeInTheDocument();
+    expect(budgetCard).not.toHaveTextContent(/prazo termina/i);
+    expect(screen.getAllByText(/prazo termina/i)).toHaveLength(8);
   });
 
   it("filtra atividades concluídas na aba correspondente", async () => {
@@ -58,15 +122,17 @@ describe("TaskListPanel", () => {
   });
 
   it("exibe link como fazer essa atividade para cada atividade ativa", async () => {
+    useMockReferenceDate();
     renderWithProviders(<TaskListPanel />);
     await waitForTasksLoaded();
 
     const links = screen.getAllByRole("link", { name: /como fazer essa atividade/i });
-    expect(links.length).toBeGreaterThanOrEqual(4);
+    expect(links).toHaveLength(9);
     expect(links[0]).toHaveAttribute("href", "/tarefas/task-1/guia");
   });
 
   it("exibe iniciar a atividade quando nenhuma tarefa foi concluída", async () => {
+    useMockReferenceDate();
     renderWithProviders(<TaskListPanel />);
     await waitForTasksLoaded();
 
@@ -79,6 +145,7 @@ describe("TaskListPanel", () => {
 
   it("pede confirmação antes de iniciar a atividade", async () => {
     const user = userEvent.setup();
+    useMockReferenceDate();
     renderWithProviders(<TaskListPanel />);
     await waitForTasksLoaded();
 
@@ -99,6 +166,7 @@ describe("TaskListPanel", () => {
   });
 
   it("exibe continuar a atividade quando há progresso parcial", async () => {
+    useMockReferenceDate();
     renderWithProviders(<TaskListPanel />);
     await waitForTasksLoaded();
 
@@ -129,7 +197,30 @@ describe("TaskListPanel", () => {
       screen.getAllByText("O prazo para essa atividade já se expirou.").length,
     ).toBeGreaterThanOrEqual(1);
     expect(
-      screen.getAllByRole("link", { name: /refazer atividade/i }).length,
+      screen.getAllByRole("button", { name: /refazer atividade/i }).length,
     ).toBeGreaterThanOrEqual(1);
+  });
+
+  it("pede confirmação antes de refazer atividade expirada", async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<TaskListPanel />);
+    await waitForTasksLoaded();
+
+    await user.click(screen.getByRole("tab", { name: /atividades expiradas/i }));
+
+    await user.click(
+      await screen.findByRole("button", {
+        name: /refazer atividade: simulação de situações reais/i,
+      }),
+    );
+
+    expect(
+      await screen.findByRole("alertdialog", { name: /refazer esta atividade/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /o prazo desta atividade já expirou\. você está prestes a refazer "simulação de situações reais"/i,
+      ),
+    ).toBeInTheDocument();
   });
 });
