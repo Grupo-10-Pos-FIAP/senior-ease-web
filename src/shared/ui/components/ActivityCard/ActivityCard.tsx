@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
-import type { TaskStatus } from '@domain/entities/Task'
-import { Button } from '@shared/ui/components/Button'
+import { getActivityProgress, type TaskStatus, type TaskStep } from '@domain/entities/Task'
 import { formatTaskDateRange } from '@shared/lib/formatTaskDate'
 import './ActivityCard.css'
 
@@ -10,8 +9,7 @@ interface ActivityCardProps {
   startDate: string
   endDate: string
   status: TaskStatus
-  onComplete?: (id: string) => void
-  isCompleting?: boolean
+  steps: TaskStep[]
 }
 
 function CalendarIcon() {
@@ -32,7 +30,7 @@ function CalendarIcon() {
   )
 }
 
-function StepByStepIcon() {
+function HowToIcon() {
   return (
     <svg
       className="activity-card__action-icon"
@@ -41,16 +39,20 @@ function StepByStepIcon() {
       viewBox="0 0 16 16"
       aria-hidden="true"
       focusable="false"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
-      <path
-        fill="currentColor"
-        d="M4 1.5h8a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1Zm1 3v1h6V4.5H5Zm0 2.5v1h6V7H5Zm0 2.5v1h4v-1H5Z"
-      />
+      <circle cx="8" cy="8" r="6" />
+      <path d="M6.15 6.15a2 2 0 0 1 3.55 1.1c0 1.2-1.75 1.45-1.75 2.35" />
+      <path d="M8 12h.01" strokeWidth="2" />
     </svg>
   )
 }
 
-function CheckIcon() {
+function PlayIcon() {
   return (
     <svg
       className="activity-card__action-icon"
@@ -62,7 +64,7 @@ function CheckIcon() {
     >
       <path
         fill="currentColor"
-        d="M13.485 3.515a.75.75 0 0 1 0 1.06l-6.5 6.5a.75.75 0 0 1-1.06 0l-3-3a.75.75 0 1 1 1.06-1.06L6.5 9.318l5.97-5.97a.75.75 0 0 1 1.015-.033Z"
+        d="M4.5 2.75a1 1 0 0 1 1.52-.85l7 4.5a1 1 0 0 1 0 1.7l-7 4.5A1 1 0 0 1 4.5 11.5v-8.75Z"
       />
     </svg>
   )
@@ -91,14 +93,18 @@ const STATUS_BADGE: Record<Exclude<TaskStatus, 'active'>, string> = {
   expired: 'Atividade expirada!',
 }
 
+const PRIMARY_ACTION_LABEL = {
+  not_started: 'Iniciar a atividade',
+  in_progress: 'Continuar a atividade',
+} as const
+
 export function ActivityCard({
   id,
   title,
   startDate,
   endDate,
   status,
-  onComplete,
-  isCompleting = false,
+  steps,
 }: ActivityCardProps) {
   const titleId = `activity-title-${id}`
   const descriptionId = `activity-description-${id}`
@@ -155,6 +161,9 @@ export function ActivityCard({
     )
   }
 
+  const progress = getActivityProgress({ id, title, startDate, endDate, status, steps })
+  const primaryLabel = progress ? PRIMARY_ACTION_LABEL[progress] : PRIMARY_ACTION_LABEL.not_started
+
   return (
     <article className="activity-card activity-card--active" aria-labelledby={titleId}>
       <div className="activity-card__content">
@@ -168,24 +177,21 @@ export function ActivityCard({
       </div>
       <div className="activity-card__actions">
         <Link
-          to={`/tarefas/${id}`}
+          to={`/tarefas/${id}?visao=guia`}
           className="se-button se-button--secondary activity-card__link"
+          aria-label={`Como fazer essa atividade: ${title}`}
         >
-          <StepByStepIcon />
-          Ver passo-a-passo
+          <HowToIcon />
+          Como fazer essa atividade?
         </Link>
-        {onComplete ? (
-          <Button
-            variant="primary"
-            className="activity-card__complete-btn"
-            onClick={() => onComplete(id)}
-            disabled={isCompleting}
-            aria-label={`Concluir atividade: ${title}`}
-          >
-            <CheckIcon />
-            Concluir atividade
-          </Button>
-        ) : null}
+        <Link
+          to={`/tarefas/${id}`}
+          className="se-button se-button--primary activity-card__link activity-card__primary-link"
+          aria-label={`${primaryLabel}: ${title}`}
+        >
+          <PlayIcon />
+          {primaryLabel}
+        </Link>
       </div>
     </article>
   )

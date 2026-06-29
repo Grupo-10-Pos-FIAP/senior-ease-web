@@ -1,8 +1,7 @@
 import { useMemo, useState } from 'react'
 import type { Task, TaskStatus } from '@domain/entities/Task'
-import { ActivityCard, ActivityTabs, ConfirmDialog } from '@shared/ui'
-import { useCompleteTaskMutation, useTasksQuery } from '@app/hooks/useTasks'
-import { useConfirmCriticalAction } from '@presentation/hooks/useConfirmCriticalAction'
+import { ActivityCard, ActivityTabs } from '@shared/ui'
+import { useTasksQuery } from '@app/hooks/useTasks'
 import { ACTIVITY_TAB_OPTIONS, EMPTY_STATE_MESSAGES } from '@shared/lib/taskLabels'
 import './TaskListPanel.css'
 
@@ -15,15 +14,11 @@ function TaskListContent({
   tasks,
   isLoading,
   isError,
-  completingTaskId,
-  onComplete,
 }: {
   status: TaskStatus
   tasks: Task[]
   isLoading: boolean
   isError: boolean
-  completingTaskId: string | null
-  onComplete: (taskId: string, title: string) => void
 }) {
   const filtered = useMemo(() => filterTasksByStatus(tasks, status), [tasks, status])
 
@@ -53,8 +48,7 @@ function TaskListContent({
             startDate={task.startDate}
             endDate={task.endDate}
             status={task.status}
-            onComplete={(id) => onComplete(id, task.title)}
-            isCompleting={completingTaskId === task.id}
+            steps={task.steps}
           />
         </li>
       ))}
@@ -64,34 +58,8 @@ function TaskListContent({
 
 export function TaskListPanel() {
   const [status, setStatus] = useState<TaskStatus>('active')
-  const [feedback, setFeedback] = useState('')
-  const [completingTaskId, setCompletingTaskId] = useState<string | null>(null)
 
   const { data: tasks = [], isLoading, isError } = useTasksQuery()
-  const completeMutation = useCompleteTaskMutation()
-  const { pending, runIfAllowed, confirm, cancel, isOpen } = useConfirmCriticalAction()
-
-  const handleComplete = (taskId: string, title: string) => {
-    runIfAllowed(
-      async () => {
-        setCompletingTaskId(taskId)
-        try {
-          await completeMutation.mutateAsync(taskId)
-          setFeedback(`Atividade "${title}" concluída com sucesso.`)
-        } catch {
-          setFeedback('Não foi possível concluir a atividade. Tente novamente.')
-        } finally {
-          setCompletingTaskId(null)
-        }
-      },
-      {
-        title: 'Concluir atividade?',
-        description: `Tem certeza de que deseja marcar "${title}" como concluída?`,
-        confirmLabel: 'Sim, concluir atividade',
-        cancelLabel: 'Não, manter em andamento',
-      },
-    )
-  }
 
   return (
     <section className="task-list-panel" aria-labelledby="activities-heading">
@@ -111,30 +79,9 @@ export function TaskListPanel() {
             tasks={tasks}
             isLoading={isLoading}
             isError={isError}
-            completingTaskId={completingTaskId}
-            onComplete={handleComplete}
           />
         )}
       </ActivityTabs>
-
-      {feedback ? (
-        <output className="visually-hidden" aria-live="polite">
-          {feedback}
-        </output>
-      ) : null}
-
-      {pending ? (
-        <ConfirmDialog
-          open={isOpen}
-          title={pending.options.title}
-          description={pending.options.description}
-          confirmLabel={pending.options.confirmLabel}
-          cancelLabel={pending.options.cancelLabel}
-          confirmVariant={pending.options.confirmVariant}
-          onConfirm={confirm}
-          onCancel={cancel}
-        />
-      ) : null}
     </section>
   )
 }

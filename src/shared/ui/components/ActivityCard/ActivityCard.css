@@ -75,7 +75,7 @@
 }
 
 .activity-card__link,
-.activity-card__complete-btn {
+.activity-card__primary-link {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;

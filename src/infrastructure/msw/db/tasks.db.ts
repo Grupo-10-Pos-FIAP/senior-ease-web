@@ -19,7 +19,7 @@ export const TASK_SEED_DATA: TaskDto[] = [
     endDate: "2026-06-22",
     status: "active",
     steps: [
-      { id: "step-2-1", label: "Acessar sua caixa de entrada", completed: false, order: 1 },
+      { id: "step-2-1", label: "Acessar sua caixa de entrada", completed: true, order: 1 },
       { id: "step-2-2", label: "Escrever uma mensagem", completed: false, order: 2 },
     ],
   },

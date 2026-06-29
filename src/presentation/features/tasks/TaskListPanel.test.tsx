@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach } from 'vitest'
-import { screen, waitFor, within } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createDefaultPreferences } from '@domain/entities/AccessibilityPreferences'
 import { TaskListPanel } from '@presentation/features/tasks/TaskListPanel'
@@ -49,37 +49,42 @@ describe('TaskListPanel', () => {
       await screen.findByRole('heading', { name: /currículo digital/i }),
     ).toBeInTheDocument()
     expect(screen.getAllByText('Atividade concluída').length).toBeGreaterThanOrEqual(1)
-    expect(screen.queryByRole('link', { name: /ver passo-a-passo/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /como fazer essa atividade/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: /primeiros passos no digital/i })).not.toBeInTheDocument()
   })
 
-  it('exibe link ver passo-a-passo para cada atividade ativa', async () => {
+  it('exibe link como fazer essa atividade para cada atividade ativa', async () => {
     renderWithProviders(<TaskListPanel />)
     await waitForTasksLoaded()
 
-    const links = screen.getAllByRole('link', { name: /ver passo-a-passo/i })
+    const links = screen.getAllByRole('link', { name: /como fazer essa atividade/i })
     expect(links.length).toBeGreaterThanOrEqual(4)
-    expect(links[0]).toHaveAttribute('href', '/tarefas/task-1')
+    expect(links[0]).toHaveAttribute('href', '/tarefas/task-1?visao=guia')
   })
 
-  it('concluir atividade exige confirmação e remove da lista ativa', async () => {
-    const user = userEvent.setup()
+  it('exibe iniciar a atividade quando nenhuma tarefa foi concluída', async () => {
     renderWithProviders(<TaskListPanel />)
     await waitForTasksLoaded()
 
-    const completeButtons = screen.getAllByRole('button', { name: /concluir atividade/i })
-    await user.click(completeButtons[0])
+    expect(
+      screen.getByRole('link', { name: /iniciar a atividade: oficina "primeiros passos no digital"/i }),
+    ).toHaveAttribute('href', '/tarefas/task-1')
+  })
 
-    const dialog = await screen.findByRole('alertdialog')
-    expect(within(dialog).getByText(/concluir atividade\?/i)).toBeInTheDocument()
+  it('exibe continuar a atividade quando há progresso parcial', async () => {
+    renderWithProviders(<TaskListPanel />)
+    await waitForTasksLoaded()
 
-    await user.click(within(dialog).getByRole('button', { name: /sim, concluir atividade/i }))
+    expect(
+      screen.getByRole('link', { name: /continuar a atividade: curso "como usar e-mail"/i }),
+    ).toHaveAttribute('href', '/tarefas/task-2')
+  })
 
-    await waitFor(() => {
-      expect(
-        screen.queryByRole('heading', { name: /primeiros passos no digital/i }),
-      ).not.toBeInTheDocument()
-    })
+  it('não exibe botão de concluir atividade na lista', async () => {
+    renderWithProviders(<TaskListPanel />)
+    await waitForTasksLoaded()
+
+    expect(screen.queryByRole('button', { name: /concluir atividade/i })).not.toBeInTheDocument()
   })
 
   it('exibe layout de atividades expiradas com badge e refazer', async () => {
