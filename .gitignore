@@ -16,6 +16,11 @@ dist-ssr
 !.env.example
 .vercel
 
+# Firebase Admin (npm run sync:course) — nunca commitar chaves de service account
+service-account.json
+*-firebase-adminsdk-*.json
+firebase-adminsdk*.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
