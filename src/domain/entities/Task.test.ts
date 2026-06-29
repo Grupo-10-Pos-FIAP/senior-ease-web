@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createTask, isTaskActive } from '@domain/entities/Task'
+import { createTask, getActivityProgress, isTaskActive } from '@domain/entities/Task'
 
 describe('Task', () => {
   const baseInput = {
@@ -36,5 +36,26 @@ describe('Task', () => {
   it('identifica atividade ativa', () => {
     expect(isTaskActive(createTask(baseInput))).toBe(true)
     expect(isTaskActive(createTask({ ...baseInput, status: 'completed' }))).toBe(false)
+  })
+
+  it('identifica atividade não iniciada', () => {
+    expect(getActivityProgress(createTask(baseInput))).toBe('not_started')
+  })
+
+  it('identifica atividade em andamento', () => {
+    const task = createTask({
+      ...baseInput,
+      steps: [
+        { id: 'step-1', label: 'Abrir o navegador', completed: true, order: 1 },
+        { id: 'step-2', label: 'Fechar o navegador', completed: false, order: 2 },
+      ],
+    })
+
+    expect(getActivityProgress(task)).toBe('in_progress')
+  })
+
+  it('retorna null para atividade concluída ou expirada', () => {
+    expect(getActivityProgress(createTask({ ...baseInput, status: 'completed' }))).toBeNull()
+    expect(getActivityProgress(createTask({ ...baseInput, status: 'expired' }))).toBeNull()
   })
 })

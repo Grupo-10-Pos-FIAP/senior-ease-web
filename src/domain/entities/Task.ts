@@ -69,6 +69,15 @@ export function createTask(input: {
   }
 }
 
+export type ActivityProgress = 'not_started' | 'in_progress'
+
 export function isTaskActive(task: Task): boolean {
   return task.status === 'active'
+}
+
+export function getActivityProgress(task: Task): ActivityProgress | null {
+  if (task.status !== 'active') return null
+
+  const hasCompletedStep = task.steps.some((step) => step.completed)
+  return hasCompletedStep ? 'in_progress' : 'not_started'
 }
