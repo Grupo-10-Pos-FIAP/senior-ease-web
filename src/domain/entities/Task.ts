@@ -1,3 +1,4 @@
+import type { ActivityStepContent } from "@domain/value-objects/ActivityStepContent";
 import { createTaskStepType, type TaskStepType } from "@domain/value-objects/TaskStepType";
 
 export type TaskStatus = "active" | "completed" | "expired";
@@ -8,6 +9,8 @@ export interface TaskStep {
   type: TaskStepType;
   completed: boolean;
   order: number;
+  content?: ActivityStepContent;
+  answer?: string;
 }
 
 export interface Task {
@@ -17,6 +20,8 @@ export interface Task {
   endDate: string;
   status: TaskStatus;
   steps: TaskStep[];
+  startedAt?: string;
+  currentStepId?: string;
 }
 
 const TASK_STATUSES: TaskStatus[] = ["active", "completed", "expired"];
@@ -37,6 +42,8 @@ function createTaskStep(
     type: createTaskStepType(input.type),
     completed: input.completed ?? false,
     order: input.order,
+    content: input.content,
+    answer: input.answer,
   };
 }
 
@@ -47,6 +54,8 @@ export function createTask(input: {
   endDate: string;
   status: TaskStatus;
   steps?: TaskStep[];
+  startedAt?: string;
+  currentStepId?: string;
 }): Task {
   const title = input.title.trim();
   if (!title) {
@@ -72,6 +81,8 @@ export function createTask(input: {
     endDate: input.endDate,
     status: input.status,
     steps: (input.steps ?? []).map((step) => createTaskStep(step)),
+    startedAt: input.startedAt,
+    currentStepId: input.currentStepId,
   };
 }
 
@@ -84,6 +95,7 @@ export function isTaskActive(task: Task): boolean {
 export function getActivityProgress(task: Task): ActivityProgress | null {
   if (task.status !== "active") return null;
 
+  const hasStarted = Boolean(task.startedAt) || Boolean(task.currentStepId);
   const hasCompletedStep = task.steps.some((step) => step.completed);
-  return hasCompletedStep ? "in_progress" : "not_started";
+  return hasStarted || hasCompletedStep ? "in_progress" : "not_started";
 }

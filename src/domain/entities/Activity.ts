@@ -1,3 +1,4 @@
+import type { ActivityStepContent } from "@domain/value-objects/ActivityStepContent";
 import { createTaskStepType, type TaskStepType } from "@domain/value-objects/TaskStepType";
 
 export type CatalogActivityStatus = "active" | "expired";
@@ -7,6 +8,7 @@ export interface ActivityStep {
   label: string;
   type: TaskStepType;
   order: number;
+  content?: ActivityStepContent;
 }
 
 export interface Activity {
@@ -35,6 +37,7 @@ function createActivityStep(
     label: input.label.trim(),
     type: createTaskStepType(input.type),
     order: input.order,
+    content: input.content,
   };
 }
 

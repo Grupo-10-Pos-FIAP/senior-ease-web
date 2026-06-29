@@ -95,4 +95,13 @@ describe("Task", () => {
     expect(getActivityProgress(createTask({ ...baseInput, status: "completed" }))).toBeNull();
     expect(getActivityProgress(createTask({ ...baseInput, status: "expired" }))).toBeNull();
   });
+
+  it("considera in_progress quando currentStepId existe", () => {
+    const withCurrentStep = createTask({
+      ...baseInput,
+      currentStepId: "step-1",
+    });
+
+    expect(getActivityProgress(withCurrentStep)).toBe("in_progress");
+  });
 });
