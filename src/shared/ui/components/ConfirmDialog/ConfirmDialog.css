@@ -11,8 +11,8 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1001;
-  width: min(90vw, 480px);
-  padding: calc(var(--se-spacing, 1rem) * 1.5);
+  width: min(92vw, 560px);
+  padding: calc(var(--se-spacing, 1rem) * 2);
   background-color: var(--se-contrast-bg);
   color: var(--se-contrast-fg);
   border: 2px solid var(--se-border);
@@ -44,7 +44,7 @@
   width: 100%;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 560px) {
   .confirm-dialog__actions {
     flex-direction: row;
     justify-content: flex-end;

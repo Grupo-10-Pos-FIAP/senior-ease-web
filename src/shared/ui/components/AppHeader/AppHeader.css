@@ -53,3 +53,44 @@
   outline: 3px solid var(--se-focus-ring);
   outline-offset: 2px;
 }
+
+@media (max-width: 639px) {
+  .app-header {
+    padding-block: calc(var(--se-spacing, 1rem) * 0.75);
+  }
+
+  .app-header__inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+    max-width: none;
+    padding-inline: var(--se-spacing, 1rem);
+    gap: 0.25rem;
+  }
+
+  .app-header__logo {
+    grid-row: 1;
+    justify-self: start;
+  }
+
+  .app-header__nav {
+    grid-row: 2;
+    justify-self: end;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.125rem;
+    margin-left: 0;
+  }
+
+  .app-header__link {
+    justify-content: flex-end;
+    min-height: var(--se-touch-min, 44px);
+    padding: 0.25rem 0;
+  }
+
+  .app-header__nav .se-button {
+    align-self: flex-end;
+    min-height: var(--se-touch-min, 44px);
+    padding: 0.25rem 0;
+  }
+}

@@ -65,6 +65,34 @@ body {
   border: 2px solid var(--se-border);
 }
 
+@media (max-width: 639px) {
+  .activity-tabs__list,
+  .profile-tabs {
+    flex-direction: column;
+    gap: calc(var(--se-spacing, 1rem) * 0.5);
+    border-bottom: none;
+    margin-bottom: var(--se-spacing, 1rem);
+  }
+
+  .activity-tabs__tab,
+  .profile-tabs__tab {
+    flex: none;
+    width: 100%;
+    min-height: calc(var(--se-touch-min, 44px) * 1.1);
+    padding: 0.75rem 0.875rem;
+    border: 2px solid var(--se-border);
+    border-radius: 8px;
+    margin-bottom: 0;
+  }
+
+  .activity-tabs__tab[data-state="active"],
+  .profile-tabs__tab--active {
+    border-color: var(--se-navy);
+    background-color: var(--se-surface-muted);
+    border-bottom-color: var(--se-navy);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

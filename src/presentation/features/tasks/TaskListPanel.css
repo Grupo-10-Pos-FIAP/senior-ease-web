@@ -3,6 +3,12 @@
   padding: calc(var(--se-spacing, 1rem) * 1.5);
 }
 
+@media (max-width: 639px) {
+  .task-list-panel {
+    padding: 0;
+  }
+}
+
 .task-list-panel__list {
   display: flex;
   flex-direction: column;

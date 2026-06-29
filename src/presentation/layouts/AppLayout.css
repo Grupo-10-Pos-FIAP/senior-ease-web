@@ -14,3 +14,15 @@
   margin-inline: auto;
   padding: calc(var(--se-spacing, 1rem) * 1.5);
 }
+
+@media (max-width: 639px) {
+  .app-layout__main {
+    width: 100%;
+    max-width: none;
+    padding: var(--se-spacing, 1rem);
+  }
+
+  [data-interface-mode="basic"] .app-layout__main {
+    padding: var(--se-spacing, 1rem);
+  }
+}
