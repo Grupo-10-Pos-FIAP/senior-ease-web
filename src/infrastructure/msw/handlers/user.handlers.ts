@@ -1,11 +1,10 @@
 import { http, HttpResponse } from 'msw'
-import { createUser } from '@domain/entities/User'
 import {
   deleteUserFromDb,
   getUserFromDb,
   updateUserInDb,
 } from '@infrastructure/msw/db/user.db'
-import { toUserDto } from '@infrastructure/mappers/user.mapper'
+import { toUserDto, toValidatedUser } from '@infrastructure/mappers/user.mapper'
 
 export const userHandlers = [
   http.get('/api/users/:id', ({ params }) => {
@@ -29,8 +28,8 @@ export const userHandlers = [
 
     try {
       const body = (await request.json()) as Record<string, unknown>
-      const user = createUser({
-        id: current.id,
+      const user = toValidatedUser({
+        ...current,
         fullName: (body.fullName as string | undefined) ?? current.fullName,
         birthDate: (body.birthDate as string | undefined) ?? current.birthDate,
         registrationId: (body.registrationId as string | undefined) ?? current.registrationId,
