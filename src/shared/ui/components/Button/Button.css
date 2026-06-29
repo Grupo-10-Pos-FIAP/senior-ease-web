@@ -74,6 +74,17 @@
   background-color: color-mix(in srgb, var(--se-danger) 88%, #000000);
 }
 
+.se-button--warning-filled {
+  background-color: var(--se-warning);
+  color: #ffffff;
+  border-color: var(--se-warning);
+}
+
+.se-button--warning-filled:hover:not(:disabled) {
+  background-color: var(--se-warning-dark);
+  border-color: var(--se-warning-dark);
+}
+
 [data-reinforced-feedback="true"] .se-button:active:not(:disabled) {
   transform: scale(0.97);
   box-shadow:

@@ -11,6 +11,8 @@
   --se-feedback-ring: #949494;
   --se-feedback-inset: #ffffff;
   --se-danger: #c0392b;
+  --se-warning: #d35400;
+  --se-warning-dark: #b84700;
   --se-touch-min: 44px;
   --se-content-max-width: 1280px;
   --se-status-completed-bg: #e8f5e9;
