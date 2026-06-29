@@ -1,5 +1,5 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTaskQuery } from "@app/hooks/useTasks";
 import type { TaskStep } from "@domain/entities/Task";
 import { Button } from "@shared/ui/components/Button";
@@ -56,15 +56,19 @@ export function StepTutorialPage() {
   const navigate = useNavigate();
   const { data: task, isLoading, isError } = useTaskQuery(id);
   const [continueDialogOpen, setContinueDialogOpen] = useState(false);
-  const [canComplete, setCanComplete] = useState(false);
+  const [tutorialReady, setTutorialReady] = useState(false);
+  const [trackedStepId, setTrackedStepId] = useState(stepId);
 
   const step = task?.steps.find((item) => item.id === stepId);
   const actionConfig = step ? getStepActionConfig(step.type) : null;
   const actionAlwaysEnabled = step ? isActionAlwaysEnabled(step.type) : false;
 
-  useEffect(() => {
-    setCanComplete(actionAlwaysEnabled);
-  }, [stepId, actionAlwaysEnabled]);
+  if (trackedStepId !== stepId) {
+    setTrackedStepId(stepId);
+    setTutorialReady(false);
+  }
+
+  const canComplete = actionAlwaysEnabled || tutorialReady;
 
   if (isLoading) {
     return <p className="step-tutorial__status">Carregando tutorial…</p>;
@@ -136,7 +140,7 @@ export function StepTutorialPage() {
           backToTasksPath={guideListPath}
           onCanCompleteChange={(ready) => {
             if (!actionAlwaysEnabled) {
-              setCanComplete(ready);
+              setTutorialReady(ready);
             }
           }}
         />
