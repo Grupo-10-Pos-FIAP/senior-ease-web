@@ -140,7 +140,7 @@ export function completeGuideStepInDb(
     : createDefaultActivityProgress(id);
 
   const merged = mergeActivityWithProgress(activity, progress);
-  if (merged.status !== "active") {
+  if (merged.status === "expired") {
     return undefined;
   }
 

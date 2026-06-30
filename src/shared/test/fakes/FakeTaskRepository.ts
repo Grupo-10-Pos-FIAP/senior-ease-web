@@ -6,6 +6,7 @@ import type { ITaskRepository } from "@domain/repositories/ITaskRepository";
 
 export class FakeTaskRepository implements ITaskRepository {
   private tasks: Map<string, Task>;
+  private completedGuideSteps = new Map<string, Set<string>>();
 
   constructor(initialTasks: Task[] = []) {
     this.tasks = new Map(initialTasks.map((task) => [task.id, task]));
@@ -97,11 +98,16 @@ export class FakeTaskRepository implements ITaskRepository {
 
   async completeGuideStep(taskId: string, stepId: string): Promise<Task> {
     const task = await this.getById(taskId);
+    const completed = this.completedGuideSteps.get(taskId) ?? new Set<string>();
+    completed.add(stepId);
+    this.completedGuideSteps.set(taskId, completed);
+
+    const guideCompleted =
+      task.steps.length > 0 && task.steps.every((step) => completed.has(step.id));
+
     const updated = createTask({
       ...task,
-      guideCompleted:
-        task.steps.every((step) => step.id === stepId || task.guideCompleted) &&
-        task.steps.length > 0,
+      guideCompleted,
     });
     this.tasks.set(taskId, updated);
     return updated;

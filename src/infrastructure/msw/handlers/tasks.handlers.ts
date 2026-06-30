@@ -91,7 +91,7 @@ export const tasksHandlers = [
       return HttpResponse.json({ message: "Atividade não encontrada" }, { status: 404 });
     }
 
-    if (dto.status !== "active") {
+    if (dto.status === "expired") {
       return HttpResponse.json(
         { message: "O tutorial não pode ser concluído no estado atual" },
         { status: 409 },
@@ -99,6 +99,9 @@ export const tasksHandlers = [
     }
 
     const updated = completeGuideStepInDb(id, stepId, userId);
+    if (!updated) {
+      return HttpResponse.json({ message: "Atividade não encontrada" }, { status: 404 });
+    }
     return HttpResponse.json(updated);
   }),
 
