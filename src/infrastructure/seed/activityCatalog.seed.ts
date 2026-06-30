@@ -207,8 +207,8 @@ export const ACTIVITY_CATALOG_SEED: ActivityDto[] = [
   {
     id: "task-5",
     title: 'Atividade "Currículo Digital"',
-    startDate: "2026-05-25",
-    endDate: "2026-05-30",
+    startDate: "2026-06-15",
+    endDate: "2026-07-07",
     status: "active",
     steps: [
       {
@@ -234,8 +234,8 @@ export const ACTIVITY_CATALOG_SEED: ActivityDto[] = [
   {
     id: "task-6",
     title: 'Oficina "Entrevista de Emprego Online"',
-    startDate: "2026-05-10",
-    endDate: "2026-05-18",
+    startDate: "2026-06-15",
+    endDate: "2026-07-08",
     status: "active",
     steps: [
       {
@@ -261,9 +261,9 @@ export const ACTIVITY_CATALOG_SEED: ActivityDto[] = [
   {
     id: "task-7",
     title: "Simulação de Situações Reais",
-    startDate: "2026-04-01",
-    endDate: "2026-04-15",
-    status: "expired",
+    startDate: "2026-06-15",
+    endDate: "2026-07-09",
+    status: "active",
     steps: [
       {
         id: "step-7-1",
@@ -288,9 +288,9 @@ export const ACTIVITY_CATALOG_SEED: ActivityDto[] = [
   {
     id: "task-8",
     title: 'Atividade "Compras Online com Segurança"',
-    startDate: "2026-03-01",
-    endDate: "2026-03-15",
-    status: "expired",
+    startDate: "2026-06-15",
+    endDate: "2026-07-10",
+    status: "active",
     steps: [
       {
         id: "step-8-1",

@@ -6,8 +6,10 @@ import { TaskListPanel } from "@presentation/features/tasks/TaskListPanel";
 import {
   completeGuideStepInDb,
   resetTasksDb,
+  setCatalogInDb,
   TASK_MOCK_REFERENCE_DATE,
 } from "@infrastructure/msw/db/tasks.db";
+import { cloneActivityCatalogSeed } from "@infrastructure/seed/activityCatalog.seed";
 import { applyAccessibilityTokens } from "@shared/lib/accessibilityTokens";
 import { renderWithProviders } from "@shared/test/renderWithProviders";
 
@@ -75,6 +77,8 @@ describe("TaskListPanel", () => {
       'Curso "Pesquisando na Internet com Segurança"',
       'Oficina "Usando o Teclado com Confiança"',
       'Atividade "Introdução ao WhatsApp"',
+      "Simulação de Situações Reais",
+      'Atividade "Compras Online com Segurança"',
       'Oficina "Planejando o Orçamento Mensal"',
     ]);
   });
@@ -131,7 +135,7 @@ describe("TaskListPanel", () => {
     await waitForTasksLoaded();
 
     const links = screen.getAllByRole("link", { name: /como fazer essa atividade/i });
-    expect(links).toHaveLength(9);
+    expect(links).toHaveLength(11);
     expect(links[0]).toHaveAttribute("href", "/tarefas/task-1/guia");
   });
 
@@ -210,6 +214,7 @@ describe("TaskListPanel", () => {
 
   it("exibe layout de atividades expiradas com badge e mensagem de prazo", async () => {
     const user = userEvent.setup();
+    setCatalogInDb(cloneActivityCatalogSeed(new Date("2026-07-11T12:00:00")));
     renderWithProviders(<TaskListPanel />);
     await waitForTasksLoaded();
 

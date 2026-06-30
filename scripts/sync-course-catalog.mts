@@ -11,6 +11,7 @@ import {
   ACTIVITY_CATALOG_SEED,
   applyCatalogExpiration,
   buildDefaultProgressForCatalog,
+  cloneActivityCatalogSeed,
   DEFAULT_COURSE_SEED,
 } from "../src/infrastructure/seed/activityCatalog.seed.ts";
 
@@ -63,7 +64,7 @@ async function upsertCourseCatalog(
   referenceDate: Date,
 ): Promise<{ activitiesUpserted: number; activitiesExpired: number }> {
   const activities = applyCatalogExpiration(
-    ACTIVITY_CATALOG_SEED.map((activity) => ({
+    cloneActivityCatalogSeed(referenceDate).map((activity) => ({
       ...activity,
       steps: activity.steps.map((step) => ({ ...step })),
     })),
