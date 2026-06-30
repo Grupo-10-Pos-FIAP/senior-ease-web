@@ -88,15 +88,26 @@ export function fromActivityProgressDto(dto: ActivityProgressDto): ActivityProgr
 }
 
 export function toActivityProgressDto(progress: ActivityProgress): ActivityProgressDto {
-  return {
+  const dto: ActivityProgressDto = {
     activityId: progress.activityId,
     status: progress.status,
     completedStepIds: [...progress.completedStepIds],
     completedGuideStepIds: [...progress.completedGuideStepIds],
-    startedAt: progress.startedAt,
-    currentStepId: progress.currentStepId,
-    stepAnswers: progress.stepAnswers ? { ...progress.stepAnswers } : undefined,
   };
+
+  if (progress.startedAt !== undefined) {
+    dto.startedAt = progress.startedAt;
+  }
+
+  if (progress.currentStepId !== undefined) {
+    dto.currentStepId = progress.currentStepId;
+  }
+
+  if (progress.stepAnswers !== undefined) {
+    dto.stepAnswers = { ...progress.stepAnswers };
+  }
+
+  return dto;
 }
 
 export function fromCourseDto(dto: CourseDto): Course {

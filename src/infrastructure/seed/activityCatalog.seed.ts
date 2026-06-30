@@ -383,12 +383,17 @@ export function buildDefaultProgressForCatalog(
   return activityIds.map((activityId) => {
     const current = existingById.get(activityId);
     if (current) {
-      return {
+      const progress: ActivityProgressDto = {
         ...current,
         completedStepIds: [...current.completedStepIds],
         completedGuideStepIds: [...(current.completedGuideStepIds ?? [])],
-        stepAnswers: current.stepAnswers ? { ...current.stepAnswers } : undefined,
       };
+
+      if (current.stepAnswers) {
+        progress.stepAnswers = { ...current.stepAnswers };
+      }
+
+      return progress;
     }
 
     return {

@@ -63,6 +63,10 @@ function mergeProgressFromSeed(
       existing.completedStepIds.length > 0
         ? [...existing.completedStepIds]
         : [...seed.completedStepIds],
+    completedGuideStepIds:
+      (existing.completedGuideStepIds?.length ?? 0) > 0
+        ? [...(existing.completedGuideStepIds ?? [])]
+        : [...(seed.completedGuideStepIds ?? [])],
     startedAt: existing.startedAt ?? seed.startedAt,
     currentStepId: existing.currentStepId ?? seed.currentStepId,
     stepAnswers: existing.stepAnswers ?? seed.stepAnswers,
@@ -76,6 +80,7 @@ function legacyTaskToProgress(task: TaskDto): ActivityProgressDto {
     activityId: task.id,
     status: task.status === "completed" ? "completed" : "active",
     completedStepIds,
+    completedGuideStepIds: [],
   };
 }
 
@@ -151,6 +156,7 @@ async function syncActivityProgressForUser(
         activityId,
         status: "active" as const,
         completedStepIds: [],
+        completedGuideStepIds: [],
       };
     }),
   );
