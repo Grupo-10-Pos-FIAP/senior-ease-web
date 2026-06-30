@@ -9,7 +9,9 @@ import { AuthContext } from "@app/providers/authContext";
 import { AccessibilityProvider } from "@app/providers/AccessibilityProvider";
 import { ActivityGuidePage } from "@presentation/features/tasks/guide/ActivityGuidePage";
 import { StepTutorialPage } from "@presentation/features/tasks/guide/StepTutorialPage";
-import { resetTasksDb } from "@infrastructure/msw/db/tasks.db";
+import { TaskWizardEntry } from "@presentation/features/tasks/execution/TaskWizardEntry";
+import { ActivityStepPage } from "@presentation/features/tasks/execution/ActivityStepPage";
+import { resetTasksDb, startActivityInDb } from "@infrastructure/msw/db/tasks.db";
 import { applyAccessibilityTokens } from "@shared/lib/accessibilityTokens";
 import { DEMO_USER_ID } from "@shared/constants/user";
 
@@ -22,6 +24,8 @@ function renderGuideRoute(initialRoute: string) {
     [
       { path: "/tarefas/:id/guia/:stepId", element: <StepTutorialPage /> },
       { path: "/tarefas/:id/guia", element: <ActivityGuidePage /> },
+      { path: "/tarefas/:id/passo/:stepId", element: <ActivityStepPage /> },
+      { path: "/tarefas/:id", element: <TaskWizardEntry /> },
     ],
     { initialEntries: [initialRoute] },
   );
@@ -175,9 +179,64 @@ describe("StepTutorialPage", () => {
       await screen.findByRole("alertdialog", { name: /parabéns! você terminou o tutorial/i }),
     ).toBeInTheDocument();
     expect(
+      screen.getByText(/deseja iniciar a atividade agora ou voltar para minhas atividades/i),
+    ).toBeInTheDocument();
+    expect(
       screen.getByRole("button", { name: /voltar para minhas atividades/i }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /iniciar a atividade/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", {
+        name: /iniciar a atividade: oficina "primeiros passos no digital"/i,
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it("pergunta continuar a atividade no modal quando a atividade já foi iniciada", async () => {
+    startActivityInDb("task-2", "step-2-1");
+    const user = userEvent.setup();
+    renderGuideRoute("/tarefas/task-2/guia/step-2-3");
+    await waitForTutorialLoaded();
+
+    await user.click(screen.getByRole("radio", { name: /campo "para"/i }));
+    await user.click(
+      screen.getByRole("button", { name: /confirmar que já aprendeu a escolher uma resposta/i }),
+    );
+
+    expect(
+      await screen.findByRole("alertdialog", { name: /parabéns! você terminou o tutorial/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/deseja continuar a atividade agora ou voltar para minhas atividades/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", {
+        name: /continuar a atividade: curso "como usar e-mail"/i,
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it("vai direto para a atividade ao iniciar pelo modal do tutorial", async () => {
+    const user = userEvent.setup();
+    renderGuideRoute("/tarefas/task-1/guia/step-1-4");
+    await waitForTutorialLoaded();
+
+    await user.click(
+      screen.getByRole("button", { name: /confirmar que terminou de assistir ao vídeo/i }),
+    );
+
+    await user.click(
+      await screen.findByRole("button", {
+        name: /iniciar a atividade: oficina "primeiros passos no digital"/i,
+      }),
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
+    });
+    expect(screen.queryByText(/iniciar esta atividade/i)).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/questão 1 de 4/i)).toBeInTheDocument();
+    });
   });
 
   it("exibe link voltar para as tarefas no topo e na parte inferior", async () => {

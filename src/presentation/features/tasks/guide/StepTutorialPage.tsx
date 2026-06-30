@@ -1,5 +1,5 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useCompleteGuideStepMutation, useTaskQuery } from "@app/hooks/useTasks";
 import type { TaskStep } from "@domain/entities/Task";
 import { getActivityProgress } from "@domain/entities/Task";
@@ -61,16 +61,27 @@ export function StepTutorialPage() {
   const [continueDialogOpen, setContinueDialogOpen] = useState(false);
   const [guideCompleteDialogOpen, setGuideCompleteDialogOpen] = useState(false);
   const [tutorialReady, setTutorialReady] = useState(false);
-  const [trackedStepId, setTrackedStepId] = useState(stepId);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [prevStepId, setPrevStepId] = useState(stepId);
+
+  if (stepId !== prevStepId) {
+    setPrevStepId(stepId);
+    setTutorialReady(false);
+    setSaveError(null);
+  }
 
   const step = task?.steps.find((item) => item.id === stepId);
   const actionConfig = step ? getStepActionConfig(step.type) : null;
   const actionAlwaysEnabled = step ? isActionAlwaysEnabled(step.type) : false;
 
-  if (trackedStepId !== stepId) {
-    setTrackedStepId(stepId);
-    setTutorialReady(false);
-  }
+  const handleCanCompleteChange = useCallback(
+    (ready: boolean) => {
+      if (!actionAlwaysEnabled) {
+        setTutorialReady(ready);
+      }
+    },
+    [actionAlwaysEnabled],
+  );
 
   const canComplete = actionAlwaysEnabled || tutorialReady;
 
@@ -129,13 +140,22 @@ export function StepTutorialPage() {
   }
 
   function handleCompleteTutorial() {
-    void completeGuideStep.mutateAsync({ taskId: id, stepId }).then(() => {
-      if (nextStep === null) {
-        setGuideCompleteDialogOpen(true);
-      } else {
-        setContinueDialogOpen(true);
-      }
-    });
+    setSaveError(null);
+    completeGuideStep.mutate(
+      { taskId: id, stepId },
+      {
+        onSuccess: () => {
+          if (nextStep === null) {
+            setGuideCompleteDialogOpen(true);
+          } else {
+            setContinueDialogOpen(true);
+          }
+        },
+        onError: () => {
+          setSaveError("Não foi possível salvar seu progresso. Tente novamente.");
+        },
+      },
+    );
   }
 
   function handleBackToActivities() {
@@ -164,13 +184,15 @@ export function StepTutorialPage() {
           type={step.type}
           stepLabel={step.label}
           backToTasksPath={guideListPath}
-          onCanCompleteChange={(ready) => {
-            if (!actionAlwaysEnabled) {
-              setTutorialReady(ready);
-            }
-          }}
+          onCanCompleteChange={handleCanCompleteChange}
         />
       </div>
+
+      {saveError ? (
+        <p className="step-tutorial__status" role="alert">
+          {saveError}
+        </p>
+      ) : null}
 
       <div className="step-tutorial__bottom-bar">
         <BackToTasksLink to={guideListPath} />
@@ -202,7 +224,7 @@ export function StepTutorialPage() {
       <TutorialGuideCompleteDialog
         open={guideCompleteDialogOpen}
         taskTitle={task.title}
-        activityInProgress={activityProgress === "in_progress"}
+        activityProgress={activityProgress}
         onBackToActivities={handleBackToActivities}
         onStartActivity={handleStartActivity}
         onClose={() => {

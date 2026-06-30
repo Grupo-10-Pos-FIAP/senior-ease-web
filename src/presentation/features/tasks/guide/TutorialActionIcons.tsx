@@ -79,6 +79,24 @@ export function LaterIcon() {
   );
 }
 
+export function PlayIcon() {
+  return (
+    <svg
+      className="activity-card__action-icon"
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        fill="currentColor"
+        d="M4.5 2.75a1 1 0 0 1 1.52-.85l7 4.5a1 1 0 0 1 0 1.7l-7 4.5A1 1 0 0 1 4.5 11.5v-8.75Z"
+      />
+    </svg>
+  );
+}
+
 export function CheckIcon() {
   return (
     <svg

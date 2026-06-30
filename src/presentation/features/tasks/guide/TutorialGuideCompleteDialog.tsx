@@ -1,11 +1,19 @@
 import { AlertDialog } from "radix-ui";
-import { Button } from "@shared/ui/components/Button";
+import type { ActivityProgress } from "@domain/entities/Task";
+import {
+  getActivityPrimaryActionLabel,
+  getTutorialCompleteDescription,
+} from "@presentation/features/tasks/activityPrimaryAction.shared";
+import { PlayIcon } from "@presentation/features/tasks/guide/TutorialActionIcons";
+import { Button } from "@shared/ui";
+import "@shared/ui/components/Button/Button.css";
+import "@shared/ui/components/ActivityCard/ActivityCard.css";
 import "@shared/ui/components/SuccessDialog/SuccessDialog.css";
 
 interface TutorialGuideCompleteDialogProps {
   open: boolean;
   taskTitle: string;
-  activityInProgress: boolean;
+  activityProgress: ActivityProgress | null;
   onBackToActivities: () => void;
   onStartActivity: () => void;
   onClose: () => void;
@@ -14,12 +22,13 @@ interface TutorialGuideCompleteDialogProps {
 export function TutorialGuideCompleteDialog({
   open,
   taskTitle,
-  activityInProgress,
+  activityProgress,
   onBackToActivities,
   onStartActivity,
   onClose,
 }: TutorialGuideCompleteDialogProps) {
-  const startLabel = activityInProgress ? "Continuar a atividade" : "Iniciar a atividade";
+  const primaryLabel = getActivityPrimaryActionLabel(activityProgress);
+  const primaryAriaLabel = `${primaryLabel}: ${taskTitle}`;
 
   return (
     <AlertDialog.Root
@@ -37,8 +46,7 @@ export function TutorialGuideCompleteDialog({
             Parabéns! Você terminou o tutorial.
           </AlertDialog.Title>
           <AlertDialog.Description className="success-dialog__description">
-            Você viu todas as tarefas de &quot;{taskTitle}&quot; e já sabe como fazer cada uma.
-            Deseja começar a atividade agora ou voltar para Minhas atividades?
+            {getTutorialCompleteDescription(taskTitle, activityProgress)}
           </AlertDialog.Description>
           <div className="success-dialog__actions success-dialog__actions--split">
             <Button
@@ -48,9 +56,15 @@ export function TutorialGuideCompleteDialog({
             >
               Voltar para Minhas atividades
             </Button>
-            <Button variant="primary" className="success-dialog__button" onClick={onStartActivity}>
-              {startLabel}
-            </Button>
+            <button
+              type="button"
+              className="se-button se-button--primary activity-card__link activity-card__primary-link success-dialog__button"
+              aria-label={primaryAriaLabel}
+              onClick={onStartActivity}
+            >
+              <PlayIcon />
+              {primaryLabel}
+            </button>
           </div>
         </AlertDialog.Content>
       </AlertDialog.Portal>
