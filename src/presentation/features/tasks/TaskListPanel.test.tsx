@@ -3,7 +3,11 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createDefaultPreferences } from "@domain/entities/AccessibilityPreferences";
 import { TaskListPanel } from "@presentation/features/tasks/TaskListPanel";
-import { resetTasksDb, TASK_MOCK_REFERENCE_DATE } from "@infrastructure/msw/db/tasks.db";
+import {
+  completeGuideStepInDb,
+  resetTasksDb,
+  TASK_MOCK_REFERENCE_DATE,
+} from "@infrastructure/msw/db/tasks.db";
 import { applyAccessibilityTokens } from "@shared/lib/accessibilityTokens";
 import { renderWithProviders } from "@shared/test/renderWithProviders";
 
@@ -129,6 +133,28 @@ describe("TaskListPanel", () => {
     const links = screen.getAllByRole("link", { name: /como fazer essa atividade/i });
     expect(links).toHaveLength(9);
     expect(links[0]).toHaveAttribute("href", "/tarefas/task-1/guia");
+  });
+
+  it("exibe rever como fazer essa atividade após concluir o tutorial", async () => {
+    useMockReferenceDate();
+    completeGuideStepInDb("task-1", "step-1-1");
+    completeGuideStepInDb("task-1", "step-1-2");
+    completeGuideStepInDb("task-1", "step-1-3");
+    completeGuideStepInDb("task-1", "step-1-4");
+
+    renderWithProviders(<TaskListPanel />);
+    await waitForTasksLoaded();
+
+    expect(
+      screen.getByRole("link", {
+        name: /rever como fazer essa atividade: oficina "primeiros passos no digital"/i,
+      }),
+    ).toHaveAttribute("href", "/tarefas/task-1/guia");
+    expect(
+      screen.queryByRole("link", {
+        name: /^como fazer essa atividade: oficina "primeiros passos no digital"$/i,
+      }),
+    ).not.toBeInTheDocument();
   });
 
   it("exibe iniciar a atividade quando nenhuma tarefa foi concluída", async () => {

@@ -110,6 +110,7 @@ export class FirestoreTaskRepository implements ITaskRepository {
       activityId: taskId,
       status: "completed",
       completedStepIds: activity.steps.map((step) => step.id),
+      completedGuideStepIds: progress.completedGuideStepIds,
       startedAt: progress.startedAt,
       currentStepId: progress.currentStepId,
       stepAnswers: progress.stepAnswers,
@@ -149,12 +150,27 @@ export class FirestoreTaskRepository implements ITaskRepository {
     const allCompleted = activity.steps.every((step) => completedStepIds.includes(step.id));
 
     const nextProgress = createActivityProgress({
+      ...progress,
       activityId: taskId,
       status: allCompleted ? "completed" : "active",
       completedStepIds,
       startedAt: progress.startedAt ?? new Date().toISOString(),
       currentStepId: stepId,
       stepAnswers,
+    });
+
+    return this.saveMergedProgress(userId, activity, nextProgress);
+  }
+
+  async completeGuideStep(taskId: string, stepId: string): Promise<Task> {
+    const userId = this.getCurrentUserId();
+    const { activity, progress } = await this.getActivityAndProgress(userId, taskId);
+
+    const completedGuideStepIds = [...new Set([...progress.completedGuideStepIds, stepId])];
+
+    const nextProgress = createActivityProgress({
+      ...progress,
+      completedGuideStepIds,
     });
 
     return this.saveMergedProgress(userId, activity, nextProgress);
@@ -175,8 +191,13 @@ export class FirestoreTaskRepository implements ITaskRepository {
 
   async resetActivity(taskId: string): Promise<Task> {
     const userId = this.getCurrentUserId();
-    const { activity } = await this.getActivityAndProgress(userId, taskId);
-    const resetProgress = createDefaultActivityProgress(taskId);
+    const { activity, progress } = await this.getActivityAndProgress(userId, taskId);
+    const resetProgress = createActivityProgress({
+      activityId: taskId,
+      status: "active",
+      completedStepIds: [],
+      completedGuideStepIds: progress.completedGuideStepIds,
+    });
 
     return this.saveMergedProgress(userId, activity, resetProgress);
   }

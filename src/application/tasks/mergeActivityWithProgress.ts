@@ -24,6 +24,9 @@ export function mergeActivityWithProgress(
 ): Task {
   const status = resolveMergedTaskStatus(activity, progress);
   const completedStepIds = new Set(progress.completedStepIds);
+  const completedGuideStepIds = new Set(progress.completedGuideStepIds);
+  const guideCompleted =
+    activity.steps.length > 0 && activity.steps.every((step) => completedGuideStepIds.has(step.id));
 
   return createTask({
     id: activity.id,
@@ -31,6 +34,7 @@ export function mergeActivityWithProgress(
     startDate: activity.startDate,
     endDate: activity.endDate,
     status,
+    guideCompleted,
     startedAt: progress.startedAt,
     currentStepId: progress.currentStepId,
     steps: activity.steps.map((step) => ({
