@@ -162,6 +162,24 @@ describe("StepTutorialPage", () => {
     ).toBeInTheDocument();
   });
 
+  it("abre modal verde de parabéns ao concluir o último tutorial da atividade", async () => {
+    const user = userEvent.setup();
+    renderGuideRoute("/tarefas/task-1/guia/step-1-4");
+    await waitForTutorialLoaded();
+
+    await user.click(
+      screen.getByRole("button", { name: /confirmar que terminou de assistir ao vídeo/i }),
+    );
+
+    expect(
+      await screen.findByRole("alertdialog", { name: /parabéns! você terminou o tutorial/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /voltar para minhas atividades/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /iniciar a atividade/i })).toBeInTheDocument();
+  });
+
   it("exibe link voltar para as tarefas no topo e na parte inferior", async () => {
     renderGuideRoute("/tarefas/task-1/guia/step-1-2");
     await waitForTutorialLoaded();

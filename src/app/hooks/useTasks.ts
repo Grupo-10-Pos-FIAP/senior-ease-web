@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   completeTask,
+  completeGuideStep,
   completeTaskStep,
   getTask,
   listTasks,
@@ -96,6 +97,18 @@ export function useCompleteStepMutation() {
       stepId: string;
       payload?: StepCompletionPayload;
     }) => completeTaskStep.execute(taskId, stepId, payload),
+    onSuccess: (_data, { taskId }) => {
+      invalidate(taskId);
+    },
+  });
+}
+
+export function useCompleteGuideStepMutation() {
+  const invalidate = useInvalidateTasks();
+
+  return useMutation({
+    mutationFn: ({ taskId, stepId }: { taskId: string; stepId: string }) =>
+      completeGuideStep.execute(taskId, stepId),
     onSuccess: (_data, { taskId }) => {
       invalidate(taskId);
     },

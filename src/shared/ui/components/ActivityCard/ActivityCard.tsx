@@ -11,6 +11,7 @@ interface ActivityCardProps {
   startDate: string;
   endDate: string;
   status: TaskStatus;
+  guideCompleted?: boolean;
   primaryAction?: ReactNode;
 }
 
@@ -65,6 +66,7 @@ export function ActivityCard({
   startDate,
   endDate,
   status,
+  guideCompleted = false,
   primaryAction,
 }: ActivityCardProps) {
   const titleId = `activity-title-${id}`;
@@ -112,6 +114,10 @@ export function ActivityCard({
     );
   }
 
+  const howToLabel = guideCompleted
+    ? "Rever como fazer essa atividade"
+    : "Como fazer essa atividade?";
+
   return (
     <article className="activity-card activity-card--active" aria-labelledby={titleId}>
       <div className="activity-card__content">
@@ -134,10 +140,10 @@ export function ActivityCard({
         <Link
           to={`/tarefas/${id}/guia`}
           className="se-button se-button--secondary activity-card__link"
-          aria-label={`Como fazer essa atividade: ${title}`}
+          aria-label={`${howToLabel}: ${title}`}
         >
           <HowToIcon />
-          Como fazer essa atividade?
+          {howToLabel}
         </Link>
         {primaryAction}
       </div>

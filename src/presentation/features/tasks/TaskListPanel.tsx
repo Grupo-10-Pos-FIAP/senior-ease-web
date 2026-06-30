@@ -56,6 +56,7 @@ function TaskListContent({
             startDate={task.startDate}
             endDate={task.endDate}
             status={task.status}
+            guideCompleted={task.guideCompleted}
             primaryAction={
               <ActivityPrimaryAction
                 taskId={task.id}

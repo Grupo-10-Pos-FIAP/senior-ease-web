@@ -4,6 +4,7 @@ import { UpdatePreferences } from "@application/accessibility/UpdatePreferences"
 import { DeleteUser } from "@application/profile/DeleteUser";
 import { GetUser } from "@application/profile/GetUser";
 import { UpdateUser } from "@application/profile/UpdateUser";
+import { CompleteGuideStep } from "@application/tasks/CompleteGuideStep";
 import { CompleteTask } from "@application/tasks/CompleteTask";
 import { CompleteTaskStep } from "@application/tasks/CompleteTaskStep";
 import { GetTask } from "@application/tasks/GetTask";
@@ -26,6 +27,7 @@ export const getTask = new GetTask(taskRepository);
 export const completeTask = new CompleteTask(taskRepository);
 export const startActivity = new StartActivity(taskRepository);
 export const completeTaskStep = new CompleteTaskStep(taskRepository);
+export const completeGuideStep = new CompleteGuideStep(taskRepository);
 export const updateCurrentStep = new UpdateCurrentStep(taskRepository);
 export const resetActivity = new ResetActivity(taskRepository);
 

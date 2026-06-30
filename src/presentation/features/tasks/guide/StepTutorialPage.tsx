@@ -1,11 +1,13 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
-import { useTaskQuery } from "@app/hooks/useTasks";
+import { useCompleteGuideStepMutation, useTaskQuery } from "@app/hooks/useTasks";
 import type { TaskStep } from "@domain/entities/Task";
+import { getActivityProgress } from "@domain/entities/Task";
 import { Button } from "@shared/ui/components/Button";
 import { BackToTasksLink } from "./BackToTasksLink";
 import { CheckIcon } from "./TutorialActionIcons";
 import { TutorialContinueDialog } from "./TutorialContinueDialog";
+import { TutorialGuideCompleteDialog } from "./TutorialGuideCompleteDialog";
 import { StepTutorialRenderer } from "./tutorials/StepTutorialRenderer";
 import "@shared/ui/components/Button/Button.css";
 import "./StepTutorialPage.css";
@@ -55,7 +57,9 @@ export function StepTutorialPage() {
   const { id = "", stepId = "" } = useParams();
   const navigate = useNavigate();
   const { data: task, isLoading, isError } = useTaskQuery(id);
+  const completeGuideStep = useCompleteGuideStepMutation();
   const [continueDialogOpen, setContinueDialogOpen] = useState(false);
+  const [guideCompleteDialogOpen, setGuideCompleteDialogOpen] = useState(false);
   const [tutorialReady, setTutorialReady] = useState(false);
   const [trackedStepId, setTrackedStepId] = useState(stepId);
 
@@ -124,6 +128,28 @@ export function StepTutorialPage() {
     void navigate(`/tarefas/${id}/guia/${nextStep.id}`);
   }
 
+  function handleCompleteTutorial() {
+    void completeGuideStep.mutateAsync({ taskId: id, stepId }).then(() => {
+      if (nextStep === null) {
+        setGuideCompleteDialogOpen(true);
+      } else {
+        setContinueDialogOpen(true);
+      }
+    });
+  }
+
+  function handleBackToActivities() {
+    setGuideCompleteDialogOpen(false);
+    void navigate("/");
+  }
+
+  function handleStartActivity() {
+    setGuideCompleteDialogOpen(false);
+    void navigate(`/tarefas/${id}`);
+  }
+
+  const activityProgress = getActivityProgress(task);
+
   return (
     <section
       className="step-tutorial step-tutorial--immersive"
@@ -152,10 +178,8 @@ export function StepTutorialPage() {
           <Button
             variant="primary"
             className="step-tutorial__complete"
-            disabled={!canComplete}
-            onClick={() => {
-              setContinueDialogOpen(true);
-            }}
+            disabled={!canComplete || completeGuideStep.isPending}
+            onClick={handleCompleteTutorial}
             aria-label={actionConfig.ariaLabel}
           >
             {actionConfig.showIcon ? <CheckIcon /> : null}
@@ -172,6 +196,17 @@ export function StepTutorialPage() {
         onNextStep={handleNextStep}
         onClose={() => {
           setContinueDialogOpen(false);
+        }}
+      />
+
+      <TutorialGuideCompleteDialog
+        open={guideCompleteDialogOpen}
+        taskTitle={task.title}
+        activityInProgress={activityProgress === "in_progress"}
+        onBackToActivities={handleBackToActivities}
+        onStartActivity={handleStartActivity}
+        onClose={() => {
+          setGuideCompleteDialogOpen(false);
         }}
       />
     </section>
