@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { TaskStep } from "@domain/entities/Task";
 import type { ActivityStepContent } from "@domain/value-objects/ActivityStepContent";
 import { getTaskStepTypeLabel } from "@shared/lib/taskStepLabels";
+import { buildYouTubeEmbedUrl, extractYouTubeVideoId } from "@shared/lib/youtube";
 
 interface StepExecutionRendererProps {
   step: TaskStep;
@@ -44,25 +45,9 @@ function ReadingStepExecution({ content, label }: { content: ActivityStepContent
 }
 
 function VideoStepExecution({ content, label }: { content: ActivityStepContent; label: string }) {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
-
-  function handlePlay() {
-    if (isPlaying && progress >= 100) {
-      setProgress(0);
-    }
-    setIsPlaying(true);
-
-    const interval = window.setInterval(() => {
-      setProgress((current) => {
-        if (current >= 100) {
-          window.clearInterval(interval);
-          return 100;
-        }
-        return current + 10;
-      });
-    }, 400);
-  }
+  const videoUrl = content.kind === "watch_content" ? content.videoUrl : "";
+  const videoId = extractYouTubeVideoId(videoUrl);
+  const embedUrl = videoId ? buildYouTubeEmbedUrl(videoId) : null;
 
   return (
     <article className="activity-execution__step-content" aria-labelledby="video-step-title">
@@ -70,42 +55,30 @@ function VideoStepExecution({ content, label }: { content: ActivityStepContent; 
       <h2 id="video-step-title" className="activity-execution__step-title">
         {label}
       </h2>
-      <div className="activity-execution__video" aria-label="Player de vídeo da atividade">
-        <div className="activity-execution__video-screen">
-          {!isPlaying || progress < 100 ? (
-            <button
-              type="button"
-              className="activity-execution__play-button"
-              onClick={handlePlay}
-              aria-label={isPlaying ? "Reproduzindo vídeo" : "Reproduzir vídeo"}
-            >
-              ▶
-            </button>
-          ) : (
-            <span className="activity-execution__video-done" aria-hidden="true">
-              ✓
-            </span>
-          )}
-        </div>
-        {isPlaying ? (
-          <div
-            className="activity-execution__video-progress"
-            role="progressbar"
-            aria-valuenow={progress}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-label="Progresso do vídeo"
+      {embedUrl ? (
+        <div className="activity-execution__video">
+          <iframe
+            className="activity-execution__video-embed"
+            src={embedUrl}
+            title={`Vídeo: ${label}`}
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          />
+          <a
+            className="activity-execution__video-external-link"
+            href={videoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            <div
-              className="activity-execution__video-progress-bar"
-              style={{ width: `${String(progress)}%` }}
-            />
-          </div>
-        ) : null}
-      </div>
-      {content.kind === "watch_content" && content.videoUrl ? (
-        <p className="activity-execution__hint">Vídeo: {content.videoUrl}</p>
-      ) : null}
+            Abrir no YouTube
+          </a>
+        </div>
+      ) : (
+        <p className="activity-execution__hint">
+          Vídeo indisponível no momento. Avise seu instrutor ou tente novamente mais tarde.
+        </p>
+      )}
     </article>
   );
 }
