@@ -139,7 +139,11 @@ describe("Activity execution", () => {
       expect(screen.getByText(/questão 2 de 4/i)).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole("radio", { name: /pedir ajuda quando tiver dúvida/i }));
+    await user.click(
+      screen.getByRole("radio", {
+        name: /começar com uma tarefa simples e pedir ajuda de alguém de confiança/i,
+      }),
+    );
     await user.click(
       screen.getByRole("button", {
         name: /salvar resposta escolhida e ir para a próxima pergunta/i,
@@ -155,7 +159,11 @@ describe("Activity execution", () => {
       expect(screen.getByText(/questão 2 de 4/i)).toBeInTheDocument();
     });
 
-    expect(screen.getByRole("radio", { name: /pedir ajuda quando tiver dúvida/i })).toBeChecked();
+    expect(
+      screen.getByRole("radio", {
+        name: /começar com uma tarefa simples e pedir ajuda de alguém de confiança/i,
+      }),
+    ).toBeChecked();
   });
 
   it("pede confirmação antes de sair e voltar depois", async () => {
