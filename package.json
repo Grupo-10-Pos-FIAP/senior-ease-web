@@ -19,8 +19,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "sync:course": "tsx scripts/sync-course-catalog.mts",
-    "reset:course": "tsx scripts/reset-course-catalog.mts --wipe-activities"
+    "sync:course": "tsx --tsconfig tsconfig.app.json scripts/sync-course-catalog.mts",
+    "reset:course": "tsx --tsconfig tsconfig.app.json scripts/reset-course-catalog.mts --wipe-activities"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.101.0",
