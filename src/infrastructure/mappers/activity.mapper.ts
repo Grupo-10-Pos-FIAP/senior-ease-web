@@ -30,6 +30,7 @@ export interface ActivityProgressDto {
   activityId: string;
   status: "active" | "completed";
   completedStepIds: string[];
+  completedGuideStepIds?: string[];
   startedAt?: string;
   currentStepId?: string;
   stepAnswers?: Record<string, string>;
@@ -79,6 +80,7 @@ export function fromActivityProgressDto(dto: ActivityProgressDto): ActivityProgr
     activityId: dto.activityId,
     status: dto.status,
     completedStepIds: dto.completedStepIds,
+    completedGuideStepIds: dto.completedGuideStepIds,
     startedAt: dto.startedAt,
     currentStepId: dto.currentStepId,
     stepAnswers: dto.stepAnswers,
@@ -90,6 +92,7 @@ export function toActivityProgressDto(progress: ActivityProgress): ActivityProgr
     activityId: progress.activityId,
     status: progress.status,
     completedStepIds: [...progress.completedStepIds],
+    completedGuideStepIds: [...progress.completedGuideStepIds],
     startedAt: progress.startedAt,
     currentStepId: progress.currentStepId,
     stepAnswers: progress.stepAnswers ? { ...progress.stepAnswers } : undefined,

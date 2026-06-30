@@ -23,6 +23,7 @@ export interface TaskDto {
   endDate: string;
   status: TaskStatus;
   steps: TaskStepDto[];
+  guideCompleted?: boolean;
   startedAt?: string;
   currentStepId?: string;
 }
@@ -34,6 +35,7 @@ export function toTaskDto(task: Task): TaskDto {
     startDate: task.startDate,
     endDate: task.endDate,
     status: task.status,
+    guideCompleted: task.guideCompleted,
     startedAt: task.startedAt,
     currentStepId: task.currentStepId,
     steps: task.steps.map((step) => ({
@@ -55,6 +57,7 @@ export function fromTaskDto(dto: TaskDto): Task {
     startDate: dto.startDate,
     endDate: dto.endDate,
     status: dto.status,
+    guideCompleted: dto.guideCompleted,
     startedAt: dto.startedAt,
     currentStepId: dto.currentStepId,
     steps: dto.steps.map((step) => ({

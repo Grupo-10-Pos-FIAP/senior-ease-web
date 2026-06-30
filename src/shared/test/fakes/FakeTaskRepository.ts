@@ -94,4 +94,16 @@ export class FakeTaskRepository implements ITaskRepository {
     this.tasks.set(taskId, reset);
     return reset;
   }
+
+  async completeGuideStep(taskId: string, stepId: string): Promise<Task> {
+    const task = await this.getById(taskId);
+    const updated = createTask({
+      ...task,
+      guideCompleted:
+        task.steps.every((step) => step.id === stepId || task.guideCompleted) &&
+        task.steps.length > 0,
+    });
+    this.tasks.set(taskId, updated);
+    return updated;
+  }
 }

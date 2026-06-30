@@ -7,6 +7,7 @@ export interface ITaskRepository {
   complete(taskId: string): Promise<Task>;
   startActivity(taskId: string, stepId: string): Promise<Task>;
   completeStep(taskId: string, stepId: string, payload?: StepCompletionPayload): Promise<Task>;
+  completeGuideStep(taskId: string, stepId: string): Promise<Task>;
   updateCurrentStep(taskId: string, stepId: string): Promise<Task>;
   resetActivity(taskId: string): Promise<Task>;
 }

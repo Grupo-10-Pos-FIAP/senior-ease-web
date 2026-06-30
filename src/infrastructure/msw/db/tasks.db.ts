@@ -33,6 +33,7 @@ function setUserProgressList(userId: string, progressList: ActivityProgressDto[]
     progressList.map((progress) => ({
       ...progress,
       completedStepIds: [...progress.completedStepIds],
+      completedGuideStepIds: [...(progress.completedGuideStepIds ?? [])],
     })),
   );
 }
@@ -63,6 +64,7 @@ export function getProgressFromDb(userId: string): ActivityProgressDto[] {
   return getUserProgressList(userId).map((progress) => ({
     ...progress,
     completedStepIds: [...progress.completedStepIds],
+    completedGuideStepIds: [...(progress.completedGuideStepIds ?? [])],
   }));
 }
 
@@ -112,8 +114,45 @@ export function startActivityInDb(
     activityId: id,
     status: "active",
     completedStepIds: [...progress.completedStepIds],
+    completedGuideStepIds: [...progress.completedGuideStepIds],
     startedAt: progress.startedAt ?? new Date().toISOString(),
     currentStepId: stepId,
+    stepAnswers: progress.stepAnswers ? { ...progress.stepAnswers } : undefined,
+  };
+
+  upsertUserProgress(userId, nextProgress);
+  return getTaskFromDb(id, userId);
+}
+
+export function completeGuideStepInDb(
+  id: string,
+  stepId: string,
+  userId = "demo-user",
+): TaskDto | undefined {
+  const activityDto = getActivityDto(id);
+  if (!activityDto) return undefined;
+
+  const activity = fromActivityDto(activityDto);
+  const currentProgressList = getUserProgressList(userId);
+  const currentProgress = currentProgressList.find((item) => item.activityId === id);
+  const progress = currentProgress
+    ? fromActivityProgressDto(currentProgress)
+    : createDefaultActivityProgress(id);
+
+  const merged = mergeActivityWithProgress(activity, progress);
+  if (merged.status !== "active") {
+    return undefined;
+  }
+
+  const completedGuideStepIds = [...new Set([...progress.completedGuideStepIds, stepId])];
+
+  const nextProgress: ActivityProgressDto = {
+    activityId: id,
+    status: "active",
+    completedStepIds: [...progress.completedStepIds],
+    completedGuideStepIds,
+    startedAt: progress.startedAt,
+    currentStepId: progress.currentStepId,
     stepAnswers: progress.stepAnswers ? { ...progress.stepAnswers } : undefined,
   };
 
@@ -154,6 +193,7 @@ export function completeStepInDb(
     activityId: id,
     status: allCompleted ? "completed" : "active",
     completedStepIds,
+    completedGuideStepIds: [...progress.completedGuideStepIds],
     startedAt: progress.startedAt ?? new Date().toISOString(),
     currentStepId: stepId,
     stepAnswers: Object.keys(stepAnswers).length > 0 ? stepAnswers : undefined,
@@ -187,6 +227,7 @@ export function updateCurrentStepInDb(
     activityId: id,
     status: "active",
     completedStepIds: [...progress.completedStepIds],
+    completedGuideStepIds: [...progress.completedGuideStepIds],
     startedAt: progress.startedAt ?? new Date().toISOString(),
     currentStepId: stepId,
     stepAnswers: progress.stepAnswers ? { ...progress.stepAnswers } : undefined,
@@ -200,10 +241,16 @@ export function resetActivityInDb(id: string, userId = "demo-user"): TaskDto | u
   const activityDto = getActivityDto(id);
   if (!activityDto) return undefined;
 
+  const currentProgressList = getUserProgressList(userId);
+  const currentProgress = currentProgressList.find((item) => item.activityId === id);
+
   const nextProgress: ActivityProgressDto = {
     activityId: id,
     status: "active",
     completedStepIds: [],
+    completedGuideStepIds: currentProgress?.completedGuideStepIds
+      ? [...currentProgress.completedGuideStepIds]
+      : [],
   };
 
   upsertUserProgress(userId, nextProgress);
@@ -230,6 +277,9 @@ export function completeTaskInDb(id: string, userId = "demo-user"): TaskDto | un
     activityId: id,
     status: "completed",
     completedStepIds: activity.steps.map((step) => step.id),
+    completedGuideStepIds: currentProgress?.completedGuideStepIds
+      ? [...currentProgress.completedGuideStepIds]
+      : [],
     startedAt: currentProgress?.startedAt,
     currentStepId: currentProgress?.currentStepId,
     stepAnswers: currentProgress?.stepAnswers,

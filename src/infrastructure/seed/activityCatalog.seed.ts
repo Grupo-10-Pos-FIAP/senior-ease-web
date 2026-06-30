@@ -370,6 +370,7 @@ export function getDemoProgressForUser(userId: string): ActivityProgressDto[] {
   return (DEMO_ACTIVITY_PROGRESS_SEED[userId] ?? []).map((progress) => ({
     ...progress,
     completedStepIds: [...progress.completedStepIds],
+    completedGuideStepIds: [...(progress.completedGuideStepIds ?? [])],
   }));
 }
 
@@ -385,6 +386,7 @@ export function buildDefaultProgressForCatalog(
       return {
         ...current,
         completedStepIds: [...current.completedStepIds],
+        completedGuideStepIds: [...(current.completedGuideStepIds ?? [])],
         stepAnswers: current.stepAnswers ? { ...current.stepAnswers } : undefined,
       };
     }
@@ -393,6 +395,7 @@ export function buildDefaultProgressForCatalog(
       activityId,
       status: "active",
       completedStepIds: [],
+      completedGuideStepIds: [],
     };
   });
 }

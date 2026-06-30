@@ -20,6 +20,7 @@ export interface Task {
   endDate: string;
   status: TaskStatus;
   steps: TaskStep[];
+  guideCompleted: boolean;
   startedAt?: string;
   currentStepId?: string;
 }
@@ -54,6 +55,7 @@ export function createTask(input: {
   endDate: string;
   status: TaskStatus;
   steps?: TaskStep[];
+  guideCompleted?: boolean;
   startedAt?: string;
   currentStepId?: string;
 }): Task {
@@ -81,6 +83,7 @@ export function createTask(input: {
     endDate: input.endDate,
     status: input.status,
     steps: (input.steps ?? []).map((step) => createTaskStep(step)),
+    guideCompleted: input.guideCompleted ?? false,
     startedAt: input.startedAt,
     currentStepId: input.currentStepId,
   };

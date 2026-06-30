@@ -4,6 +4,7 @@ export interface ActivityProgress {
   activityId: string;
   status: UserActivityStatus;
   completedStepIds: string[];
+  completedGuideStepIds: string[];
   startedAt?: string;
   currentStepId?: string;
   stepAnswers?: Record<string, string>;
@@ -15,6 +16,7 @@ export function createActivityProgress(input: {
   activityId: string;
   status?: UserActivityStatus;
   completedStepIds?: string[];
+  completedGuideStepIds?: string[];
   startedAt?: string;
   currentStepId?: string;
   stepAnswers?: Record<string, string>;
@@ -26,12 +28,14 @@ export function createActivityProgress(input: {
   }
 
   const completedStepIds = [...new Set(input.completedStepIds ?? [])];
+  const completedGuideStepIds = [...new Set(input.completedGuideStepIds ?? [])];
   const stepAnswers = input.stepAnswers ? { ...input.stepAnswers } : undefined;
 
   return {
     activityId: input.activityId,
     status,
     completedStepIds,
+    completedGuideStepIds,
     startedAt: input.startedAt,
     currentStepId: input.currentStepId,
     stepAnswers,

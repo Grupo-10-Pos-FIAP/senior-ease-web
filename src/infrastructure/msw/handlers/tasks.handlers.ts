@@ -1,5 +1,6 @@
 import { http, HttpResponse } from "msw";
 import {
+  completeGuideStepInDb,
   completeStepInDb,
   completeTaskInDb,
   getTaskFromDb,
@@ -78,6 +79,27 @@ export const tasksHandlers = [
 
     const started = startActivityInDb(id, stepId, userId);
     return HttpResponse.json(started);
+  }),
+
+  http.patch("/api/tasks/:id/guide/:stepId", ({ params, request }) => {
+    const id = params.id as string;
+    const stepId = params.stepId as string;
+    const userId = resolveUserId(request);
+
+    const dto = getTaskFromDb(id, userId);
+    if (!dto) {
+      return HttpResponse.json({ message: "Atividade não encontrada" }, { status: 404 });
+    }
+
+    if (dto.status !== "active") {
+      return HttpResponse.json(
+        { message: "O tutorial não pode ser concluído no estado atual" },
+        { status: 409 },
+      );
+    }
+
+    const updated = completeGuideStepInDb(id, stepId, userId);
+    return HttpResponse.json(updated);
   }),
 
   http.patch("/api/tasks/:id/steps/:stepId", async ({ params, request }) => {

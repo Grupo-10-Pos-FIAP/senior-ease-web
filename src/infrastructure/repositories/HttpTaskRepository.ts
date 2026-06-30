@@ -77,6 +77,14 @@ export class HttpTaskRepository implements ITaskRepository {
     return fromTaskDto(dto);
   }
 
+  async completeGuideStep(taskId: string, stepId: string): Promise<Task> {
+    const userId = resolveHttpUserId();
+    const dto = await this.httpClient.patch<TaskDto>(
+      `/api/tasks/${taskId}/guide/${stepId}?userId=${encodeURIComponent(userId)}`,
+    );
+    return fromTaskDto(dto);
+  }
+
   async updateCurrentStep(taskId: string, stepId: string): Promise<Task> {
     const userId = resolveHttpUserId();
     const dto = await this.httpClient.patch<TaskDto>(
