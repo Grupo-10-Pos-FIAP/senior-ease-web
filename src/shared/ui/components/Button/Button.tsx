@@ -2,7 +2,13 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 import "./Button.css";
 
 type ButtonVariant =
-  "primary" | "secondary" | "ghost" | "danger" | "danger-filled" | "warning-filled";
+  | "primary"
+  | "secondary"
+  | "ghost"
+  | "danger"
+  | "danger-filled"
+  | "warning-filled"
+  | "success-filled";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;

@@ -16,6 +16,8 @@
   --se-warning-bg-hover: color-mix(in srgb, var(--se-warning) 32%, transparent);
   --se-warning-fg: #6b4e0a;
   --se-warning-border: color-mix(in srgb, var(--se-warning) 45%, transparent);
+  --se-success: #2e7d32;
+  --se-success-dark: #1b5e20;
   --se-touch-min: 44px;
   --se-content-max-width: 1280px;
   --se-status-completed-bg: #e8f5e9;

@@ -11,13 +11,22 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1001;
-  width: min(92vw, 560px);
+  width: min(92vw, 720px);
+  max-height: min(90dvh, calc(100dvh - 2rem));
+  overflow-y: auto;
   padding: calc(var(--se-spacing, 1rem) * 2);
   background-color: var(--se-contrast-bg);
   color: var(--se-contrast-fg);
   border: 2px solid var(--se-border);
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+@media (min-width: 1024px) {
+  .confirm-dialog__content {
+    width: min(88vw, 840px);
+    padding: calc(var(--se-spacing, 1rem) * 2.5);
+  }
 }
 
 .confirm-dialog__title {

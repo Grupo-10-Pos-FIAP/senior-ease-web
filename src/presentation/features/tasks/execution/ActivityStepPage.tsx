@@ -147,7 +147,7 @@ function ActivityStepContent({ task, step, taskId, stepId }: ActivityStepContent
       confirmLabel: "Sim, concluir atividade",
       cancelLabel: "Não, continuar na atividade",
       alwaysConfirm: true,
-      confirmVariant: "warning",
+      confirmVariant: "success",
     });
   }
 

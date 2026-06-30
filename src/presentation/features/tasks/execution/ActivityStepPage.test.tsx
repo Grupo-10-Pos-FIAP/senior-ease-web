@@ -208,7 +208,7 @@ describe("Activity execution", () => {
     expect(screen.getByRole("alertdialog")).toBeInTheDocument();
     expect(screen.getByText(/não poderá refazer esta atividade/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /sim, concluir atividade/i }).className).toContain(
-      "se-button--warning-filled",
+      "se-button--success-filled",
     );
 
     await user.click(screen.getByRole("button", { name: /não, continuar na atividade/i }));

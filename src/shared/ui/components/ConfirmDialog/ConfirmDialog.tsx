@@ -2,7 +2,7 @@ import { AlertDialog } from "radix-ui";
 import { Button } from "@shared/ui/components/Button";
 import "./ConfirmDialog.css";
 
-export type ConfirmDialogVariant = "primary" | "danger" | "warning";
+export type ConfirmDialogVariant = "primary" | "danger" | "warning" | "success";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -54,7 +54,9 @@ export function ConfirmDialog({
                     ? "danger-filled"
                     : confirmVariant === "warning"
                       ? "warning-filled"
-                      : "primary"
+                      : confirmVariant === "success"
+                        ? "success-filled"
+                        : "primary"
                 }
                 className="confirm-dialog__button"
                 onClick={onConfirm}

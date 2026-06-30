@@ -85,6 +85,17 @@
   border-color: var(--se-warning);
 }
 
+.se-button--success-filled {
+  background-color: var(--se-success);
+  color: #ffffff;
+  border-color: var(--se-success);
+}
+
+.se-button--success-filled:hover:not(:disabled) {
+  background-color: var(--se-success-dark);
+  border-color: var(--se-success-dark);
+}
+
 [data-reinforced-feedback="true"] .se-button:active:not(:disabled) {
   transform: scale(0.97);
   box-shadow:
