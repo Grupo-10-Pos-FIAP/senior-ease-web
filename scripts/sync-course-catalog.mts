@@ -6,7 +6,6 @@ import type {
   ActivityDto,
   ActivityProgressDto,
 } from "../src/infrastructure/mappers/activity.mapper.ts";
-import type { TaskDto } from "../src/infrastructure/mappers/task.mapper.ts";
 import {
   ACTIVITY_CATALOG_SEED,
   applyCatalogExpiration,
@@ -19,7 +18,6 @@ interface SyncSummary {
   activitiesUpserted: number;
   activitiesExpired: number;
   usersProcessed: number;
-  legacyTasksMigrated: number;
   progressDocumentsCreated: number;
 }
 
@@ -51,14 +49,6 @@ function initializeAdminApp(): Firestore {
   return getFirestore();
 }
 
-function legacyTaskToProgress(task: TaskDto): ActivityProgressDto {
-  return {
-    activityId: task.id,
-    status: task.status === "completed" ? "completed" : "active",
-    completedStepIds: task.steps.filter((step) => step.completed).map((step) => step.id),
-  };
-}
-
 async function upsertCourseCatalog(
   firestore: Firestore,
   referenceDate: Date,
@@ -87,27 +77,6 @@ async function upsertCourseCatalog(
     activitiesUpserted: activities.length,
     activitiesExpired: activities.filter((activity) => activity.status === "expired").length,
   };
-}
-
-async function migrateLegacyTasksForUser(firestore: Firestore, userId: string): Promise<number> {
-  const legacySnapshot = await firestore.collection(`users/${userId}/tasks`).get();
-  if (legacySnapshot.empty) {
-    return 0;
-  }
-
-  const batch = firestore.batch();
-
-  legacySnapshot.docs.forEach((taskDoc) => {
-    const legacyTask = taskDoc.data() as TaskDto;
-    batch.set(
-      firestore.doc(`users/${userId}/activityProgress/${taskDoc.id}`),
-      legacyTaskToProgress(legacyTask),
-    );
-    batch.delete(taskDoc.ref);
-  });
-
-  await batch.commit();
-  return legacySnapshot.size;
 }
 
 async function ensureUserCourseEnrollment(firestore: Firestore, userId: string): Promise<void> {
@@ -165,12 +134,10 @@ export async function syncCourseCatalog(referenceDate = new Date()): Promise<Syn
   const activityIds = ACTIVITY_CATALOG_SEED.map((activity) => activity.id);
   const usersSnapshot = await firestore.collection("users").get();
 
-  let legacyTasksMigrated = 0;
   let progressDocumentsCreated = 0;
 
   for (const userDoc of usersSnapshot.docs) {
     await ensureUserCourseEnrollment(firestore, userDoc.id);
-    legacyTasksMigrated += await migrateLegacyTasksForUser(firestore, userDoc.id);
     progressDocumentsCreated += await ensureUserProgress(firestore, userDoc.id, activityIds);
   }
 
@@ -178,7 +145,6 @@ export async function syncCourseCatalog(referenceDate = new Date()): Promise<Syn
     activitiesUpserted,
     activitiesExpired,
     usersProcessed: usersSnapshot.size,
-    legacyTasksMigrated,
     progressDocumentsCreated,
   };
 }
@@ -190,7 +156,6 @@ async function main(): Promise<void> {
   console.log(`- Atividades sincronizadas: ${summary.activitiesUpserted}`);
   console.log(`- Atividades expiradas no catálogo: ${summary.activitiesExpired}`);
   console.log(`- Usuários processados: ${summary.usersProcessed}`);
-  console.log(`- Tarefas legadas migradas: ${summary.legacyTasksMigrated}`);
   console.log(`- Documentos de progresso criados: ${summary.progressDocumentsCreated}`);
 }
 

@@ -4,7 +4,6 @@ import { getFirestoreDb } from "@infrastructure/firebase/client";
 import { ageToBirthDate } from "@infrastructure/mappers/user.mapper";
 import { toPreferencesDto } from "@infrastructure/mappers/preferences.mapper";
 import type { ActivityDto, ActivityProgressDto } from "@infrastructure/mappers/activity.mapper";
-import type { TaskDto } from "@infrastructure/mappers/task.mapper";
 import {
   applyCatalogExpiration,
   buildDefaultProgressForCatalog,
@@ -70,17 +69,6 @@ function mergeProgressFromSeed(
     startedAt: existing.startedAt ?? seed.startedAt,
     currentStepId: existing.currentStepId ?? seed.currentStepId,
     stepAnswers: existing.stepAnswers ?? seed.stepAnswers,
-  };
-}
-
-function legacyTaskToProgress(task: TaskDto): ActivityProgressDto {
-  const completedStepIds = task.steps.filter((step) => step.completed).map((step) => step.id);
-
-  return {
-    activityId: task.id,
-    status: task.status === "completed" ? "completed" : "active",
-    completedStepIds,
-    completedGuideStepIds: [],
   };
 }
 
@@ -177,26 +165,6 @@ async function syncActivityProgressForUser(
   }
 }
 
-async function migrateLegacyTasksToProgress(firestore: Firestore, uid: string): Promise<void> {
-  const legacyTasksRef = collection(firestore, "users", uid, "tasks");
-  const snapshot = await getDocs(legacyTasksRef);
-
-  if (snapshot.empty) {
-    return;
-  }
-
-  const progressRef = collection(firestore, "users", uid, "activityProgress");
-  const batch = writeBatch(firestore);
-
-  snapshot.docs.forEach((taskDoc) => {
-    const legacyTask = taskDoc.data() as TaskDto;
-    batch.set(doc(progressRef, taskDoc.id), legacyTaskToProgress(legacyTask));
-    batch.delete(taskDoc.ref);
-  });
-
-  await batch.commit();
-}
-
 function createNewUserDocument(uid: string, email: string | null): UserDocument {
   return {
     id: uid,
@@ -252,7 +220,6 @@ export async function ensureUserDocument(uid: string, email: string | null): Pro
 
   if (snapshot.exists()) {
     await migrateLegacyUserDocument(userRef, snapshot.data());
-    await migrateLegacyTasksToProgress(firestore, uid);
 
     if (isTaskSeedSyncEnabled()) {
       await syncCourseCatalog(firestore);
@@ -289,22 +256,6 @@ export async function deleteUserActivityProgress(firestore: Firestore, uid: stri
 
 export async function deleteUserLearningData(firestore: Firestore, uid: string): Promise<void> {
   await deleteUserActivityProgress(firestore, uid);
-
-  const legacyTasksSnapshot = await getDocs(collection(firestore, "users", uid, "tasks"));
-  if (legacyTasksSnapshot.empty) {
-    return;
-  }
-
-  const batch = writeBatch(firestore);
-  legacyTasksSnapshot.docs.forEach((taskDoc) => {
-    batch.delete(taskDoc.ref);
-  });
-  await batch.commit();
-}
-
-/** @deprecated Use `deleteUserLearningData`. Mantido para compatibilidade durante migração. */
-export async function deleteUserTasks(firestore: Firestore, uid: string): Promise<void> {
-  await deleteUserLearningData(firestore, uid);
 }
 
 export async function syncCourseCatalogForDev(firestore: Firestore): Promise<void> {
