@@ -62,19 +62,18 @@ export function LoginPage() {
       <div className="login-page__card">
         <p className="login-page__brand">SeniorEASE</p>
         <h1 id="login-heading" className="login-page__title">
-          Bem-vindo(a)
+          Bem-vindo(a) ao SeniorEASE!
         </h1>
-        <p className="login-page__subtitle">Entre para continuar</p>
 
         <SegmentedControl
           name="login-mode"
           value={mode}
           options={[
-            { value: "sign-in", label: "Entrar" },
-            { value: "sign-up", label: "Criar conta" },
+            { value: "sign-in", label: "Acessar minha conta" },
+            { value: "sign-up", label: "Criar minha conta" },
           ]}
           onChange={setMode}
-          ariaLabel="Escolha entrar ou criar conta"
+          ariaLabel="Escolha acessar minha conta ou criar minha conta"
         />
 
         <form
@@ -126,7 +125,7 @@ export function LoginPage() {
             disabled={isLoading}
             aria-busy={isSubmitting}
           >
-            {mode === "sign-in" ? "Entrar" : "Criar minha conta"}
+            {mode === "sign-in" ? "Acessar minha conta" : "Criar minha conta"}
           </Button>
         </form>
 
