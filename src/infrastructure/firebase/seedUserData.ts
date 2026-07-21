@@ -5,6 +5,7 @@ import { ageToBirthDate } from "@infrastructure/mappers/user.mapper";
 import { toPreferencesDto } from "@infrastructure/mappers/preferences.mapper";
 import type { ActivityDto, ActivityProgressDto } from "@infrastructure/mappers/activity.mapper";
 import {
+  ACTIVITY_CATALOG_SEED,
   applyCatalogExpiration,
   buildDefaultProgressForCatalog,
   cloneActivityCatalogSeed,
@@ -100,7 +101,26 @@ async function syncCourseCatalog(firestore: Firestore): Promise<void> {
   await batch.commit();
 }
 
+/**
+ * Tentativa best-effort: as regras atuais bloqueiam escrita em `courses` no client.
+ * Em DEV o catálogo é lido do seed local; em produção use `npm run sync:course` (Admin SDK).
+ */
+async function trySyncCourseCatalog(firestore: Firestore): Promise<void> {
+  try {
+    await syncCourseCatalog(firestore);
+  } catch (error: unknown) {
+    console.warn(
+      "[SeniorEase] Catálogo não sincronizado no Firestore (escrita em courses bloqueada pelas regras). Em DEV a lista usa o seed local.",
+      error,
+    );
+  }
+}
+
 async function listCatalogActivityIds(firestore: Firestore): Promise<string[]> {
+  if (isTaskSeedSyncEnabled()) {
+    return ACTIVITY_CATALOG_SEED.map((activity) => activity.id);
+  }
+
   const snapshot = await getDocs(collection(firestore, "courses", DEFAULT_COURSE_ID, "activities"));
   return snapshot.docs.map((activityDoc) => activityDoc.id);
 }
@@ -222,7 +242,7 @@ export async function ensureUserDocument(uid: string, email: string | null): Pro
     await migrateLegacyUserDocument(userRef, snapshot.data());
 
     if (isTaskSeedSyncEnabled()) {
-      await syncCourseCatalog(firestore);
+      await trySyncCourseCatalog(firestore);
     }
 
     await syncActivityProgressForUser(firestore, uid, seedProgress);
@@ -234,7 +254,7 @@ export async function ensureUserDocument(uid: string, email: string | null): Pro
   await batch.commit();
 
   if (isTaskSeedSyncEnabled()) {
-    await syncCourseCatalog(firestore);
+    await trySyncCourseCatalog(firestore);
   }
 
   await syncActivityProgressForUser(firestore, uid, seedProgress);

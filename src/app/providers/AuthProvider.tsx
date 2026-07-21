@@ -27,11 +27,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
 
       setUser(authUser);
-      setStatus("authenticated");
+      setStatus("loading");
 
-      void ensureUserDocument(authUser.uid, authUser.email).catch((error: unknown) => {
-        console.error("[SeniorEase] Falha ao preparar dados do usuário no Firestore:", error);
-      });
+      // Aguarda o sync do catálogo antes de liberar a app, para a lista de
+      // atividades não carregar datas antigas do Firestore.
+      void ensureUserDocument(authUser.uid, authUser.email)
+        .catch((error: unknown) => {
+          console.error("[SeniorEase] Falha ao preparar dados do usuário no Firestore:", error);
+        })
+        .finally(() => {
+          setStatus("authenticated");
+        });
     });
   }, []);
 

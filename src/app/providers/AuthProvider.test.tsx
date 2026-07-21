@@ -55,4 +55,36 @@ describe("AuthProvider", () => {
 
     expect(authMocks.ensureUserDocument).toHaveBeenCalledWith("user-1", "test@example.com");
   });
+
+  it("só autentica depois que o seed do catálogo termina", async () => {
+    let resolveSeed: (() => void) | undefined;
+    authMocks.ensureUserDocument.mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveSeed = resolve;
+        }),
+    );
+    authMocks.subscribeToAuthState.mockImplementation(
+      (callback: (user: AuthUser | null) => void) => {
+        callback({ uid: "user-1", email: "test@example.com" });
+        return () => undefined;
+      },
+    );
+
+    render(
+      <AuthProvider>
+        <AuthStatusProbe />
+      </AuthProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("status:loading")).toBeInTheDocument();
+    });
+
+    resolveSeed?.();
+
+    await waitFor(() => {
+      expect(screen.getByText("status:authenticated")).toBeInTheDocument();
+    });
+  });
 });
