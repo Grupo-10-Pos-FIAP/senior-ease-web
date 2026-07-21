@@ -6,10 +6,8 @@ import { TaskListPanel } from "@presentation/features/tasks/TaskListPanel";
 import {
   completeGuideStepInDb,
   resetTasksDb,
-  setCatalogInDb,
   TASK_MOCK_REFERENCE_DATE,
 } from "@infrastructure/msw/db/tasks.db";
-import { cloneActivityCatalogSeed } from "@infrastructure/seed/activityCatalog.seed";
 import { applyAccessibilityTokens } from "@shared/lib/accessibilityTokens";
 import { renderWithProviders } from "@shared/test/renderWithProviders";
 
@@ -69,6 +67,14 @@ describe("TaskListPanel", () => {
       .map((heading) => heading.textContent);
 
     expect(titles).toEqual([
+      'Atividade "Conferindo Avisos no Celular"',
+      'Oficina "Criando sua Conta de E-mail"',
+      'Curso "Reconhecendo Links Confiáveis"',
+      'Atividade "Usando o Calendário Digital"',
+      'Oficina "WhatsApp no Celular e no Computador"',
+      'Curso "Pedindo Ajuda por Mensagem"',
+      'Atividade "Salvando Contatos de Emergência"',
+      'Oficina "Reconhecendo Links Seguros"',
       'Oficina "Primeiros Passos no Digital"',
       'Curso "Como usar E-mail"',
       'Atividade "Videochamadas sem Medo"',
@@ -135,8 +141,8 @@ describe("TaskListPanel", () => {
     await waitForTasksLoaded();
 
     const links = screen.getAllByRole("link", { name: /como fazer essa atividade/i });
-    expect(links).toHaveLength(11);
-    expect(links[0]).toHaveAttribute("href", "/tarefas/task-1/guia");
+    expect(links).toHaveLength(19);
+    expect(links[0]).toHaveAttribute("href", "/tarefas/task-14/guia");
   });
 
   it("exibe rever como fazer essa atividade após concluir o tutorial", async () => {
@@ -214,19 +220,18 @@ describe("TaskListPanel", () => {
 
   it("exibe layout de atividades expiradas com badge e mensagem de prazo", async () => {
     const user = userEvent.setup();
-    setCatalogInDb(cloneActivityCatalogSeed(new Date("2026-07-11T12:00:00")));
     renderWithProviders(<TaskListPanel />);
     await waitForTasksLoaded();
 
     await user.click(screen.getByRole("tab", { name: /atividades expiradas/i }));
 
     expect(
-      await screen.findByRole("heading", { name: /simulação de situações reais/i }),
+      await screen.findByRole("heading", { name: /criando conta de e-mail/i }),
     ).toBeInTheDocument();
-    expect(screen.getAllByText("Atividade expirada!").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("Atividade expirada!").length).toBeGreaterThanOrEqual(5);
     expect(
       screen.getAllByText("O prazo para essa atividade já se expirou.").length,
-    ).toBeGreaterThanOrEqual(1);
+    ).toBeGreaterThanOrEqual(5);
     expect(screen.queryByRole("button", { name: /refazer atividade/i })).not.toBeInTheDocument();
   });
 });

@@ -3,10 +3,12 @@ import type { ActivityDto, ActivityProgressDto } from "@infrastructure/mappers/a
 import { enrichActivityStepsWithContent } from "@infrastructure/seed/activityStepContent.seed";
 
 /**
- * Data de referência do demo. Os prazos das atividades ativas foram definidos
- * para cobrir todos os cenários de badge (hoje até 7 dias) a partir desta data.
+ * Data de referência do demo (hoje do catálogo).
+ * - task-14..task-21: badges de prazo (hoje até 7 dias)
+ * - task-22..task-26: já expiradas (prazo antes da data de referência)
+ * - demais: prazos futuros até setembro/2026
  */
-export const TASK_MOCK_REFERENCE_DATE = "2026-06-29";
+export const TASK_MOCK_REFERENCE_DATE = "2026-07-21";
 
 export const DEFAULT_COURSE_SEED = {
   id: DEFAULT_COURSE_ID,
@@ -15,10 +17,178 @@ export const DEFAULT_COURSE_SEED = {
 
 export const ACTIVITY_CATALOG_SEED: ActivityDto[] = [
   {
+    id: "task-14",
+    title: 'Atividade "Conferindo Avisos no Celular"',
+    startDate: "2026-07-15",
+    endDate: "2026-08-30",
+    status: "active",
+    steps: [
+      {
+        id: "step-14-1",
+        label: "Leitura: lendo avisos importantes no celular",
+        type: "content_reading",
+        order: 1,
+      },
+      {
+        id: "step-14-2",
+        label: "Quiz: o que fazer com um aviso urgente",
+        type: "multiple_choice",
+        order: 2,
+      },
+    ],
+  },
+  {
+    id: "task-15",
+    title: 'Oficina "Criando sua Conta de E-mail"',
+    startDate: "2026-07-15",
+    endDate: "2026-08-31",
+    status: "active",
+    steps: [
+      {
+        id: "step-15-1",
+        label: "Leitura: passos para criar um e-mail",
+        type: "content_reading",
+        order: 1,
+      },
+      {
+        id: "step-15-2",
+        label: "Quiz: escolhendo uma senha segura",
+        type: "multiple_choice",
+        order: 2,
+      },
+    ],
+  },
+  {
+    id: "task-16",
+    title: 'Curso "Reconhecendo Links Confiáveis"',
+    startDate: "2026-07-15",
+    endDate: "2026-08-28",
+    status: "active",
+    steps: [
+      {
+        id: "step-16-1",
+        label: "Leitura: como identificar um link seguro",
+        type: "content_reading",
+        order: 1,
+      },
+      {
+        id: "step-16-2",
+        label: "Quiz: quando desconfiar de um endereço",
+        type: "multiple_choice",
+        order: 2,
+      },
+    ],
+  },
+  {
+    id: "task-17",
+    title: 'Atividade "Usando o Calendário Digital"',
+    startDate: "2026-07-15",
+    endDate: "2026-08-29",
+    status: "active",
+    steps: [
+      {
+        id: "step-17-1",
+        label: "Leitura: criando um compromisso no calendário",
+        type: "content_reading",
+        order: 1,
+      },
+      {
+        id: "step-17-2",
+        label: "Quiz: lembretes e alertas do calendário",
+        type: "multiple_choice",
+        order: 2,
+      },
+    ],
+  },
+  {
+    id: "task-18",
+    title: 'Oficina "WhatsApp no Celular e no Computador"',
+    startDate: "2026-07-15",
+    endDate: "2026-08-30",
+    status: "active",
+    steps: [
+      {
+        id: "step-18-1",
+        label: "Leitura: conversando no WhatsApp do celular",
+        type: "content_reading",
+        order: 1,
+      },
+      {
+        id: "step-18-2",
+        label: "Quiz: usando o WhatsApp Web com segurança",
+        type: "multiple_choice",
+        order: 2,
+      },
+    ],
+  },
+  {
+    id: "task-19",
+    title: 'Curso "Pedindo Ajuda por Mensagem"',
+    startDate: "2026-07-15",
+    endDate: "2026-08-31",
+    status: "active",
+    steps: [
+      {
+        id: "step-19-1",
+        label: "Leitura: escrevendo um pedido claro",
+        type: "content_reading",
+        order: 1,
+      },
+      {
+        id: "step-19-2",
+        label: "Quiz: quando pedir ajuda a alguém de confiança",
+        type: "multiple_choice",
+        order: 2,
+      },
+    ],
+  },
+  {
+    id: "task-20",
+    title: 'Atividade "Salvando Contatos de Emergência"',
+    startDate: "2026-07-15",
+    endDate: "2026-08-27",
+    status: "active",
+    steps: [
+      {
+        id: "step-20-1",
+        label: "Leitura: cadastrando um contato importante",
+        type: "content_reading",
+        order: 1,
+      },
+      {
+        id: "step-20-2",
+        label: "Quiz: quem incluir na lista de emergência",
+        type: "multiple_choice",
+        order: 2,
+      },
+    ],
+  },
+  {
+    id: "task-21",
+    title: 'Oficina "Reconhecendo Links Seguros"',
+    startDate: "2026-07-15",
+    endDate: "2026-08-28",
+    status: "active",
+    steps: [
+      {
+        id: "step-21-1",
+        label: "Leitura: https e o cadeado do navegador",
+        type: "content_reading",
+        order: 1,
+      },
+      {
+        id: "step-21-2",
+        label: "Quiz: quando desconfiar de um link",
+        type: "multiple_choice",
+        order: 2,
+      },
+    ],
+  },
+  {
     id: "task-1",
     title: 'Oficina "Primeiros Passos no Digital"',
-    startDate: "2026-06-10",
-    endDate: "2026-06-29",
+    startDate: "2026-07-15",
+    endDate: "2026-08-05",
     status: "active",
     steps: [
       { id: "step-1-1", label: "Conhecendo o mundo digital", type: "content_reading", order: 1 },
@@ -40,8 +210,8 @@ export const ACTIVITY_CATALOG_SEED: ActivityDto[] = [
   {
     id: "task-2",
     title: 'Curso "Como usar E-mail"',
-    startDate: "2026-06-10",
-    endDate: "2026-06-30",
+    startDate: "2026-07-15",
+    endDate: "2026-08-08",
     status: "active",
     steps: [
       { id: "step-2-1", label: "Acessar sua caixa de entrada", type: "content_reading", order: 1 },
@@ -52,8 +222,8 @@ export const ACTIVITY_CATALOG_SEED: ActivityDto[] = [
   {
     id: "task-3",
     title: 'Atividade "Videochamadas sem Medo"',
-    startDate: "2026-06-15",
-    endDate: "2026-07-01",
+    startDate: "2026-07-15",
+    endDate: "2026-08-12",
     status: "active",
     steps: [
       {
@@ -79,8 +249,8 @@ export const ACTIVITY_CATALOG_SEED: ActivityDto[] = [
   {
     id: "task-4",
     title: "Oficina de Segurança Digital",
-    startDate: "2026-06-15",
-    endDate: "2026-07-02",
+    startDate: "2026-07-15",
+    endDate: "2026-08-15",
     status: "active",
     steps: [
       {
@@ -102,8 +272,8 @@ export const ACTIVITY_CATALOG_SEED: ActivityDto[] = [
   {
     id: "task-9",
     title: 'Atividade "Organizando Arquivos no Computador"',
-    startDate: "2026-06-15",
-    endDate: "2026-07-03",
+    startDate: "2026-07-15",
+    endDate: "2026-08-18",
     status: "active",
     steps: [
       {
@@ -123,8 +293,8 @@ export const ACTIVITY_CATALOG_SEED: ActivityDto[] = [
   {
     id: "task-10",
     title: 'Curso "Pesquisando na Internet com Segurança"',
-    startDate: "2026-06-15",
-    endDate: "2026-07-04",
+    startDate: "2026-07-15",
+    endDate: "2026-08-20",
     status: "active",
     steps: [
       {
@@ -144,8 +314,8 @@ export const ACTIVITY_CATALOG_SEED: ActivityDto[] = [
   {
     id: "task-11",
     title: 'Oficina "Usando o Teclado com Confiança"',
-    startDate: "2026-06-15",
-    endDate: "2026-07-05",
+    startDate: "2026-07-15",
+    endDate: "2026-08-22",
     status: "active",
     steps: [
       {
@@ -165,8 +335,8 @@ export const ACTIVITY_CATALOG_SEED: ActivityDto[] = [
   {
     id: "task-12",
     title: 'Atividade "Introdução ao WhatsApp"',
-    startDate: "2026-06-15",
-    endDate: "2026-07-06",
+    startDate: "2026-07-15",
+    endDate: "2026-08-25",
     status: "active",
     steps: [
       {
@@ -186,8 +356,8 @@ export const ACTIVITY_CATALOG_SEED: ActivityDto[] = [
   {
     id: "task-13",
     title: 'Oficina "Planejando o Orçamento Mensal"',
-    startDate: "2026-06-15",
-    endDate: "2026-07-15",
+    startDate: "2026-07-15",
+    endDate: "2026-09-30",
     status: "active",
     steps: [
       {
@@ -207,8 +377,8 @@ export const ACTIVITY_CATALOG_SEED: ActivityDto[] = [
   {
     id: "task-5",
     title: 'Atividade "Currículo Digital"',
-    startDate: "2026-06-15",
-    endDate: "2026-07-07",
+    startDate: "2026-07-15",
+    endDate: "2026-08-28",
     status: "active",
     steps: [
       {
@@ -234,8 +404,8 @@ export const ACTIVITY_CATALOG_SEED: ActivityDto[] = [
   {
     id: "task-6",
     title: 'Oficina "Entrevista de Emprego Online"',
-    startDate: "2026-06-15",
-    endDate: "2026-07-08",
+    startDate: "2026-07-15",
+    endDate: "2026-09-05",
     status: "active",
     steps: [
       {
@@ -261,8 +431,8 @@ export const ACTIVITY_CATALOG_SEED: ActivityDto[] = [
   {
     id: "task-7",
     title: "Simulação de Situações Reais",
-    startDate: "2026-06-15",
-    endDate: "2026-07-09",
+    startDate: "2026-07-15",
+    endDate: "2026-09-10",
     status: "active",
     steps: [
       {
@@ -288,8 +458,8 @@ export const ACTIVITY_CATALOG_SEED: ActivityDto[] = [
   {
     id: "task-8",
     title: 'Atividade "Compras Online com Segurança"',
-    startDate: "2026-06-15",
-    endDate: "2026-07-10",
+    startDate: "2026-07-15",
+    endDate: "2026-09-15",
     status: "active",
     steps: [
       {
@@ -309,6 +479,111 @@ export const ACTIVITY_CATALOG_SEED: ActivityDto[] = [
         label: "Quiz: formas de pagamento seguras",
         type: "multiple_choice",
         order: 3,
+      },
+    ],
+  },
+  {
+    id: "task-22",
+    title: 'Oficina "Criando Conta de E-mail"',
+    startDate: "2026-06-01",
+    endDate: "2026-08-10",
+    status: "expired",
+    steps: [
+      {
+        id: "step-22-1",
+        label: "Leitura: escolhendo um provedor de e-mail",
+        type: "content_reading",
+        order: 1,
+      },
+      {
+        id: "step-22-2",
+        label: "Quiz: senha forte para o e-mail",
+        type: "multiple_choice",
+        order: 2,
+      },
+    ],
+  },
+  {
+    id: "task-23",
+    title: 'Curso "Instalando Aplicativos com Segurança"',
+    startDate: "2026-06-01",
+    endDate: "2026-08-12",
+    status: "expired",
+    steps: [
+      {
+        id: "step-23-1",
+        label: "Leitura: baixando só de lojas oficiais",
+        type: "content_reading",
+        order: 1,
+      },
+      {
+        id: "step-23-2",
+        label: "Quiz: permissões que um app pede",
+        type: "multiple_choice",
+        order: 2,
+      },
+    ],
+  },
+  {
+    id: "task-24",
+    title: 'Atividade "Pagando Contas pelo Celular"',
+    startDate: "2026-06-05",
+    endDate: "2026-08-14",
+    status: "expired",
+    steps: [
+      {
+        id: "step-24-1",
+        label: "Leitura: boleto e Pix com atenção",
+        type: "content_reading",
+        order: 1,
+      },
+      {
+        id: "step-24-2",
+        label: "Quiz: evitando golpes no pagamento",
+        type: "multiple_choice",
+        order: 2,
+      },
+    ],
+  },
+  {
+    id: "task-25",
+    title: 'Oficina "Usando o GPS sem Confusão"',
+    startDate: "2026-06-05",
+    endDate: "2026-08-16",
+    status: "expired",
+    steps: [
+      {
+        id: "step-25-1",
+        label: "Leitura: traçando um caminho simples",
+        type: "content_reading",
+        order: 1,
+      },
+      {
+        id: "step-25-2",
+        label: "Quiz: quando confiar no mapa",
+        type: "multiple_choice",
+        order: 2,
+      },
+    ],
+  },
+  {
+    id: "task-26",
+    title: 'Curso "Protegendo Fotos e Documentos"',
+    startDate: "2026-06-10",
+    endDate: "2026-08-18",
+    status: "expired",
+    steps: [
+      {
+        id: "step-26-1",
+        label: "Leitura: fazendo cópia de segurança",
+        type: "content_reading",
+        order: 1,
+      },
+      {
+        id: "step-26-2",
+        label: "Quiz: onde guardar arquivos importantes",
+        type: "multiple_choice",
+        order: 2,
       },
     ],
   },
