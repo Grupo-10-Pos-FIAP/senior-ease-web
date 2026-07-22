@@ -10,9 +10,9 @@ const EXPIRED_SEED_IDS = ["task-22", "task-23", "task-24", "task-25", "task-26"]
 
 describe("activityCatalog.seed", () => {
   it("inclui cinco atividades marcadas como expiradas no seed", () => {
-    const expiredIds = ACTIVITY_CATALOG_SEED.filter((activity) => activity.status === "expired").map(
-      (activity) => activity.id,
-    );
+    const expiredIds = ACTIVITY_CATALOG_SEED.filter(
+      (activity) => activity.status === "expired",
+    ).map((activity) => activity.id);
 
     expect(expiredIds).toEqual(EXPIRED_SEED_IDS);
   });
@@ -46,9 +46,7 @@ describe("activityCatalog.seed", () => {
         "task-21",
       ]),
     );
-    expect(stillActiveIds).toEqual(
-      expect.arrayContaining(["task-13", "task-8", "task-7"]),
-    );
+    expect(stillActiveIds).toEqual(expect.arrayContaining(["task-13", "task-8", "task-7"]));
   });
 
   it("mantém a data máxima de expiração em setembro de 2026", () => {
