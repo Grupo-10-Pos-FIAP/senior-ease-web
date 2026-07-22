@@ -160,7 +160,15 @@ src/
 
 **API REST (v1, simulada via MSW):** `GET/PATCH /api/users/:id`, `POST /api/users/:id/deactivate|reactivate`, `DELETE /api/users/:id`, `GET/PUT /api/users/:id/preferences`, `GET/POST /api/tasks`, `GET /api/tasks/:id`, `PATCH /api/tasks/:id/steps/:stepId`, `PATCH /api/tasks/:id/complete`, `GET /api/activities/history`. MVP usa `userId` fixo `"demo-user"`.
 
-Conta: desativação com retenção de 90 dias + reativação no login/cadastro. Purge automático via `functions/` (`npm run functions:deploy`).
+Conta: desativação com retenção de 90 dias + reativação no login/cadastro.
+
+**Purge manual (após 90 dias):** script em `scripts/purge-deactivated-accounts.mts`. Apaga Auth + documento Firestore do usuário e subcoleção `activityProgress`. Funciona em produção desde que a service account seja do projeto Firebase correto.
+
+```bash
+export GOOGLE_APPLICATION_CREDENTIALS=./service-account.json
+npm run purge:accounts:dry   # simula
+npm run purge:accounts       # executa
+```
 
 ---
 
