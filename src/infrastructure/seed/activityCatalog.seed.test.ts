@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   ACTIVITY_CATALOG_SEED,
   applyCatalogExpiration,
+  buildDefaultProgressForCatalog,
   resolveCatalogStatusByEndDate,
   TASK_MOCK_REFERENCE_DATE,
 } from "@infrastructure/seed/activityCatalog.seed";
@@ -53,5 +54,27 @@ describe("activityCatalog.seed", () => {
     const endDates = ACTIVITY_CATALOG_SEED.map((activity) => activity.endDate);
     expect(endDates.every((endDate) => endDate <= "2026-09-30")).toBe(true);
     expect(endDates).toContain("2026-09-30");
+  });
+
+  it("normaliza progresso incompleto ao mesclar com o catálogo", () => {
+    const merged = buildDefaultProgressForCatalog(
+      ["task-1", "task-2"],
+      [{ activityId: "task-1", status: "active" }],
+    );
+
+    expect(merged).toEqual([
+      {
+        activityId: "task-1",
+        status: "active",
+        completedStepIds: [],
+        completedGuideStepIds: [],
+      },
+      {
+        activityId: "task-2",
+        status: "active",
+        completedStepIds: [],
+        completedGuideStepIds: [],
+      },
+    ]);
   });
 });

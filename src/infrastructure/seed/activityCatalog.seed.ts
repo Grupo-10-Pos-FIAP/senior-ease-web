@@ -649,9 +649,15 @@ export function getDemoProgressForUser(userId: string): ActivityProgressDto[] {
   }));
 }
 
+function asStringIdList(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string")
+    : [];
+}
+
 export function buildDefaultProgressForCatalog(
   activityIds: string[],
-  existing: ActivityProgressDto[] = [],
+  existing: Array<Partial<ActivityProgressDto> & Pick<ActivityProgressDto, "activityId">> = [],
 ): ActivityProgressDto[] {
   const existingById = new Map(existing.map((progress) => [progress.activityId, progress]));
 
@@ -659,10 +665,19 @@ export function buildDefaultProgressForCatalog(
     const current = existingById.get(activityId);
     if (current) {
       const progress: ActivityProgressDto = {
-        ...current,
-        completedStepIds: [...current.completedStepIds],
-        completedGuideStepIds: [...(current.completedGuideStepIds ?? [])],
+        activityId: current.activityId,
+        status: current.status === "completed" ? "completed" : "active",
+        completedStepIds: asStringIdList(current.completedStepIds),
+        completedGuideStepIds: asStringIdList(current.completedGuideStepIds),
       };
+
+      if (current.startedAt) {
+        progress.startedAt = current.startedAt;
+      }
+
+      if (current.currentStepId) {
+        progress.currentStepId = current.currentStepId;
+      }
 
       if (current.stepAnswers) {
         progress.stepAnswers = { ...current.stepAnswers };
