@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { AlertDialog } from "radix-ui";
 import { Button } from "@shared/ui/components/Button";
 import "./ConfirmDialog.css";
@@ -25,13 +26,25 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
+  const confirmedRef = useRef(false);
+
   return (
     <AlertDialog.Root
       open={open}
       onOpenChange={(isOpen) => {
-        if (!isOpen) {
-          onCancel();
+        if (isOpen) {
+          return;
         }
+
+        // AlertDialog.Action também fecha o dialog e dispara onOpenChange(false).
+        // Não tratar isso como cancelamento — senão o onCancel (ex.: signOut) corre
+        // em paralelo com onConfirm e quebra ações assíncronas como reativar conta.
+        if (confirmedRef.current) {
+          confirmedRef.current = false;
+          return;
+        }
+
+        onCancel();
       }}
     >
       <AlertDialog.Portal>
@@ -43,7 +56,7 @@ export function ConfirmDialog({
           </AlertDialog.Description>
           <div className="confirm-dialog__actions">
             <AlertDialog.Cancel asChild>
-              <Button variant="secondary" className="confirm-dialog__button" onClick={onCancel}>
+              <Button variant="secondary" className="confirm-dialog__button">
                 {cancelLabel}
               </Button>
             </AlertDialog.Cancel>
@@ -59,7 +72,10 @@ export function ConfirmDialog({
                         : "primary"
                 }
                 className="confirm-dialog__button"
-                onClick={onConfirm}
+                onClick={() => {
+                  confirmedRef.current = true;
+                  onConfirm();
+                }}
               >
                 {confirmLabel}
               </Button>

@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUser, formatUserAge, formatUserDisability, type User } from "@domain/entities/User";
 import type { UserUpdateInput } from "@domain/repositories/IUserRepository";
+import { signOutUser } from "@infrastructure/firebase/authService";
 import { formatPhoneMask } from "@shared/lib/formatPhone";
 import {
   birthDateDisplayToIso,
@@ -162,7 +163,7 @@ function SaveIcon() {
 
 export function AccountInfoTab() {
   const { data: user, isLoading, isError } = useUserQuery();
-  const { updateMutation, deleteMutation } = useUserMutations();
+  const { updateMutation, deactivateMutation } = useUserMutations();
   const { pending, runIfAllowed, confirm, cancel, isOpen } = useConfirmCriticalAction();
   const navigate = useNavigate();
 
@@ -218,26 +219,28 @@ export function AccountInfoTab() {
     });
   };
 
-  const handleDelete = () => {
+  const handleDeactivate = () => {
     runIfAllowed(
       () => {
-        deleteMutation.mutate(undefined, {
+        deactivateMutation.mutate(undefined, {
           onSuccess: () => {
-            void navigate("/", { state: { accountDeleted: true }, replace: true });
+            void signOutUser().then(() => {
+              void navigate("/entrar", { state: { accountDeactivated: true }, replace: true });
+            });
           },
           onError: () => {
             setFeedback({
               type: "error",
-              message: "Não foi possível excluir a conta. Tente novamente.",
+              message: "Não foi possível desativar a conta. Tente novamente.",
             });
           },
         });
       },
       {
-        title: "Excluir conta permanentemente?",
+        title: "Desativar sua conta?",
         description:
-          "Todos os seus dados serão removidos e não poderão ser recuperados. Esta ação é irreversível.",
-        confirmLabel: "Sim, excluir minha conta",
+          "Sua conta ficará inativa por 90 dias. Nesse período seus dados e progresso serão preservados e você poderá reativar a conta. Após 90 dias, a conta e todos os dados serão excluídos permanentemente.",
+        confirmLabel: "Sim, desativar minha conta",
         cancelLabel: "Não, manter minha conta",
         confirmVariant: "danger",
         alwaysConfirm: true,
@@ -504,9 +507,13 @@ export function AccountInfoTab() {
           </>
         ) : (
           <>
-            <Button variant="danger" onClick={handleDelete} disabled={deleteMutation.isPending}>
+            <Button
+              variant="danger"
+              onClick={handleDeactivate}
+              disabled={deactivateMutation.isPending}
+            >
               <TrashIcon />
-              {deleteMutation.isPending ? "Excluindo…" : "Excluir minha conta"}
+              {deactivateMutation.isPending ? "Desativando…" : "Desativar conta"}
             </Button>
             <Button variant="primary" onClick={handleEdit}>
               <PencilIcon />

@@ -18,5 +18,6 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./src/shared/test/setup.ts"],
     pool: "threads",
+    exclude: ["**/node_modules/**", "**/dist/**", "**/functions/**"],
   },
 });

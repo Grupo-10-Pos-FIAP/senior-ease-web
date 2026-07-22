@@ -47,6 +47,20 @@ describe("user.handlers", () => {
     expect(getResponse.status).toBe(404);
   });
 
+  it("POST deactivate e reactivate alteram o status da conta", async () => {
+    const deactivateResponse = await fetch("/api/users/demo-user/deactivate", { method: "POST" });
+    expect(deactivateResponse.status).toBe(200);
+    const deactivated = (await deactivateResponse.json()) as UserDto;
+    expect(deactivated.accountStatus).toBe("deactivated");
+    expect(deactivated.purgeAt).toBeTruthy();
+
+    const reactivateResponse = await fetch("/api/users/demo-user/reactivate", { method: "POST" });
+    expect(reactivateResponse.status).toBe(200);
+    const reactivated = (await reactivateResponse.json()) as UserDto;
+    expect(reactivated.accountStatus).toBe("active");
+    expect(reactivated.deactivatedAt).toBeNull();
+  });
+
   it("GET retorna 404 para usuário inexistente", async () => {
     const response = await fetch("/api/users/inexistente");
     expect(response.status).toBe(404);

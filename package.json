@@ -20,7 +20,10 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "sync:course": "tsx --tsconfig tsconfig.app.json scripts/sync-course-catalog.mts",
-    "reset:course": "tsx --tsconfig tsconfig.app.json scripts/reset-course-catalog.mts --wipe-activities"
+    "reset:course": "tsx --tsconfig tsconfig.app.json scripts/reset-course-catalog.mts --wipe-activities",
+    "functions:build": "npm --prefix functions run build",
+    "functions:test": "npm --prefix functions test",
+    "functions:deploy": "firebase deploy --only functions"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.101.0",

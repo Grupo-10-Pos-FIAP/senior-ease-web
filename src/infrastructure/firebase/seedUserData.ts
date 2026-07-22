@@ -33,6 +33,9 @@ export interface UserDocument {
   phone: string;
   preferences: ReturnType<typeof toPreferencesDto>;
   enrolledCourseId: string;
+  accountStatus: "active" | "deactivated";
+  deactivatedAt: string | null;
+  purgeAt: string | null;
 }
 
 /** Em produção, o catálogo é gerenciado pelo script Admin / Firebase Console. */
@@ -196,6 +199,9 @@ function createNewUserDocument(uid: string, email: string | null): UserDocument 
     phone: "",
     preferences: toPreferencesDto(createDefaultPreferences()),
     enrolledCourseId: DEFAULT_COURSE_ID,
+    accountStatus: "active",
+    deactivatedAt: null,
+    purgeAt: null,
   };
 }
 
@@ -223,6 +229,12 @@ async function migrateLegacyUserDocument(
 
   if (data.birthDate === "1960-01-01" && isIncompleteProfile) {
     patch.birthDate = "";
+  }
+
+  if (data.accountStatus !== "active" && data.accountStatus !== "deactivated") {
+    patch.accountStatus = "active";
+    patch.deactivatedAt = null;
+    patch.purgeAt = null;
   }
 
   if (Object.keys(patch).length === 0) {

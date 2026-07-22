@@ -1,6 +1,11 @@
 import { GetPreferences } from "@application/accessibility/GetPreferences";
 import { ResetPreferences } from "@application/accessibility/ResetPreferences";
 import { UpdatePreferences } from "@application/accessibility/UpdatePreferences";
+import {
+  DeactivateUser,
+  GetAccountLifecycle,
+  ReactivateUser,
+} from "@application/profile/AccountStatus";
 import { DeleteUser } from "@application/profile/DeleteUser";
 import { GetUser } from "@application/profile/GetUser";
 import { UpdateUser } from "@application/profile/UpdateUser";
@@ -33,4 +38,7 @@ export const resetActivity = new ResetActivity(taskRepository);
 
 export const getUser = new GetUser(userRepository);
 export const updateUser = new UpdateUser(userRepository);
+export const getAccountLifecycle = new GetAccountLifecycle(userRepository);
+export const deactivateUser = new DeactivateUser(userRepository);
+export const reactivateUser = new ReactivateUser(userRepository);
 export const deleteUser = new DeleteUser(userRepository);

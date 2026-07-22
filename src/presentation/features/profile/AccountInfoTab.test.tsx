@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach } from "vitest";
+import { describe, expect, it, beforeEach, vi } from "vitest";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
@@ -18,6 +18,10 @@ import { toPreferencesDto } from "@infrastructure/mappers/preferences.mapper";
 import { applyAccessibilityTokens } from "@shared/lib/accessibilityTokens";
 import { renderWithProviders } from "@shared/test/renderWithProviders";
 
+vi.mock("@infrastructure/firebase/authService", () => ({
+  signOutUser: vi.fn().mockResolvedValue(undefined),
+}));
+
 async function findAccountTab() {
   await waitFor(() => {
     expect(screen.queryByText(/carregando informações/i)).not.toBeInTheDocument();
@@ -36,6 +40,7 @@ function renderAccountApp(initialRoute = "/perfil/conta") {
   const router = createMemoryRouter(
     [
       { path: "/", element: <DashboardPage /> },
+      { path: "/entrar", element: <p>Login</p> },
       { path: "/perfil/conta", element: <AccountInfoTab /> },
     ],
     { initialEntries: [initialRoute] },
@@ -49,6 +54,7 @@ function renderAccountApp(initialRoute = "/perfil/conta") {
           value={{
             user: { uid: "demo-user", email: "antoniojose@seniorease.com.br" },
             status: "authenticated",
+            refreshSession: () => Promise.resolve(),
           }}
         >
           <AccessibilityProvider>
@@ -147,30 +153,27 @@ describe("AccountInfoTab", () => {
     expect(emailInput).toHaveAttribute("aria-invalid", "true");
   });
 
-  it("deletar conta com confirmação exige dialog e redireciona", async () => {
+  it("desativar conta com confirmação exige dialog e redireciona para login", async () => {
     const user = userEvent.setup();
     const { router } = renderAccountApp();
 
     const tab = await findAccountTab();
 
-    await user.click(within(tab).getByRole("button", { name: /excluir minha conta/i }));
+    await user.click(within(tab).getByRole("button", { name: /desativar conta/i }));
 
     expect(
-      await screen.findByRole("alertdialog", { name: /excluir conta permanentemente/i }),
+      await screen.findByRole("alertdialog", { name: /desativar sua conta/i }),
     ).toBeInTheDocument();
+    expect(screen.getByText(/90 dias/i)).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: /sim, excluir minha conta/i }));
+    await user.click(screen.getByRole("button", { name: /sim, desativar minha conta/i }));
 
     await waitFor(() => {
-      expect(router.state.location.pathname).toBe("/");
+      expect(router.state.location.pathname).toBe("/entrar");
     });
-
-    expect(await screen.findByRole("alertdialog", { name: /conta excluída/i })).toHaveTextContent(
-      /conta foi excluída permanentemente/i,
-    );
   });
 
-  it("deletar conta exige confirmação mesmo com preferência desligada", async () => {
+  it("desativar conta exige confirmação mesmo com preferência desligada", async () => {
     const user = userEvent.setup();
     updatePreferencesInDb(
       "demo-user",
@@ -180,18 +183,16 @@ describe("AccountInfoTab", () => {
     const { router } = renderAccountApp();
     const tab = await findAccountTab();
 
-    await user.click(within(tab).getByRole("button", { name: /excluir minha conta/i }));
+    await user.click(within(tab).getByRole("button", { name: /desativar conta/i }));
 
     expect(
-      await screen.findByRole("alertdialog", { name: /excluir conta permanentemente/i }),
+      await screen.findByRole("alertdialog", { name: /desativar sua conta/i }),
     ).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: /sim, excluir minha conta/i }));
+    await user.click(screen.getByRole("button", { name: /sim, desativar minha conta/i }));
 
     await waitFor(() => {
-      expect(router.state.location.pathname).toBe("/");
+      expect(router.state.location.pathname).toBe("/entrar");
     });
-
-    expect(await screen.findByRole("alertdialog", { name: /conta excluída/i })).toBeInTheDocument();
   });
 });

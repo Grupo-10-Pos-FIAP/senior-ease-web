@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteUser, getUser, updateUser } from "@app/composition/useCases";
+import { deactivateUser, getUser, updateUser } from "@app/composition/useCases";
 import { useAuth } from "@app/providers/authContext";
 import { UserNotFoundError } from "@domain/errors/UserNotFoundError";
 import type { UserUpdateInput } from "@domain/repositories/IUserRepository";
@@ -45,12 +45,12 @@ export function useUserMutations() {
     },
   });
 
-  const deleteMutation = useMutation({
+  const deactivateMutation = useMutation({
     mutationFn: () => {
       if (!userId) {
         throw new Error("Usuário não autenticado");
       }
-      return deleteUser.execute(userId);
+      return deactivateUser.execute(userId);
     },
     onSuccess: () => {
       if (userId) {
@@ -59,5 +59,5 @@ export function useUserMutations() {
     },
   });
 
-  return { updateMutation, deleteMutation };
+  return { updateMutation, deactivateMutation };
 }

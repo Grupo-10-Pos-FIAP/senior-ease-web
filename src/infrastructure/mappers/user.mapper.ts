@@ -1,3 +1,8 @@
+import {
+  normalizeAccountLifecycle,
+  type AccountLifecycle,
+  type AccountStatus,
+} from "@domain/accountLifecycle";
 import { createUser, type User } from "@domain/entities/User";
 
 export interface UserDto {
@@ -10,6 +15,9 @@ export interface UserDto {
   disability: string | null;
   email: string;
   phone: string;
+  accountStatus?: AccountStatus;
+  deactivatedAt?: string | null;
+  purgeAt?: string | null;
 }
 
 export function ageToBirthDate(age: number): string {
@@ -52,7 +60,20 @@ export function fromUserDto(dto: UserDto): User {
   };
 }
 
-export function toUserDto(user: User): UserDto {
+export function fromAccountLifecycleDto(dto: {
+  accountStatus?: AccountStatus | null;
+  deactivatedAt?: string | null;
+  purgeAt?: string | null;
+}): AccountLifecycle {
+  return normalizeAccountLifecycle({
+    accountStatus: dto.accountStatus,
+    deactivatedAt: dto.deactivatedAt,
+    purgeAt: dto.purgeAt,
+  });
+}
+
+export function toUserDto(user: User, lifecycle?: AccountLifecycle): UserDto {
+  const account = lifecycle ?? normalizeAccountLifecycle({});
   return {
     id: user.id,
     fullName: user.fullName,
@@ -61,6 +82,9 @@ export function toUserDto(user: User): UserDto {
     disability: user.disability,
     email: user.email,
     phone: user.phone,
+    accountStatus: account.accountStatus,
+    deactivatedAt: account.deactivatedAt,
+    purgeAt: account.purgeAt,
   };
 }
 

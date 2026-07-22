@@ -1,3 +1,4 @@
+import { ACTIVE_ACCOUNT_LIFECYCLE, createDeactivatedLifecycle } from "@domain/accountLifecycle";
 import type { UserDto } from "@infrastructure/mappers/user.mapper";
 
 const store = new Map<string, UserDto>();
@@ -10,6 +11,9 @@ const DEMO_USER: UserDto = {
   disability: "Baixa visão",
   email: "antoniojose@seniorease.com.br",
   phone: "(85) 96767-6767",
+  accountStatus: "active",
+  deactivatedAt: null,
+  purgeAt: null,
 };
 
 export function seedUserDb(): void {
@@ -25,6 +29,35 @@ export function getUserFromDb(userId: string): UserDto | undefined {
 export function updateUserInDb(userId: string, dto: UserDto): UserDto {
   store.set(userId, { ...dto });
   return { ...dto };
+}
+
+export function deactivateUserInDb(userId: string): UserDto | undefined {
+  const current = store.get(userId);
+  if (!current) return undefined;
+
+  const lifecycle = createDeactivatedLifecycle();
+  const updated: UserDto = {
+    ...current,
+    accountStatus: lifecycle.accountStatus,
+    deactivatedAt: lifecycle.deactivatedAt,
+    purgeAt: lifecycle.purgeAt,
+  };
+  store.set(userId, updated);
+  return { ...updated };
+}
+
+export function reactivateUserInDb(userId: string): UserDto | undefined {
+  const current = store.get(userId);
+  if (!current) return undefined;
+
+  const updated: UserDto = {
+    ...current,
+    accountStatus: ACTIVE_ACCOUNT_LIFECYCLE.accountStatus,
+    deactivatedAt: null,
+    purgeAt: null,
+  };
+  store.set(userId, updated);
+  return { ...updated };
 }
 
 export function deleteUserFromDb(userId: string): boolean {

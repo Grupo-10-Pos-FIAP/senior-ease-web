@@ -13,7 +13,7 @@ export function ProtectedRoute() {
     return <p style={{ padding: "2rem", textAlign: "center" }}>Carregando…</p>;
   }
 
-  if (status === "unauthenticated") {
+  if (status === "unauthenticated" || status === "deactivated") {
     return <Navigate to="/entrar" replace />;
   }
 

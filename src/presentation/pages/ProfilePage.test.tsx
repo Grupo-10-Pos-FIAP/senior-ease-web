@@ -44,6 +44,7 @@ function renderApp(initialRoute = "/") {
         value={{
           user: { uid: "demo-user", email: "antoniojose@seniorease.com.br" },
           status: "authenticated",
+          refreshSession: () => Promise.resolve(),
         }}
       >
         <AccessibilityProvider>

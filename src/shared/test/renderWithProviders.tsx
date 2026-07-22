@@ -32,6 +32,7 @@ export function renderWithProviders(
           value={{
             user: { uid: DEMO_USER_ID, email: "antoniojose@seniorease.com.br" },
             status: "authenticated",
+            refreshSession: () => Promise.resolve(),
           }}
         >
           <AccessibilityProvider>

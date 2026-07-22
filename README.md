@@ -145,7 +145,7 @@ src/
 | ----------------- | ------------------------ | ------------------------------------------------------------ | -------------------------------------------------- |
 | **Accessibility** | `IPreferencesRepository` | `AccessibilityPreferences`, `FontSizeLevel`, `ContrastLevel` | Get/Update/Reset preferences                       |
 | **Tasks**         | `ITaskRepository`        | `Task`, `TaskStep`, `ActivityHistoryEntry`                   | List, Get, Create, CompleteStep, Complete, History |
-| **Profile**       | `IUserRepository`        | `User`, prefs de notificação                                 | Get/Update perfil                                  |
+| **Profile**       | `IUserRepository`        | `User`, ciclo de vida da conta                               | Get/Update, Deactivate/Reactivate                  |
 
 **Rotas previstas (presentation):**
 
@@ -158,7 +158,9 @@ src/
 | `/historico`      | Histórico                |
 | `/perfil`         | Perfil e configurações   |
 
-**API REST (v1, simulada via MSW):** `GET/PATCH /api/users/:id`, `GET/PUT /api/users/:id/preferences`, `GET/POST /api/tasks`, `GET /api/tasks/:id`, `PATCH /api/tasks/:id/steps/:stepId`, `PATCH /api/tasks/:id/complete`, `GET /api/activities/history`. MVP usa `userId` fixo `"demo-user"`.
+**API REST (v1, simulada via MSW):** `GET/PATCH /api/users/:id`, `POST /api/users/:id/deactivate|reactivate`, `DELETE /api/users/:id`, `GET/PUT /api/users/:id/preferences`, `GET/POST /api/tasks`, `GET /api/tasks/:id`, `PATCH /api/tasks/:id/steps/:stepId`, `PATCH /api/tasks/:id/complete`, `GET /api/activities/history`. MVP usa `userId` fixo `"demo-user"`.
+
+Conta: desativação com retenção de 90 dias + reativação no login/cadastro. Purge automático via `functions/` (`npm run functions:deploy`).
 
 ---
 

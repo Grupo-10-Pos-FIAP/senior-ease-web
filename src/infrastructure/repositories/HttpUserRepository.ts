@@ -1,9 +1,15 @@
 import type { User } from "@domain/entities/User";
 import { UserNotFoundError } from "@domain/errors/UserNotFoundError";
+import type { AccountLifecycle } from "@domain/accountLifecycle";
 import type { IUserRepository, UserUpdateInput } from "@domain/repositories/IUserRepository";
 import type { HttpClient } from "@infrastructure/api/HttpClient";
 import { HttpError } from "@infrastructure/api/HttpClient";
-import { fromUserDto, toUserDto, type UserDto } from "@infrastructure/mappers/user.mapper";
+import {
+  fromAccountLifecycleDto,
+  fromUserDto,
+  toUserDto,
+  type UserDto,
+} from "@infrastructure/mappers/user.mapper";
 
 export class HttpUserRepository implements IUserRepository {
   constructor(private readonly httpClient: HttpClient) {}
@@ -20,10 +26,46 @@ export class HttpUserRepository implements IUserRepository {
     }
   }
 
+  async getAccountLifecycle(userId: string): Promise<AccountLifecycle> {
+    try {
+      const dto = await this.httpClient.get<UserDto>(`/api/users/${userId}`);
+      return fromAccountLifecycleDto(dto);
+    } catch (error) {
+      if (error instanceof HttpError && error.status === 404) {
+        throw new UserNotFoundError(userId);
+      }
+      throw error;
+    }
+  }
+
   async update(userId: string, input: UserUpdateInput): Promise<User> {
     try {
       const dto = await this.httpClient.patch<UserDto>(`/api/users/${userId}`, input);
       return fromUserDto(dto);
+    } catch (error) {
+      if (error instanceof HttpError && error.status === 404) {
+        throw new UserNotFoundError(userId);
+      }
+      throw error;
+    }
+  }
+
+  async deactivate(userId: string): Promise<AccountLifecycle> {
+    try {
+      const dto = await this.httpClient.post<UserDto>(`/api/users/${userId}/deactivate`, {});
+      return fromAccountLifecycleDto(dto);
+    } catch (error) {
+      if (error instanceof HttpError && error.status === 404) {
+        throw new UserNotFoundError(userId);
+      }
+      throw error;
+    }
+  }
+
+  async reactivate(userId: string): Promise<AccountLifecycle> {
+    try {
+      const dto = await this.httpClient.post<UserDto>(`/api/users/${userId}/reactivate`, {});
+      return fromAccountLifecycleDto(dto);
     } catch (error) {
       if (error instanceof HttpError && error.status === 404) {
         throw new UserNotFoundError(userId);

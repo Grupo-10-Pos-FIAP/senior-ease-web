@@ -1,6 +1,13 @@
 import { http, HttpResponse } from "msw";
-import { deleteUserFromDb, getUserFromDb, updateUserInDb } from "@infrastructure/msw/db/user.db";
+import {
+  deactivateUserInDb,
+  deleteUserFromDb,
+  getUserFromDb,
+  reactivateUserInDb,
+  updateUserInDb,
+} from "@infrastructure/msw/db/user.db";
 import { toUserDto, toValidatedUser } from "@infrastructure/mappers/user.mapper";
+import { fromAccountLifecycleDto } from "@infrastructure/mappers/user.mapper";
 
 export const userHandlers = [
   http.get("/api/users/:id", ({ params }) => {
@@ -11,7 +18,10 @@ export const userHandlers = [
       return HttpResponse.json({ message: "Usuário não encontrado" }, { status: 404 });
     }
 
-    return HttpResponse.json(dto);
+    return HttpResponse.json({
+      ...dto,
+      ...fromAccountLifecycleDto(dto),
+    });
   }),
 
   http.patch("/api/users/:id", async ({ params, request }) => {
@@ -34,13 +44,36 @@ export const userHandlers = [
         email: (body.email as string | undefined) ?? current.email,
         phone: (body.phone as string | undefined) ?? current.phone,
       });
-      const dto = toUserDto(user);
+      const lifecycle = fromAccountLifecycleDto(current);
+      const dto = toUserDto(user, lifecycle);
       updateUserInDb(userId, dto);
       return HttpResponse.json(dto);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Dados inválidos";
       return HttpResponse.json({ message }, { status: 400 });
     }
+  }),
+
+  http.post("/api/users/:id/deactivate", ({ params }) => {
+    const userId = params.id as string;
+    const dto = deactivateUserInDb(userId);
+
+    if (!dto) {
+      return HttpResponse.json({ message: "Usuário não encontrado" }, { status: 404 });
+    }
+
+    return HttpResponse.json(dto);
+  }),
+
+  http.post("/api/users/:id/reactivate", ({ params }) => {
+    const userId = params.id as string;
+    const dto = reactivateUserInDb(userId);
+
+    if (!dto) {
+      return HttpResponse.json({ message: "Usuário não encontrado" }, { status: 404 });
+    }
+
+    return HttpResponse.json(dto);
   }),
 
   http.delete("/api/users/:id", ({ params }) => {

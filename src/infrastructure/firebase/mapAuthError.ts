@@ -17,9 +17,16 @@ const AUTH_ERROR_MESSAGES: Record<string, string> = {
   "auth/too-many-requests": "Muitas tentativas. Aguarde um momento e tente de novo.",
 };
 
+export function getAuthErrorCode(error: unknown): string | null {
+  if (error && typeof error === "object" && "code" in error && typeof error.code === "string") {
+    return error.code;
+  }
+  return null;
+}
+
 export function mapAuthError(error: unknown): string {
-  if (error && typeof error === "object" && "code" in error) {
-    const code = (error as { code: string }).code;
+  const code = getAuthErrorCode(error);
+  if (code) {
     const message = AUTH_ERROR_MESSAGES[code];
     if (message) return message;
   }
