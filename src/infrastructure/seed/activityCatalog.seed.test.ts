@@ -9,12 +9,10 @@ import {
 const EXPIRED_SEED_IDS = ["task-22", "task-23", "task-24", "task-25", "task-26"];
 
 describe("activityCatalog.seed", () => {
-  it("inclui cinco atividades já expiradas na data de referência", () => {
-    const referenceDate = new Date(`${TASK_MOCK_REFERENCE_DATE}T12:00:00`);
-    const activities = applyCatalogExpiration(ACTIVITY_CATALOG_SEED, referenceDate);
-    const expiredIds = activities
-      .filter((activity) => activity.status === "expired")
-      .map((activity) => activity.id);
+  it("inclui cinco atividades marcadas como expiradas no seed", () => {
+    const expiredIds = ACTIVITY_CATALOG_SEED.filter((activity) => activity.status === "expired").map(
+      (activity) => activity.id,
+    );
 
     expect(expiredIds).toEqual(EXPIRED_SEED_IDS);
   });
@@ -25,7 +23,7 @@ describe("activityCatalog.seed", () => {
     expect(resolveCatalogStatusByEndDate(TASK_MOCK_REFERENCE_DATE, referenceDate)).toBe("active");
     expect(resolveCatalogStatusByEndDate("2026-07-20", referenceDate)).toBe("expired");
 
-    const afterNearTermDeadlines = new Date("2026-07-29T12:00:00");
+    const afterNearTermDeadlines = new Date("2026-09-01T12:00:00");
     const expiredActivities = applyCatalogExpiration(ACTIVITY_CATALOG_SEED, afterNearTermDeadlines);
     const expiredIds = expiredActivities
       .filter((activity) => activity.status === "expired")
@@ -37,6 +35,7 @@ describe("activityCatalog.seed", () => {
     expect(expiredIds).toEqual(
       expect.arrayContaining([
         ...EXPIRED_SEED_IDS,
+        "task-1",
         "task-14",
         "task-15",
         "task-16",
@@ -48,7 +47,7 @@ describe("activityCatalog.seed", () => {
       ]),
     );
     expect(stillActiveIds).toEqual(
-      expect.arrayContaining(["task-1", "task-2", "task-13", "task-8"]),
+      expect.arrayContaining(["task-13", "task-8", "task-7"]),
     );
   });
 

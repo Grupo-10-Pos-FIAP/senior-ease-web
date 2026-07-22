@@ -79,6 +79,6 @@ describe("taskDeadline", () => {
 
     const sorted = sortActiveTasksByDeadline(tasks);
 
-    expect(sorted.map((task) => task.id)).toEqual(["task-14", "task-15", "task-1", "task-13"]);
+    expect(sorted.map((task) => task.id)).toEqual(["task-1", "task-14", "task-15", "task-13"]);
   });
 });

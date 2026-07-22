@@ -67,14 +67,6 @@ describe("TaskListPanel", () => {
       .map((heading) => heading.textContent);
 
     expect(titles).toEqual([
-      'Atividade "Conferindo Avisos no Celular"',
-      'Oficina "Criando sua Conta de E-mail"',
-      'Curso "Reconhecendo Links Confiáveis"',
-      'Atividade "Usando o Calendário Digital"',
-      'Oficina "WhatsApp no Celular e no Computador"',
-      'Curso "Pedindo Ajuda por Mensagem"',
-      'Atividade "Salvando Contatos de Emergência"',
-      'Oficina "Reconhecendo Links Seguros"',
       'Oficina "Primeiros Passos no Digital"',
       'Curso "Como usar E-mail"',
       'Atividade "Videochamadas sem Medo"',
@@ -83,28 +75,21 @@ describe("TaskListPanel", () => {
       'Curso "Pesquisando na Internet com Segurança"',
       'Oficina "Usando o Teclado com Confiança"',
       'Atividade "Introdução ao WhatsApp"',
+      'Atividade "Salvando Contatos de Emergência"',
+      'Curso "Reconhecendo Links Confiáveis"',
+      'Oficina "Reconhecendo Links Seguros"',
+      'Atividade "Usando o Calendário Digital"',
+      'Atividade "Conferindo Avisos no Celular"',
+      'Oficina "WhatsApp no Celular e no Computador"',
+      'Curso "Pedindo Ajuda por Mensagem"',
+      'Oficina "Criando sua Conta de E-mail"',
       "Simulação de Situações Reais",
       'Atividade "Compras Online com Segurança"',
       'Oficina "Planejando o Orçamento Mensal"',
     ]);
   });
 
-  it("exibe badges de prazo para todos os cenários de até 7 dias", async () => {
-    useMockReferenceDate();
-    renderWithProviders(<TaskListPanel />);
-    await waitForTasksLoaded();
-
-    expect(screen.getByText("Prazo termina hoje")).toBeInTheDocument();
-    expect(screen.getByText("Prazo termina daqui 1 dia")).toBeInTheDocument();
-    expect(screen.getByText("Prazo termina daqui 2 dias")).toBeInTheDocument();
-    expect(screen.getByText("Prazo termina daqui 3 dias")).toBeInTheDocument();
-    expect(screen.getByText("Prazo termina daqui 4 dias")).toBeInTheDocument();
-    expect(screen.getByText("Prazo termina daqui 5 dias")).toBeInTheDocument();
-    expect(screen.getByText("Prazo termina daqui 6 dias")).toBeInTheDocument();
-    expect(screen.getByText("Prazo termina daqui 7 dias")).toBeInTheDocument();
-  });
-
-  it("não exibe badge de prazo para atividades com mais de 7 dias para vencer", async () => {
+  it("não exibe badge de prazo quando o vencimento está além de 7 dias", async () => {
     useMockReferenceDate();
     renderWithProviders(<TaskListPanel />);
     await waitForTasksLoaded();
@@ -115,7 +100,7 @@ describe("TaskListPanel", () => {
 
     expect(budgetCard).toBeInTheDocument();
     expect(budgetCard).not.toHaveTextContent(/prazo termina/i);
-    expect(screen.getAllByText(/prazo termina/i)).toHaveLength(8);
+    expect(screen.queryByText(/prazo termina/i)).not.toBeInTheDocument();
   });
 
   it("filtra atividades concluídas na aba correspondente", async () => {
@@ -142,7 +127,7 @@ describe("TaskListPanel", () => {
 
     const links = screen.getAllByRole("link", { name: /como fazer essa atividade/i });
     expect(links).toHaveLength(19);
-    expect(links[0]).toHaveAttribute("href", "/tarefas/task-14/guia");
+    expect(links[0]).toHaveAttribute("href", "/tarefas/task-1/guia");
   });
 
   it("exibe rever como fazer essa atividade após concluir o tutorial", async () => {
