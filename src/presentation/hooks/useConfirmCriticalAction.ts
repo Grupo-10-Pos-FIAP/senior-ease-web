@@ -4,7 +4,7 @@ import type { ConfirmDialogVariant } from "@shared/ui/components/ConfirmDialog/C
 
 interface CriticalActionOptions {
   title: string;
-  description: string;
+  description?: string;
   confirmLabel?: string;
   cancelLabel?: string;
   /** Quando true, exige confirmação mesmo com a preferência de confirmação desligada. */

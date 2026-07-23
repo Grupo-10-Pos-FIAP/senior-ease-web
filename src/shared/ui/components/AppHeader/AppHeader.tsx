@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "@app/providers/authContext";
+import { useConfirmCriticalAction } from "@presentation/hooks/useConfirmCriticalAction";
 import { signOutUser } from "@infrastructure/firebase/authService";
 import { Button } from "@shared/ui/components/Button";
 import { ConfirmDialog } from "@shared/ui/components/ConfirmDialog";
@@ -8,11 +8,22 @@ import "./AppHeader.css";
 
 export function AppHeader() {
   const { status } = useAuth();
-  const [showSignOutDialog, setShowSignOutDialog] = useState(false);
+  const { pending, runIfAllowed, confirm, cancel, isOpen } = useConfirmCriticalAction();
 
-  async function handleConfirmSignOut() {
-    await signOutUser();
-    setShowSignOutDialog(false);
+  function handleSignOutClick() {
+    runIfAllowed(
+      () => {
+        void signOutUser();
+      },
+      {
+        title: "Sair da sua conta?",
+        description:
+          "Você precisará entrar novamente para acessar suas atividades e preferências salvas.",
+        confirmLabel: "Sim, sair da conta",
+        cancelLabel: "Não, continuar aqui",
+        confirmVariant: "warning",
+      },
+    );
   }
 
   return (
@@ -44,12 +55,10 @@ export function AppHeader() {
               variant="ghost"
               className="app-header__action--secondary"
               aria-label="Sair da conta"
-              aria-haspopup="dialog"
-              aria-expanded={showSignOutDialog}
+              aria-haspopup={pending ? "dialog" : undefined}
+              aria-expanded={isOpen}
               disabled={status !== "authenticated"}
-              onClick={() => {
-                setShowSignOutDialog(true);
-              }}
+              onClick={handleSignOutClick}
             >
               Sair
             </Button>
@@ -58,16 +67,14 @@ export function AppHeader() {
       </header>
 
       <ConfirmDialog
-        open={showSignOutDialog}
-        title="Sair da sua conta?"
-        description="Você precisará entrar novamente para acessar suas atividades e preferências salvas."
-        confirmLabel="Sim, sair da conta"
-        cancelLabel="Não, continuar aqui"
-        confirmVariant="warning"
-        onConfirm={() => void handleConfirmSignOut()}
-        onCancel={() => {
-          setShowSignOutDialog(false);
-        }}
+        open={isOpen}
+        title={pending?.options.title ?? ""}
+        description={pending?.options.description ?? ""}
+        confirmLabel={pending?.options.confirmLabel}
+        cancelLabel={pending?.options.cancelLabel}
+        confirmVariant={pending?.options.confirmVariant}
+        onConfirm={confirm}
+        onCancel={cancel}
       />
     </>
   );

@@ -8,7 +8,7 @@ export type ConfirmDialogVariant = "primary" | "danger" | "warning" | "success";
 interface ConfirmDialogProps {
   open: boolean;
   title: string;
-  description: string;
+  description?: string;
   confirmLabel?: string;
   cancelLabel?: string;
   confirmVariant?: ConfirmDialogVariant;
@@ -27,6 +27,7 @@ export function ConfirmDialog({
   onCancel,
 }: ConfirmDialogProps) {
   const confirmedRef = useRef(false);
+  const hasDescription = Boolean(description);
 
   return (
     <AlertDialog.Root
@@ -49,11 +50,16 @@ export function ConfirmDialog({
     >
       <AlertDialog.Portal>
         <AlertDialog.Overlay className="confirm-dialog__overlay" />
-        <AlertDialog.Content className="confirm-dialog__content">
+        <AlertDialog.Content
+          className="confirm-dialog__content"
+          {...(!hasDescription ? { "aria-describedby": undefined } : {})}
+        >
           <AlertDialog.Title className="confirm-dialog__title">{title}</AlertDialog.Title>
-          <AlertDialog.Description className="confirm-dialog__description">
-            {description}
-          </AlertDialog.Description>
+          {hasDescription ? (
+            <AlertDialog.Description className="confirm-dialog__description">
+              {description}
+            </AlertDialog.Description>
+          ) : null}
           <div className="confirm-dialog__actions">
             <AlertDialog.Cancel asChild>
               <Button variant="secondary" className="confirm-dialog__button">

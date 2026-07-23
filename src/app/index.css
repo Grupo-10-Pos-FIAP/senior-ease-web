@@ -39,10 +39,6 @@ body {
   padding: calc(var(--se-spacing, 1rem) * 1.5);
 }
 
-[data-interface-mode="basic"] .app-header__action--secondary {
-  display: none;
-}
-
 [data-interface-mode="basic"] .dashboard-page__subtitle {
   display: none;
 }
