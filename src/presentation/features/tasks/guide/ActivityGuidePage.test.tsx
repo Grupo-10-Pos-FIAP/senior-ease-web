@@ -9,6 +9,8 @@ import { AuthContext } from "@app/providers/authContext";
 import { AccessibilityProvider } from "@app/providers/AccessibilityProvider";
 import { ActivityGuidePage } from "@presentation/features/tasks/guide/ActivityGuidePage";
 import { StepTutorialPage } from "@presentation/features/tasks/guide/StepTutorialPage";
+import { TaskWizardEntry } from "@presentation/features/tasks/execution/TaskWizardEntry";
+import { ActivityStepPage } from "@presentation/features/tasks/execution/ActivityStepPage";
 import { resetTasksDb } from "@infrastructure/msw/db/tasks.db";
 import { applyAccessibilityTokens } from "@shared/lib/accessibilityTokens";
 import { DEMO_USER_ID } from "@shared/constants/user";
@@ -23,6 +25,8 @@ function renderGuideRoute(initialRoute: string) {
     [
       { path: "/tarefas/:id/guia/:stepId", element: <StepTutorialPage /> },
       { path: "/tarefas/:id/guia", element: <ActivityGuidePage /> },
+      { path: "/tarefas/:id/passo/:stepId", element: <ActivityStepPage /> },
+      { path: "/tarefas/:id", element: <TaskWizardEntry /> },
     ],
     { initialEntries: [initialRoute] },
   );
@@ -102,25 +106,25 @@ describe("ActivityGuidePage", () => {
     );
     expect(
       screen.getByRole("button", {
-        name: /iniciar a atividade: oficina "primeiros passos no digital"/i,
+        name: /^iniciar: oficina "primeiros passos no digital"$/i,
       }),
     ).toBeInTheDocument();
   });
 
-  it("pede confirmação antes de iniciar a atividade no guia", async () => {
+  it("no modo avançado inicia a atividade no guia sem confirmação", async () => {
     const user = userEvent.setup();
     renderGuideRoute("/tarefas/task-1/guia");
     await waitForGuideLoaded();
 
     await user.click(
       screen.getByRole("button", {
-        name: /iniciar a atividade: oficina "primeiros passos no digital"/i,
+        name: /^iniciar: oficina "primeiros passos no digital"$/i,
       }),
     );
 
     expect(
-      await screen.findByRole("alertdialog", { name: /iniciar esta atividade/i }),
-    ).toBeInTheDocument();
+      screen.queryByRole("alertdialog", { name: /iniciar esta atividade/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("lista quiz de e-mail no curso como usar e-mail", async () => {

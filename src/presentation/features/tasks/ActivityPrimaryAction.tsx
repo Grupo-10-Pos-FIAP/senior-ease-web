@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import type { ActivityProgress } from "@domain/entities/Task";
+import { useAccessibility } from "@app/providers/accessibilityContext";
 import {
   getActivityPrimaryActionLabel,
   getEffectiveActivityProgress,
@@ -25,9 +26,10 @@ export function ActivityPrimaryAction({
   className = "se-button se-button--primary activity-card__link activity-card__primary-link",
 }: ActivityPrimaryActionProps) {
   const navigate = useNavigate();
+  const { preferences } = useAccessibility();
   const { pending, runIfAllowed, confirm, cancel, isOpen } = useConfirmCriticalAction();
   const effectiveProgress = getEffectiveActivityProgress(progress);
-  const label = getActivityPrimaryActionLabel(progress);
+  const label = getActivityPrimaryActionLabel(progress, preferences.interfaceMode);
   const ariaLabel = `${label}: ${taskTitle}`;
 
   if (effectiveProgress === "in_progress") {
@@ -40,9 +42,16 @@ export function ActivityPrimaryAction({
   }
 
   const handleStart = () => {
-    runIfAllowed(() => {
+    const startActivity = () => {
       void navigate(`/tarefas/${taskId}`);
-    }, getStartActivityConfirmOptions(taskTitle));
+    };
+
+    if (preferences.interfaceMode === "standard") {
+      startActivity();
+      return;
+    }
+
+    runIfAllowed(startActivity, getStartActivityConfirmOptions(taskTitle));
   };
 
   return (
@@ -51,16 +60,18 @@ export function ActivityPrimaryAction({
         <PlayIcon />
         {label}
       </button>
-      <ConfirmDialog
-        open={isOpen}
-        title={pending?.options.title ?? ""}
-        description={pending?.options.description ?? ""}
-        confirmLabel={pending?.options.confirmLabel}
-        cancelLabel={pending?.options.cancelLabel}
-        confirmVariant={pending?.options.confirmVariant}
-        onConfirm={confirm}
-        onCancel={cancel}
-      />
+      {preferences.interfaceMode === "simplified" ? (
+        <ConfirmDialog
+          open={isOpen}
+          title={pending?.options.title ?? ""}
+          description={pending?.options.description}
+          confirmLabel={pending?.options.confirmLabel}
+          cancelLabel={pending?.options.cancelLabel}
+          confirmVariant={pending?.options.confirmVariant}
+          onConfirm={confirm}
+          onCancel={cancel}
+        />
+      ) : null}
     </>
   );
 }

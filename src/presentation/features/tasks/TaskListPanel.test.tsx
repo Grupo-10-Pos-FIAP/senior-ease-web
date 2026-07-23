@@ -1,13 +1,18 @@
 import { describe, expect, it, beforeEach, afterEach, vi } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { createDefaultPreferences } from "@domain/entities/AccessibilityPreferences";
+import {
+  createAccessibilityPreferences,
+  createDefaultPreferences,
+} from "@domain/entities/AccessibilityPreferences";
 import { TaskListPanel } from "@presentation/features/tasks/TaskListPanel";
+import { toPreferencesDto } from "@infrastructure/mappers/preferences.mapper";
 import {
   completeGuideStepInDb,
   resetTasksDb,
   TASK_MOCK_REFERENCE_DATE,
 } from "@infrastructure/msw/db/tasks.db";
+import { resetPreferencesDb, updatePreferencesInDb } from "@infrastructure/msw/db/preferences.db";
 import { applyAccessibilityTokens } from "@shared/lib/accessibilityTokens";
 import { renderWithProviders } from "@shared/test/renderWithProviders";
 
@@ -22,9 +27,17 @@ function useMockReferenceDate() {
   vi.setSystemTime(new Date(`${TASK_MOCK_REFERENCE_DATE}T12:00:00`));
 }
 
+function setInterfaceMode(mode: "standard" | "simplified") {
+  updatePreferencesInDb(
+    "demo-user",
+    toPreferencesDto(createAccessibilityPreferences({ interfaceMode: mode })),
+  );
+}
+
 describe("TaskListPanel", () => {
   beforeEach(() => {
     resetTasksDb();
+    resetPreferencesDb();
     applyAccessibilityTokens(createDefaultPreferences());
   });
 
@@ -120,14 +133,32 @@ describe("TaskListPanel", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("exibe link como fazer essa atividade para cada atividade ativa", async () => {
+  it("no modo avançado exibe ajuda como ícone ao lado do título", async () => {
     useMockReferenceDate();
     renderWithProviders(<TaskListPanel />);
     await waitForTasksLoaded();
 
+    const links = await screen.findAllByRole("link", { name: /como fazer essa atividade/i });
+    expect(links).toHaveLength(19);
+    expect(links[0]).toHaveAttribute("href", "/tarefas/task-1/guia");
+    expect(links[0]).toHaveClass("activity-card__howto-icon");
+    expect(screen.queryByText("Como fazer essa atividade?")).not.toBeInTheDocument();
+  });
+
+  it("no modo básico exibe botão como fazer essa atividade", async () => {
+    useMockReferenceDate();
+    setInterfaceMode("simplified");
+    renderWithProviders(<TaskListPanel />);
+    await waitForTasksLoaded();
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Como fazer essa atividade?").length).toBeGreaterThan(0);
+    });
+
     const links = screen.getAllByRole("link", { name: /como fazer essa atividade/i });
     expect(links).toHaveLength(19);
     expect(links[0]).toHaveAttribute("href", "/tarefas/task-1/guia");
+    expect(links[0]).toHaveClass("activity-card__link");
   });
 
   it("exibe rever como fazer essa atividade após concluir o tutorial", async () => {
@@ -141,7 +172,7 @@ describe("TaskListPanel", () => {
     await waitForTasksLoaded();
 
     expect(
-      screen.getByRole("link", {
+      await screen.findByRole("link", {
         name: /rever como fazer essa atividade: oficina "primeiros passos no digital"/i,
       }),
     ).toHaveAttribute("href", "/tarefas/task-1/guia");
@@ -152,29 +183,40 @@ describe("TaskListPanel", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("exibe iniciar a atividade quando nenhuma tarefa foi concluída", async () => {
+  it("no modo avançado inicia a atividade sem modal de confirmação", async () => {
+    const user = userEvent.setup();
     useMockReferenceDate();
     renderWithProviders(<TaskListPanel />);
     await waitForTasksLoaded();
 
     expect(
       screen.getByRole("button", {
-        name: /iniciar a atividade: oficina "primeiros passos no digital"/i,
+        name: /^iniciar: oficina "primeiros passos no digital"$/i,
       }),
     ).toBeInTheDocument();
-  });
-
-  it("pede confirmação antes de iniciar a atividade", async () => {
-    const user = userEvent.setup();
-    useMockReferenceDate();
-    renderWithProviders(<TaskListPanel />);
-    await waitForTasksLoaded();
 
     await user.click(
       screen.getByRole("button", {
-        name: /iniciar a atividade: oficina "primeiros passos no digital"/i,
+        name: /^iniciar: oficina "primeiros passos no digital"$/i,
       }),
     );
+
+    expect(
+      screen.queryByRole("alertdialog", { name: /iniciar esta atividade/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("no modo básico mantém textos completos de iniciar atividade", async () => {
+    const user = userEvent.setup();
+    useMockReferenceDate();
+    setInterfaceMode("simplified");
+    renderWithProviders(<TaskListPanel />);
+    await waitForTasksLoaded();
+
+    const startButton = await screen.findByRole("button", {
+      name: /iniciar a atividade: oficina "primeiros passos no digital"/i,
+    });
+    await user.click(startButton);
 
     expect(
       await screen.findByRole("alertdialog", { name: /iniciar esta atividade/i }),

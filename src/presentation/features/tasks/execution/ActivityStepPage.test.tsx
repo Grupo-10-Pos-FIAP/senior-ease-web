@@ -4,14 +4,26 @@ import userEvent from "@testing-library/user-event";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Suspense } from "react";
-import { createDefaultPreferences } from "@domain/entities/AccessibilityPreferences";
+import {
+  createAccessibilityPreferences,
+  createDefaultPreferences,
+} from "@domain/entities/AccessibilityPreferences";
 import { AuthContext } from "@app/providers/authContext";
 import { AccessibilityProvider } from "@app/providers/AccessibilityProvider";
 import { ActivityStepPage } from "@presentation/features/tasks/execution/ActivityStepPage";
 import { TaskWizardEntry } from "@presentation/features/tasks/execution/TaskWizardEntry";
 import { resetTasksDb, completeStepInDb } from "@infrastructure/msw/db/tasks.db";
+import { resetPreferencesDb, updatePreferencesInDb } from "@infrastructure/msw/db/preferences.db";
+import { toPreferencesDto } from "@infrastructure/mappers/preferences.mapper";
 import { applyAccessibilityTokens } from "@shared/lib/accessibilityTokens";
 import { DEMO_USER_ID } from "@shared/constants/user";
+
+function setInterfaceMode(mode: "standard" | "simplified") {
+  updatePreferencesInDb(
+    DEMO_USER_ID,
+    toPreferencesDto(createAccessibilityPreferences({ interfaceMode: mode })),
+  );
+}
 
 function renderExecutionRoute(initialRoute: string) {
   const queryClient = new QueryClient({
@@ -55,6 +67,7 @@ async function waitForStepLoaded() {
 describe("Activity execution", () => {
   beforeEach(() => {
     resetTasksDb();
+    resetPreferencesDb();
     applyAccessibilityTokens(createDefaultPreferences());
   });
 
@@ -167,8 +180,9 @@ describe("Activity execution", () => {
     ).toBeChecked();
   });
 
-  it("pede confirmação antes de sair e voltar depois", async () => {
+  it("pede confirmação antes de sair e voltar depois no modo básico", async () => {
     const user = userEvent.setup();
+    setInterfaceMode("simplified");
     renderExecutionRoute("/tarefas/task-1/passo/step-1-1");
     await waitForStepLoaded();
 

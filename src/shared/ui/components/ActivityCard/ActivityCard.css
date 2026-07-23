@@ -56,12 +56,48 @@
   border: 1px solid var(--se-status-completed-border);
 }
 
+.activity-card__title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
 .activity-card__title {
   margin: 0;
+  flex: 1;
+  min-width: 0;
   font-size: calc(var(--se-font-size, 1rem) * 1.125);
   font-weight: 700;
   color: var(--se-navy);
   line-height: 1.35;
+}
+
+.activity-card__howto-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--se-touch-min, 44px);
+  height: var(--se-touch-min, 44px);
+  margin-block: -0.25rem;
+  margin-inline-end: -0.25rem;
+  color: var(--se-navy);
+  text-decoration: none;
+  border-radius: 999px;
+}
+
+.activity-card__howto-icon:hover {
+  background-color: color-mix(in srgb, var(--se-navy) 8%, transparent);
+}
+
+.activity-card__howto-icon:focus-visible {
+  outline: 3px solid var(--se-focus-ring);
+  outline-offset: 2px;
+}
+
+.activity-card__howto-icon .activity-card__action-icon {
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .activity-card__description {

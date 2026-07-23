@@ -187,7 +187,7 @@ describe("StepTutorialPage", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", {
-        name: /iniciar a atividade: oficina "primeiros passos no digital"/i,
+        name: /^iniciar: oficina "primeiros passos no digital"$/i,
       }),
     ).toBeInTheDocument();
   });
@@ -227,7 +227,7 @@ describe("StepTutorialPage", () => {
 
     await user.click(
       await screen.findByRole("button", {
-        name: /iniciar a atividade: oficina "primeiros passos no digital"/i,
+        name: /^iniciar: oficina "primeiros passos no digital"$/i,
       }),
     );
 

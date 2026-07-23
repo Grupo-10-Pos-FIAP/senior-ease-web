@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { getActivityProgress, type Task, type TaskStatus } from "@domain/entities/Task";
-import { ActivityCard, ActivityTabs } from "@shared/ui";
+import { useAccessibility } from "@app/providers/accessibilityContext";
+import { ActivityCard, ActivityTabs, type ActivityHowToPresentation } from "@shared/ui";
 import { useTasksQuery } from "@app/hooks/useTasks";
 import { ACTIVITY_TAB_OPTIONS, EMPTY_STATE_MESSAGES } from "@shared/lib/taskLabels";
 import { sortActiveTasksByDeadline } from "@shared/lib/taskDeadline";
@@ -22,11 +23,13 @@ function TaskListContent({
   tasks,
   isLoading,
   isError,
+  howToPresentation,
 }: {
   status: TaskStatus;
   tasks: Task[];
   isLoading: boolean;
   isError: boolean;
+  howToPresentation: ActivityHowToPresentation;
 }) {
   const filtered = useMemo(() => filterTasksByStatus(tasks, status), [tasks, status]);
 
@@ -57,6 +60,7 @@ function TaskListContent({
             endDate={task.endDate}
             status={task.status}
             guideCompleted={task.guideCompleted}
+            howToPresentation={howToPresentation}
             primaryAction={
               <ActivityPrimaryAction
                 taskId={task.id}
@@ -73,8 +77,11 @@ function TaskListContent({
 
 export function TaskListPanel() {
   const [status, setStatus] = useState<TaskStatus>("active");
+  const { preferences } = useAccessibility();
 
   const { data: tasks = [], isLoading, isError } = useTasksQuery();
+  const howToPresentation: ActivityHowToPresentation =
+    preferences.interfaceMode === "simplified" ? "button" : "icon";
 
   return (
     <section className="task-list-panel" aria-labelledby="activities-heading">
@@ -94,6 +101,7 @@ export function TaskListPanel() {
             tasks={tasks}
             isLoading={isLoading}
             isError={isError}
+            howToPresentation={howToPresentation}
           />
         )}
       </ActivityTabs>

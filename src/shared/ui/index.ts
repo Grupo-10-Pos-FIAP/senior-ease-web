@@ -2,7 +2,7 @@ export { Button } from "./components/Button";
 export { AppHeader } from "./components/AppHeader";
 export { ProfileTabs } from "./components/ProfileTabs";
 export { ActivityTabs } from "./components/ActivityTabs";
-export { ActivityCard } from "./components/ActivityCard";
+export { ActivityCard, type ActivityHowToPresentation } from "./components/ActivityCard";
 export { PreferenceRow } from "./components/PreferenceRow";
 export { SegmentedControl } from "./components/SegmentedControl";
 export { ConfirmDialog } from "./components/ConfirmDialog";

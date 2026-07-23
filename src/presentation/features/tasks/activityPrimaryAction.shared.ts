@@ -1,4 +1,5 @@
 import type { ActivityProgress } from "@domain/entities/Task";
+import type { InterfaceMode } from "@domain/value-objects/InterfaceMode";
 
 export const ACTIVITY_PRIMARY_ACTION_LABEL = {
   not_started: "Iniciar a atividade",
@@ -9,8 +10,17 @@ export function getEffectiveActivityProgress(progress: ActivityProgress | null):
   return progress ?? "not_started";
 }
 
-export function getActivityPrimaryActionLabel(progress: ActivityProgress | null): string {
-  return ACTIVITY_PRIMARY_ACTION_LABEL[getEffectiveActivityProgress(progress)];
+export function getActivityPrimaryActionLabel(
+  progress: ActivityProgress | null,
+  interfaceMode: InterfaceMode = "simplified",
+): string {
+  const effectiveProgress = getEffectiveActivityProgress(progress);
+
+  if (effectiveProgress === "not_started" && interfaceMode === "standard") {
+    return "Iniciar";
+  }
+
+  return ACTIVITY_PRIMARY_ACTION_LABEL[effectiveProgress];
 }
 
 export function getTutorialCompleteDescription(
