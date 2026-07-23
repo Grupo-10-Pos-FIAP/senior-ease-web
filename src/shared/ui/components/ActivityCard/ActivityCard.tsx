@@ -5,6 +5,8 @@ import { formatTaskDateRange } from "@shared/lib/formatTaskDate";
 import { getTaskDeadlineBadgeLabel, getTaskDeadlineBadgeTone } from "@shared/lib/taskDeadline";
 import "./ActivityCard.css";
 
+export type ActivityHowToPresentation = "button" | "icon";
+
 interface ActivityCardProps {
   id: string;
   title: string;
@@ -12,6 +14,7 @@ interface ActivityCardProps {
   endDate: string;
   status: TaskStatus;
   guideCompleted?: boolean;
+  howToPresentation?: ActivityHowToPresentation;
   primaryAction?: ReactNode;
 }
 
@@ -67,6 +70,7 @@ export function ActivityCard({
   endDate,
   status,
   guideCompleted = false,
+  howToPresentation = "button",
   primaryAction,
 }: ActivityCardProps) {
   const titleId = `activity-title-${id}`;
@@ -117,6 +121,9 @@ export function ActivityCard({
   const howToLabel = guideCompleted
     ? "Rever como fazer essa atividade"
     : "Como fazer essa atividade?";
+  const howToAriaLabel = `${howToLabel}: ${title}`;
+  const guidePath = `/tarefas/${id}/guia`;
+  const showHowToAsIcon = howToPresentation === "icon";
 
   return (
     <article className="activity-card activity-card--active" aria-labelledby={titleId}>
@@ -128,23 +135,32 @@ export function ActivityCard({
             {deadlineBadgeLabel}
           </span>
         ) : null}
-        <h3 id={titleId} className="activity-card__title">
-          {title}
-        </h3>
+        <div className="activity-card__title-row">
+          <h3 id={titleId} className="activity-card__title">
+            {title}
+          </h3>
+          {showHowToAsIcon ? (
+            <Link to={guidePath} className="activity-card__howto-icon" aria-label={howToAriaLabel}>
+              <HowToIcon />
+            </Link>
+          ) : null}
+        </div>
         <p className="activity-card__dates">
           <CalendarIcon />
           <time dateTime={`${startDate}/${endDate}`}>{dateLabel}</time>
         </p>
       </div>
       <div className="activity-card__actions">
-        <Link
-          to={`/tarefas/${id}/guia`}
-          className="se-button se-button--secondary activity-card__link"
-          aria-label={`${howToLabel}: ${title}`}
-        >
-          <HowToIcon />
-          {howToLabel}
-        </Link>
+        {!showHowToAsIcon ? (
+          <Link
+            to={guidePath}
+            className="se-button se-button--secondary activity-card__link"
+            aria-label={howToAriaLabel}
+          >
+            <HowToIcon />
+            {howToLabel}
+          </Link>
+        ) : null}
         {primaryAction}
       </div>
     </article>

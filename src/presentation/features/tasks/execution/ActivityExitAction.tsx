@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useAccessibility } from "@app/providers/accessibilityContext";
 import { useConfirmCriticalAction } from "@presentation/hooks/useConfirmCriticalAction";
 import { Button, ConfirmDialog } from "@shared/ui";
 import { LaterIcon } from "@presentation/features/tasks/guide/TutorialActionIcons";
@@ -16,23 +17,28 @@ export function ActivityExitAction({
   className = "",
 }: ActivityExitActionProps) {
   const navigate = useNavigate();
+  const { preferences } = useAccessibility();
   const { pending, runIfAllowed, confirm, cancel, isOpen } = useConfirmCriticalAction();
+  const isAdvancedMode = preferences.interfaceMode === "standard";
 
   const handleExit = () => {
-    runIfAllowed(
-      () => {
-        void navigate(to);
-      },
-      {
-        title: "Sair e voltar depois?",
-        description:
-          "Seu progresso ficará salvo. Você pode continuar esta atividade quando quiser.",
-        confirmLabel: "Sim, sair agora",
-        cancelLabel: "Não, continuar na atividade",
-        alwaysConfirm: true,
-        confirmVariant: "warning",
-      },
-    );
+    const exit = () => {
+      void navigate(to);
+    };
+
+    if (isAdvancedMode) {
+      exit();
+      return;
+    }
+
+    runIfAllowed(exit, {
+      title: "Sair e voltar depois?",
+      description: "Seu progresso ficará salvo. Você pode continuar esta atividade quando quiser.",
+      confirmLabel: "Sim, sair agora",
+      cancelLabel: "Não, continuar na atividade",
+      alwaysConfirm: true,
+      confirmVariant: "warning",
+    });
   };
 
   return (

@@ -83,12 +83,11 @@ export const PREFERENCE_DESCRIPTIONS = {
   contrast:
     "Ajuste a diferença entre texto e fundo. A descrição do nível escolhido aparece abaixo.",
   interfaceMode:
-    "No modo básico, a plataforma mostra menos opções e textos mais diretos.\nJá no modo avançado, todas as opções são visíveis.",
+    "No modo básico, a plataforma oferece mais orientações e textos didáticos.\nJá no modo avançado, a interface fica mais enxuta, com menos ajuda na tela.",
   spacing: "Aumente o espaço entre botões e blocos se tiver dificuldade para tocar.",
   reinforcedVisualFeedback:
     "Destaca botões e foco com contornos mais visíveis ao tocar ou navegar.",
-  confirmCriticalActions:
-    "Pede confirmação antes de ações importantes, como restaurar configurações.",
+  confirmCriticalActions: "Pede confirmação antes de ações importantes, como sair da conta.",
 } as const;
 
 export const PANEL_INTRO =

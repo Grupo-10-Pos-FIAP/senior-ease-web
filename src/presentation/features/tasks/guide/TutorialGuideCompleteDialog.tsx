@@ -1,5 +1,6 @@
 import { AlertDialog } from "radix-ui";
 import type { ActivityProgress } from "@domain/entities/Task";
+import { useAccessibility } from "@app/providers/accessibilityContext";
 import {
   getActivityPrimaryActionLabel,
   getTutorialCompleteDescription,
@@ -27,7 +28,8 @@ export function TutorialGuideCompleteDialog({
   onStartActivity,
   onClose,
 }: TutorialGuideCompleteDialogProps) {
-  const primaryLabel = getActivityPrimaryActionLabel(activityProgress);
+  const { preferences } = useAccessibility();
+  const primaryLabel = getActivityPrimaryActionLabel(activityProgress, preferences.interfaceMode);
   const primaryAriaLabel = `${primaryLabel}: ${taskTitle}`;
 
   return (
