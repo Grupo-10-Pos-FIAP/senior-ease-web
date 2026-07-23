@@ -58,15 +58,18 @@ describe("PersonalizationPanel", () => {
     ).toBeInTheDocument();
   });
 
-  it("exibe banner quando há alterações não salvas", async () => {
+  it("exibe banner de alterações não salvas somente no modo básico", async () => {
     const user = userEvent.setup();
     renderWithProviders(<PersonalizationPanel />);
     const panel = await findPanel();
 
-    expect(within(panel).queryByText(/alterações não salvas/i)).not.toBeInTheDocument();
-
     const fontSizeGroup = within(panel).getByRole("radiogroup", { name: /tamanho da letra/i });
     await user.click(within(fontSizeGroup).getByRole("radio", { name: /letra grande/i }));
+
+    expect(within(panel).queryByText(/alterações não salvas/i)).not.toBeInTheDocument();
+
+    const modeGroup = within(panel).getByRole("radiogroup", { name: /modo de navegação/i });
+    await user.click(within(modeGroup).getByRole("radio", { name: /modo básico/i }));
 
     expect(await within(panel).findByText(/alterações não salvas/i)).toBeInTheDocument();
     expect(within(panel).getByRole("button", { name: /salvar agora/i })).toBeInTheDocument();
@@ -97,7 +100,10 @@ describe("PersonalizationPanel", () => {
     renderWithProviders(<PersonalizationPanel />);
     const panel = await findPanel();
 
-    const confirmGroup = within(panel).getByRole("radiogroup", {
+    const modeGroup = within(panel).getByRole("radiogroup", { name: /modo de navegação/i });
+    await user.click(within(modeGroup).getByRole("radio", { name: /modo básico/i }));
+
+    const confirmGroup = await within(panel).findByRole("radiogroup", {
       name: /confirmação em ações críticas/i,
     });
     await user.click(within(confirmGroup).getByRole("radio", { name: /^não$/i }));
@@ -139,26 +145,37 @@ describe("PersonalizationPanel", () => {
     });
   });
 
-  it("oculta bloco avançado no modo básico", async () => {
+  it("oculta opções de orientação no modo avançado", async () => {
     const user = userEvent.setup();
     renderWithProviders(<PersonalizationPanel />);
     const panel = await findPanel();
 
     expect(
-      within(panel).getByRole("radiogroup", { name: /feedback visual reforçado/i }),
-    ).toBeInTheDocument();
+      within(panel).queryByRole("radiogroup", { name: /feedback visual reforçado/i }),
+    ).not.toBeInTheDocument();
+    expect(
+      within(panel).queryByRole("radiogroup", { name: /confirmação em ações críticas/i }),
+    ).not.toBeInTheDocument();
 
     const modeGroup = within(panel).getByRole("radiogroup", { name: /modo de navegação/i });
     await user.click(within(modeGroup).getByRole("radio", { name: /modo básico/i }));
 
     await waitFor(() => {
       expect(
-        within(panel).queryByRole("radiogroup", { name: /feedback visual reforçado/i }),
-      ).not.toBeInTheDocument();
+        within(panel).getByRole("radiogroup", { name: /feedback visual reforçado/i }),
+      ).toBeInTheDocument();
       expect(
-        within(panel).queryByRole("radiogroup", { name: /confirmação em ações críticas/i }),
-      ).not.toBeInTheDocument();
+        within(panel).getByRole("radiogroup", { name: /confirmação em ações críticas/i }),
+      ).toBeInTheDocument();
     });
+  });
+
+  it("descreve o modo básico como mais didático", async () => {
+    renderWithProviders(<PersonalizationPanel />);
+    const panel = await findPanel();
+
+    expect(within(panel).getByText(/mais orientações e textos didáticos/i)).toBeInTheDocument();
+    expect(within(panel).getByText(/interface fica mais enxuta/i)).toBeInTheDocument();
   });
 
   it("exibe mensagem de sucesso após salvar", async () => {

@@ -23,8 +23,16 @@ const SPACING_OPTIONS = getSpacingOptions();
 const CONTRAST_OPTIONS = getContrastOptions();
 
 const INTERFACE_MODE_OPTIONS: { value: InterfaceMode; label: string; ariaLabel: string }[] = [
-  { value: "simplified", label: "Básico", ariaLabel: "Modo básico — interface simplificada" },
-  { value: "standard", label: "Avançado", ariaLabel: "Modo avançado — todas as opções visíveis" },
+  {
+    value: "simplified",
+    label: "Básico",
+    ariaLabel: "Modo básico — mais orientações e opções didáticas",
+  },
+  {
+    value: "standard",
+    label: "Avançado",
+    ariaLabel: "Modo avançado — interface mais enxuta",
+  },
 ];
 
 function RestoreIcon() {
@@ -113,7 +121,7 @@ export function PersonalizationPanel() {
         <p className="personalization-panel__intro">{PANEL_INTRO}</p>
       </header>
 
-      {isDirty ? (
+      {isBasicMode && isDirty ? (
         <div className="personalization-panel__dirty-banner" role="status" aria-live="polite">
           <p className="personalization-panel__dirty-text">Você tem alterações não salvas.</p>
           <Button
@@ -195,7 +203,7 @@ export function PersonalizationPanel() {
           )}
         />
 
-        {!isBasicMode ? (
+        {isBasicMode ? (
           <div className="personalization-panel__advanced">
             <PreferenceRow
               icon="✦"
