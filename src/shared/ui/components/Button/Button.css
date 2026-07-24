@@ -85,6 +85,19 @@
   border-color: var(--se-warning);
 }
 
+/* Nível 6 (tema escuro): mesmo padrão dos botões azuis — fundo da superfície
+   escura, borda e texto na cor warn, em vez do fundo laranja claro fixo. */
+[data-contrast-level="6"] .se-button--warning-filled {
+  background-color: transparent;
+  color: var(--se-warning);
+  border-color: var(--se-warning);
+}
+
+[data-contrast-level="6"] .se-button--warning-filled:hover:not(:disabled) {
+  background-color: var(--se-surface-muted);
+  border-color: var(--se-warning);
+}
+
 .se-button--success-filled {
   background-color: var(--se-success);
   color: #ffffff;
