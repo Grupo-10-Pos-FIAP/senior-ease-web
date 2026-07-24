@@ -52,28 +52,28 @@ function getForwardActionConfig(
   switch (stepType) {
     case "content_reading":
       return {
-        label: "Próxima pergunta",
-        ariaLabel: "Marcar leitura como concluída e ir para a próxima pergunta",
+        label: "Próximo passo",
+        ariaLabel: "Marcar leitura como concluída e ir para o próximo passo",
       };
     case "watch_content":
       return {
-        label: "Próxima pergunta",
-        ariaLabel: "Marcar vídeo como assistido e ir para a próxima pergunta",
+        label: "Próximo passo",
+        ariaLabel: "Marcar vídeo como assistido e ir para o próximo passo",
       };
     case "multiple_choice":
       return {
-        label: "Próxima pergunta",
-        ariaLabel: "Salvar resposta escolhida e ir para a próxima pergunta",
+        label: "Próximo passo",
+        ariaLabel: "Salvar resposta escolhida e ir para o próximo passo",
       };
     case "open_question":
       return {
-        label: "Próxima pergunta",
-        ariaLabel: "Salvar sua resposta e ir para a próxima pergunta",
+        label: "Próximo passo",
+        ariaLabel: "Salvar sua resposta e ir para o próximo passo",
       };
     default:
       return {
-        label: "Próxima pergunta",
-        ariaLabel: "Salvar e ir para a próxima pergunta",
+        label: "Próximo passo",
+        ariaLabel: "Salvar e ir para o próximo passo",
       };
   }
 }
@@ -108,8 +108,8 @@ function ActivityStepContent({ task, step, taskId, stepId }: ActivityStepContent
   const canGoPrevious = previousStep ? canNavigateToStep(task, previousStep.id) : false;
   const isLastStep = nextStep === null;
   const forwardAction = getForwardActionConfig(step.type, isLastStep, preferences.interfaceMode);
-  const previousLabel = isAdvancedMode ? "Anterior" : "Pergunta anterior";
-  const previousAriaLabel = isAdvancedMode ? "Anterior" : "Ir para a pergunta anterior";
+  const previousLabel = isAdvancedMode ? "Anterior" : "Passo anterior";
+  const previousAriaLabel = isAdvancedMode ? "Anterior" : "Ir para o passo anterior";
   const isSaving = completeStep.isPending || updateCurrentStep.isPending;
 
   function navigateToStep(targetStepId: string) {
@@ -291,10 +291,10 @@ export function ActivityStepPage() {
     return (
       <section className="activity-execution" aria-labelledby="activity-step-not-found">
         <h1 id="activity-step-not-found" className="activity-execution__title">
-          Questão não encontrada
+          Passo não encontrado
         </h1>
         <p className="activity-execution__message">
-          Esta questão não faz parte da atividade. Volte e tente novamente.
+          Este passo não faz parte da atividade. Volte e tente novamente.
         </p>
         <Link to={`/tarefas/${id}`} className="se-button se-button--secondary">
           Voltar para a atividade

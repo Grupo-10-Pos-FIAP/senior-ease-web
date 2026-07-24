@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
-import { GuidedTutorialHeader } from "./GuidedTutorialHeader";
 import type { StepTutorialProps } from "./types";
 
-export function OpenQuestionTutorial({
-  stepLabel,
-  backToTasksPath,
-  onCanCompleteChange,
-}: StepTutorialProps) {
+export function OpenQuestionTutorial({ stepLabel, onCanCompleteChange }: StepTutorialProps) {
   const [answer, setAnswer] = useState("");
   const canSubmit = answer.trim().length >= 3;
 
@@ -16,11 +11,6 @@ export function OpenQuestionTutorial({
 
   return (
     <article className="immersive-tutorial" aria-labelledby="open-question-tutorial-title">
-      <GuidedTutorialHeader
-        backToTasksPath={backToTasksPath}
-        hint="Leia a pergunta e escreva sua resposta com calma, do jeito que você falaria."
-      />
-
       <div className="immersive-tutorial__content">
         <h2 id="open-question-tutorial-title" className="immersive-tutorial__title">
           {stepLabel}

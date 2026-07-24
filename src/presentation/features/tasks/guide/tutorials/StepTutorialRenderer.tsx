@@ -12,10 +12,9 @@ interface StepTutorialRendererProps extends StepTutorialProps {
 export function StepTutorialRenderer({
   type,
   stepLabel,
-  backToTasksPath,
   onCanCompleteChange,
 }: StepTutorialRendererProps) {
-  const sharedProps = { stepLabel, backToTasksPath, onCanCompleteChange };
+  const sharedProps = { stepLabel, onCanCompleteChange };
 
   switch (type) {
     case "multiple_choice":

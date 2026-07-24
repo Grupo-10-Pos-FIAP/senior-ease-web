@@ -81,10 +81,10 @@ describe("Activity execution", () => {
     renderExecutionRoute("/tarefas/task-1");
 
     await waitFor(() => {
-      expect(screen.getByText(/questão 1 de 4/i)).toBeInTheDocument();
+      expect(screen.getByText(/passo 1 de 4/i)).toBeInTheDocument();
     });
 
-    expect(screen.getByText(/questão 1 de 4/i)).toBeInTheDocument();
+    expect(screen.getByText(/passo 1 de 4/i)).toBeInTheDocument();
     expect(
       screen.getByRole("heading", { level: 2, name: /conhecendo o mundo digital/i }),
     ).toBeInTheDocument();
@@ -119,12 +119,12 @@ describe("Activity execution", () => {
 
     expect(
       screen.getByRole("button", {
-        name: /marcar leitura como concluída e ir para a próxima pergunta/i,
+        name: /marcar leitura como concluída e ir para o próximo passo/i,
       }),
-    ).toHaveTextContent("Próxima pergunta");
+    ).toHaveTextContent("Próximo passo");
   });
 
-  it("permite voltar à questão 1 e avançar de novo para a questão em andamento", async () => {
+  it("permite voltar ao passo 1 e avançar de novo para o passo em andamento", async () => {
     const user = userEvent.setup();
     renderExecutionRoute("/tarefas/task-1/passo/step-1-1");
     await waitForStepLoaded();
@@ -132,19 +132,19 @@ describe("Activity execution", () => {
     await user.click(screen.getByRole("button", { name: /^próximo$/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/questão 2 de 4/i)).toBeInTheDocument();
+      expect(screen.getByText(/passo 2 de 4/i)).toBeInTheDocument();
     });
 
     await user.click(screen.getByRole("button", { name: /^anterior$/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/questão 1 de 4/i)).toBeInTheDocument();
+      expect(screen.getByText(/passo 1 de 4/i)).toBeInTheDocument();
     });
 
     await user.click(screen.getByRole("button", { name: /^próximo$/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/questão 2 de 4/i)).toBeInTheDocument();
+      expect(screen.getByText(/passo 2 de 4/i)).toBeInTheDocument();
     });
   });
 
@@ -156,7 +156,7 @@ describe("Activity execution", () => {
     await user.click(screen.getByRole("button", { name: /^próximo$/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/questão 2 de 4/i)).toBeInTheDocument();
+      expect(screen.getByText(/passo 2 de 4/i)).toBeInTheDocument();
     });
 
     await user.click(
@@ -167,12 +167,12 @@ describe("Activity execution", () => {
     await user.click(screen.getByRole("button", { name: /^próximo$/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/questão 3 de 4/i)).toBeInTheDocument();
+      expect(screen.getByText(/passo 3 de 4/i)).toBeInTheDocument();
     });
 
     await user.click(screen.getByRole("button", { name: /^anterior$/i }));
     await waitFor(() => {
-      expect(screen.getByText(/questão 2 de 4/i)).toBeInTheDocument();
+      expect(screen.getByText(/passo 2 de 4/i)).toBeInTheDocument();
     });
 
     expect(
@@ -198,10 +198,10 @@ describe("Activity execution", () => {
 
     await user.click(screen.getByRole("button", { name: /não, continuar na atividade/i }));
     expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
-    expect(screen.getByText(/questão 1 de 4/i)).toBeInTheDocument();
+    expect(screen.getByText(/passo 1 de 4/i)).toBeInTheDocument();
   });
 
-  it("conclui leitura e avança para a próxima pergunta", async () => {
+  it("conclui leitura e avança para o próximo passo", async () => {
     const user = userEvent.setup();
     renderExecutionRoute("/tarefas/task-1/passo/step-1-1");
     await waitForStepLoaded();
@@ -209,7 +209,7 @@ describe("Activity execution", () => {
     await user.click(screen.getByRole("button", { name: /^próximo$/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/questão 2 de 4/i)).toBeInTheDocument();
+      expect(screen.getByText(/passo 2 de 4/i)).toBeInTheDocument();
     });
   });
 
@@ -256,7 +256,7 @@ describe("Activity execution", () => {
 
     await user.click(screen.getByRole("button", { name: /não, continuar na atividade/i }));
     expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
-    expect(screen.getByText(/questão 4 de 4/i)).toBeInTheDocument();
+    expect(screen.getByText(/passo 4 de 4/i)).toBeInTheDocument();
   });
 
   it("no modo básico conclui sem confirmação quando a preferência está desligada", async () => {

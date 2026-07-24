@@ -14,7 +14,7 @@ export function ActivityProgressHeader({ task, stepId }: ActivityProgressHeaderP
   return (
     <header className="activity-execution__progress-header">
       <p className="activity-execution__progress-label">
-        {`Questão ${String(current)} de ${String(total)}`}
+        {`Passo ${String(current)} de ${String(total)}`}
       </p>
       <div
         className="activity-execution__progress-bar"
@@ -22,7 +22,7 @@ export function ActivityProgressHeader({ task, stepId }: ActivityProgressHeaderP
         aria-valuenow={completedCount}
         aria-valuemin={0}
         aria-valuemax={total}
-        aria-label={`Progresso da atividade: ${String(completedCount)} de ${String(total)} questões concluídas`}
+        aria-label={`Progresso da atividade: ${String(completedCount)} de ${String(total)} passos concluídos`}
       >
         <div
           className="activity-execution__progress-bar-fill"

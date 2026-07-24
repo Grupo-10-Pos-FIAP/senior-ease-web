@@ -183,7 +183,6 @@ export function StepTutorialPage() {
         <StepTutorialRenderer
           type={step.type}
           stepLabel={step.label}
-          backToTasksPath={guideListPath}
           onCanCompleteChange={handleCanCompleteChange}
         />
       </div>

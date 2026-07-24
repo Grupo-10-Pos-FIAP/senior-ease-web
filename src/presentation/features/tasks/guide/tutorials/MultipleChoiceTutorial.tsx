@@ -1,5 +1,4 @@
 import { useEffect, useId, useState } from "react";
-import { GuidedTutorialHeader } from "./GuidedTutorialHeader";
 import type { StepTutorialProps } from "./types";
 
 interface DemoOption {
@@ -40,11 +39,7 @@ function getDemoContent(stepLabel: string): DemoContent {
   };
 }
 
-export function MultipleChoiceTutorial({
-  stepLabel,
-  backToTasksPath,
-  onCanCompleteChange,
-}: StepTutorialProps) {
+export function MultipleChoiceTutorial({ stepLabel, onCanCompleteChange }: StepTutorialProps) {
   const groupId = useId();
   const { question, options } = getDemoContent(stepLabel);
   const [selected, setSelected] = useState<string | null>(null);
@@ -56,11 +51,6 @@ export function MultipleChoiceTutorial({
 
   return (
     <article className="immersive-tutorial" aria-labelledby="mc-tutorial-title">
-      <GuidedTutorialHeader
-        backToTasksPath={backToTasksPath}
-        hint="Leia a pergunta com calma e escolha uma opção tocando no círculo ao lado."
-      />
-
       <div className="immersive-tutorial__content">
         <h2 id="mc-tutorial-title" className="immersive-tutorial__title">
           {stepLabel}
@@ -68,9 +58,8 @@ export function MultipleChoiceTutorial({
 
         <div className="practice-tutorial">
           <p className="practice-tutorial__intro">
-            Nesta tarefa você responde um <strong>quiz de múltipla escolha</strong>. Cada pergunta
-            mostra opções com <strong>botões redondos</strong> (chamados de radio buttons). Siga os
-            passos abaixo e pratique com o exemplo.
+            Nesta tarefa você responde um <strong>quiz de múltipla escolha</strong>. Siga os passos
+            abaixo e pratique com o exemplo.
           </p>
 
           <ol className="practice-tutorial__steps">
@@ -83,7 +72,7 @@ export function MultipleChoiceTutorial({
               Em cada pergunta você escolhe <strong>apenas uma</strong> resposta. Se tocar em outra
               opção, a anterior desmarca sozinha.
             </li>
-            <li>Confira sua escolha antes de avançar para a próxima pergunta.</li>
+            <li>Confira sua escolha antes de tocar no botão abaixo.</li>
           </ol>
 
           <fieldset className="practice-tutorial__panel">

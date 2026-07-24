@@ -69,11 +69,10 @@ describe("StepTutorialPage", () => {
       screen.getByRole("heading", { level: 2, name: /quiz: hábitos seguros na internet/i }),
     ).toBeInTheDocument();
     expect(screen.getByText(/quiz de múltipla escolha/i)).toBeInTheDocument();
-    expect(screen.getByText(/botões redondos/i)).toBeInTheDocument();
     expect(
       screen.getByRole("radio", { name: /pedir ajuda quando tiver dúvida/i }),
     ).toBeInTheDocument();
-    expect(screen.getAllByRole("link", { name: /voltar para as tarefas/i })).toHaveLength(2);
+    expect(screen.getByRole("link", { name: /voltar para as tarefas/i })).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /confirmar que já aprendeu a escolher uma resposta/i }),
     ).toBeDisabled();
@@ -128,7 +127,7 @@ describe("StepTutorialPage", () => {
       screen.getByRole("heading", { level: 2, name: /reflexão: o que você quer aprender/i }),
     ).toBeInTheDocument();
     expect(screen.getByLabelText(/sua resposta/i)).toBeInTheDocument();
-    expect(screen.getAllByRole("link", { name: /voltar para as tarefas/i })).toHaveLength(2);
+    expect(screen.getByRole("link", { name: /voltar para as tarefas/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /enviar resposta de exemplo/i })).toBeDisabled();
   });
 
@@ -141,7 +140,7 @@ describe("StepTutorialPage", () => {
       screen.getByRole("heading", { level: 2, name: /conhecendo o mundo digital/i }),
     ).toBeInTheDocument();
     expect(screen.getByText(/leia o texto com calma, do começo ao fim/i)).toBeInTheDocument();
-    expect(screen.getAllByRole("link", { name: /voltar para as tarefas/i })).toHaveLength(2);
+    expect(screen.getByRole("link", { name: /voltar para as tarefas/i })).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /confirmar que terminou de ler o texto/i }),
     ).toBeInTheDocument();
@@ -236,19 +235,16 @@ describe("StepTutorialPage", () => {
     });
     expect(screen.queryByText(/iniciar esta atividade/i)).not.toBeInTheDocument();
     await waitFor(() => {
-      expect(screen.getByText(/questão 1 de 4/i)).toBeInTheDocument();
+      expect(screen.getByText(/passo 1 de 4/i)).toBeInTheDocument();
     });
   });
 
-  it("exibe link voltar para as tarefas no topo e na parte inferior", async () => {
+  it("exibe link voltar para as tarefas na barra inferior", async () => {
     renderGuideRoute("/tarefas/task-1/guia/step-1-2");
     await waitForTutorialLoaded();
 
-    const backLinks = screen.getAllByRole("link", { name: /voltar para as tarefas/i });
-    expect(backLinks).toHaveLength(2);
-    backLinks.forEach((link) => {
-      expect(link).toHaveAttribute("href", "/tarefas/task-1/guia");
-    });
+    const backLink = screen.getByRole("link", { name: /voltar para as tarefas/i });
+    expect(backLink).toHaveAttribute("href", "/tarefas/task-1/guia");
   });
 
   it("exibe mensagem quando tarefa não existe", async () => {

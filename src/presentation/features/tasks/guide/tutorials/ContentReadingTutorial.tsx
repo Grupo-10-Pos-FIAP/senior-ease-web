@@ -1,13 +1,10 @@
 import type { StepTutorialProps } from "./types";
 import { GuidedTutorialHeader } from "./GuidedTutorialHeader";
 
-export function ContentReadingTutorial({ stepLabel, backToTasksPath }: StepTutorialProps) {
+export function ContentReadingTutorial({ stepLabel }: StepTutorialProps) {
   return (
     <article className="immersive-tutorial" aria-labelledby="reading-tutorial-title">
-      <GuidedTutorialHeader
-        backToTasksPath={backToTasksPath}
-        hint="Leia o texto com calma, do começo ao fim. Role a página se precisar."
-      />
+      <GuidedTutorialHeader hint="Leia o texto com calma, do começo ao fim. Role a página se precisar." />
 
       <div className="immersive-tutorial__content">
         <h2 id="reading-tutorial-title" className="immersive-tutorial__title">

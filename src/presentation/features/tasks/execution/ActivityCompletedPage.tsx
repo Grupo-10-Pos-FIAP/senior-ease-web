@@ -43,7 +43,7 @@ export function ActivityCompletedPage() {
           <strong>{task.title}</strong>
         </p>
         <p className="activity-execution__summary">
-          Você respondeu {completed} de {total} {total === 1 ? "questão" : "questões"}. Muito bem!
+          Você concluiu {completed} de {total} {total === 1 ? "passo" : "passos"}. Muito bem!
         </p>
         <BackToTasksLink
           to="/"

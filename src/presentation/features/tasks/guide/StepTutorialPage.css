@@ -113,15 +113,9 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
   gap: calc(var(--se-spacing, 1rem) * 0.75) calc(var(--se-spacing, 1rem) * 1.25);
   padding: calc(var(--se-spacing, 1rem) * 1) calc(var(--se-spacing, 1rem) * 1.5);
   border-bottom: 1px solid var(--se-border);
-}
-
-.immersive-tutorial__back {
-  flex-shrink: 0;
-  margin-left: auto;
 }
 
 .immersive-tutorial__hint {

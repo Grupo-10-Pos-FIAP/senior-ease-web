@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { StepTutorialProps } from "./types";
 import { GuidedTutorialHeader } from "./GuidedTutorialHeader";
 
-export function WatchContentTutorial({ stepLabel, backToTasksPath }: StepTutorialProps) {
+export function WatchContentTutorial({ stepLabel }: StepTutorialProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
 
@@ -25,10 +25,7 @@ export function WatchContentTutorial({ stepLabel, backToTasksPath }: StepTutoria
 
   return (
     <article className="immersive-tutorial" aria-labelledby="video-tutorial-title">
-      <GuidedTutorialHeader
-        backToTasksPath={backToTasksPath}
-        hint="Assista ao vídeo com calma. Use o botão de play para começar e ajuste o volume se precisar."
-      />
+      <GuidedTutorialHeader hint="Assista ao vídeo com calma. Use o botão de play para começar e ajuste o volume se precisar." />
 
       <div className="immersive-tutorial__content immersive-tutorial__content--video">
         <h2 id="video-tutorial-title" className="immersive-tutorial__title">
@@ -71,7 +68,7 @@ export function WatchContentTutorial({ stepLabel, backToTasksPath }: StepTutoria
         </div>
 
         <p className="immersive-tutorial__video-tip">
-          Na atividade real, você pode pausar, voltar e ajustar o volume pelos controles do vídeo.
+          Na atividade real, você também pode pausar e voltar com os controles do vídeo.
         </p>
       </div>
     </article>
