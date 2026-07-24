@@ -1,4 +1,5 @@
 import type { TaskStepType } from "@domain/value-objects/TaskStepType";
+import type { InterfaceMode } from "@domain/value-objects/InterfaceMode";
 
 export const TASK_STEP_TYPE_LABELS: Record<TaskStepType, string> = {
   multiple_choice: "Múltipla escolha",
@@ -23,7 +24,8 @@ export function getTaskStepTypeDescription(type: TaskStepType): string {
 }
 
 export const GUIDE_STEP_ACTION_LABEL = "Como fazer esta tarefa?";
+export const GUIDE_STEP_ACTION_LABEL_ADVANCED = "Como fazer?";
 
-export function getTaskStepGuideActionLabel(): string {
-  return GUIDE_STEP_ACTION_LABEL;
+export function getTaskStepGuideActionLabel(interfaceMode: InterfaceMode = "standard"): string {
+  return interfaceMode === "standard" ? GUIDE_STEP_ACTION_LABEL_ADVANCED : GUIDE_STEP_ACTION_LABEL;
 }

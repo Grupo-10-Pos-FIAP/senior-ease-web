@@ -4,7 +4,10 @@ import userEvent from "@testing-library/user-event";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Suspense } from "react";
-import { createDefaultPreferences } from "@domain/entities/AccessibilityPreferences";
+import {
+  createAccessibilityPreferences,
+  createDefaultPreferences,
+} from "@domain/entities/AccessibilityPreferences";
 import { AuthContext } from "@app/providers/authContext";
 import { AccessibilityProvider } from "@app/providers/AccessibilityProvider";
 import { ActivityGuidePage } from "@presentation/features/tasks/guide/ActivityGuidePage";
@@ -12,9 +15,21 @@ import { StepTutorialPage } from "@presentation/features/tasks/guide/StepTutoria
 import { TaskWizardEntry } from "@presentation/features/tasks/execution/TaskWizardEntry";
 import { ActivityStepPage } from "@presentation/features/tasks/execution/ActivityStepPage";
 import { resetTasksDb } from "@infrastructure/msw/db/tasks.db";
+import { resetPreferencesDb, updatePreferencesInDb } from "@infrastructure/msw/db/preferences.db";
+import { toPreferencesDto } from "@infrastructure/mappers/preferences.mapper";
 import { applyAccessibilityTokens } from "@shared/lib/accessibilityTokens";
 import { DEMO_USER_ID } from "@shared/constants/user";
-import { GUIDE_STEP_ACTION_LABEL } from "@shared/lib/taskStepLabels";
+import {
+  GUIDE_STEP_ACTION_LABEL,
+  GUIDE_STEP_ACTION_LABEL_ADVANCED,
+} from "@shared/lib/taskStepLabels";
+
+function setInterfaceMode(mode: "standard" | "simplified") {
+  updatePreferencesInDb(
+    DEMO_USER_ID,
+    toPreferencesDto(createAccessibilityPreferences({ interfaceMode: mode })),
+  );
+}
 
 function renderGuideRoute(initialRoute: string) {
   const queryClient = new QueryClient({
@@ -59,6 +74,7 @@ async function waitForGuideLoaded() {
 describe("ActivityGuidePage", () => {
   beforeEach(() => {
     resetTasksDb();
+    resetPreferencesDb();
     applyAccessibilityTokens(createDefaultPreferences());
   });
 
@@ -83,27 +99,38 @@ describe("ActivityGuidePage", () => {
     expect(screen.getByText("Assistir conteúdo")).toBeInTheDocument();
   });
 
-  it("exibe botão como fazer esta tarefa em cada item", async () => {
+  it("exibe botão como fazer em cada item no modo avançado", async () => {
     renderGuideRoute("/tarefas/task-1/guia");
     await waitForGuideLoaded();
 
-    const actionLinks = screen.getAllByRole("link", { name: /como fazer esta tarefa/i });
+    const actionLinks = screen.getAllByRole("link", { name: /^como fazer\?:/i });
     expect(actionLinks).toHaveLength(4);
     expect(actionLinks[0]).toHaveAttribute("href", "/tarefas/task-1/guia/step-1-1");
     expect(actionLinks[1]).toHaveAttribute("href", "/tarefas/task-1/guia/step-1-2");
     expect(actionLinks[2]).toHaveAttribute("href", "/tarefas/task-1/guia/step-1-3");
     expect(actionLinks[3]).toHaveAttribute("href", "/tarefas/task-1/guia/step-1-4");
+    expect(actionLinks[0]).toHaveTextContent(GUIDE_STEP_ACTION_LABEL_ADVANCED);
+  });
+
+  it("exibe textos longos do guia no modo básico", async () => {
+    setInterfaceMode("simplified");
+    renderGuideRoute("/tarefas/task-1/guia");
+    await waitForGuideLoaded();
+
+    const actionLinks = screen.getAllByRole("link", { name: /como fazer esta tarefa\?:/i });
+    expect(actionLinks).toHaveLength(4);
     expect(actionLinks[0]).toHaveTextContent(GUIDE_STEP_ACTION_LABEL);
+    expect(screen.getByRole("link", { name: /voltar para minhas atividades/i })).toHaveAttribute(
+      "href",
+      "/",
+    );
   });
 
   it("exibe ações de voltar e iniciar atividade", async () => {
     renderGuideRoute("/tarefas/task-1/guia");
     await waitForGuideLoaded();
 
-    expect(screen.getByRole("link", { name: /voltar para minhas atividades/i })).toHaveAttribute(
-      "href",
-      "/",
-    );
+    expect(screen.getByRole("link", { name: /^voltar$/i })).toHaveAttribute("href", "/");
     expect(
       screen.getByRole("button", {
         name: /^iniciar: oficina "primeiros passos no digital"$/i,
@@ -137,7 +164,7 @@ describe("ActivityGuidePage", () => {
     expect(screen.getByText("Quiz: partes de uma mensagem")).toBeInTheDocument();
     expect(screen.getByText("Múltipla escolha")).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: /como fazer esta tarefa\?: quiz: partes de uma mensagem/i }),
+      screen.getByRole("link", { name: /como fazer\?: quiz: partes de uma mensagem/i }),
     ).toHaveAttribute("href", "/tarefas/task-2/guia/step-2-3");
   });
 });

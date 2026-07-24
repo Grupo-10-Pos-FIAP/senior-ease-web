@@ -1,5 +1,6 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import { useAccessibility } from "@app/providers/accessibilityContext";
 import {
   useCompleteStepMutation,
   useStartActivityMutation,
@@ -8,6 +9,7 @@ import {
 } from "@app/hooks/useTasks";
 import { canNavigateToStep, getSortedSteps } from "@domain/entities/taskProgress";
 import type { Task, TaskStep } from "@domain/entities/Task";
+import type { InterfaceMode } from "@domain/value-objects/InterfaceMode";
 import { BackToTasksLink } from "@presentation/features/tasks/guide/BackToTasksLink";
 import { ActivityExitAction } from "./ActivityExitAction";
 import { NextIcon, PreviousIcon } from "@presentation/features/tasks/guide/TutorialActionIcons";
@@ -28,11 +30,22 @@ function isActionAlwaysEnabled(type: TaskStep["type"]): boolean {
   return type === "content_reading" || type === "watch_content";
 }
 
-function getForwardActionConfig(stepType: TaskStep["type"], isLastStep: boolean): StepActionConfig {
+function getForwardActionConfig(
+  stepType: TaskStep["type"],
+  isLastStep: boolean,
+  interfaceMode: InterfaceMode,
+): StepActionConfig {
   if (isLastStep) {
     return {
       label: "Concluir atividade",
       ariaLabel: "Salvar resposta e concluir a atividade",
+    };
+  }
+
+  if (interfaceMode === "standard") {
+    return {
+      label: "Próximo",
+      ariaLabel: "Próximo",
     };
   }
 
@@ -74,6 +87,7 @@ interface ActivityStepContentProps {
 
 function ActivityStepContent({ task, step, taskId, stepId }: ActivityStepContentProps) {
   const navigate = useNavigate();
+  const { preferences } = useAccessibility();
   const completeStep = useCompleteStepMutation();
   const updateCurrentStep = useUpdateCurrentStepMutation();
   const { pending, runIfAllowed, confirm, cancel, isOpen } = useConfirmCriticalAction();
@@ -81,6 +95,7 @@ function ActivityStepContent({ task, step, taskId, stepId }: ActivityStepContent
   const [answer, setAnswer] = useState(step.answer ?? "");
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
+  const isAdvancedMode = preferences.interfaceMode === "standard";
   const actionAlwaysEnabled = isActionAlwaysEnabled(step.type);
   const canComplete = actionAlwaysEnabled || tutorialReady;
   const sortedSteps = getSortedSteps(task);
@@ -92,7 +107,9 @@ function ActivityStepContent({ task, step, taskId, stepId }: ActivityStepContent
       : null;
   const canGoPrevious = previousStep ? canNavigateToStep(task, previousStep.id) : false;
   const isLastStep = nextStep === null;
-  const forwardAction = getForwardActionConfig(step.type, isLastStep);
+  const forwardAction = getForwardActionConfig(step.type, isLastStep, preferences.interfaceMode);
+  const previousLabel = isAdvancedMode ? "Anterior" : "Pergunta anterior";
+  const previousAriaLabel = isAdvancedMode ? "Anterior" : "Ir para a pergunta anterior";
   const isSaving = completeStep.isPending || updateCurrentStep.isPending;
 
   function navigateToStep(targetStepId: string) {
@@ -141,12 +158,16 @@ function ActivityStepContent({ task, step, taskId, stepId }: ActivityStepContent
       return;
     }
 
+    if (isAdvancedMode) {
+      handleForward();
+      return;
+    }
+
     runIfAllowed(handleForward, {
       title: "Concluir esta atividade?",
       description: `Ao concluir "${task.title}", você não poderá refazer esta atividade. Deseja continuar?`,
       confirmLabel: "Sim, concluir atividade",
       cancelLabel: "Não, continuar na atividade",
-      alwaysConfirm: true,
       confirmVariant: "success",
     });
   }
@@ -194,10 +215,10 @@ function ActivityStepContent({ task, step, taskId, stepId }: ActivityStepContent
                   navigateToStep(previousStep.id);
                 }
               }}
-              aria-label="Ir para a pergunta anterior"
+              aria-label={previousAriaLabel}
             >
               <PreviousIcon />
-              Pergunta anterior
+              {previousLabel}
             </Button>
           ) : null}
 

@@ -16,8 +16,8 @@ export function getActivityPrimaryActionLabel(
 ): string {
   const effectiveProgress = getEffectiveActivityProgress(progress);
 
-  if (effectiveProgress === "not_started" && interfaceMode === "standard") {
-    return "Iniciar";
+  if (interfaceMode === "standard") {
+    return effectiveProgress === "in_progress" ? "Continuar" : "Iniciar";
   }
 
   return ACTIVITY_PRIMARY_ACTION_LABEL[effectiveProgress];

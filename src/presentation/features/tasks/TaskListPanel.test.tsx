@@ -228,13 +228,13 @@ describe("TaskListPanel", () => {
     ).toBeInTheDocument();
   });
 
-  it("exibe continuar a atividade quando há progresso parcial", async () => {
+  it("exibe continuar quando há progresso parcial no modo avançado", async () => {
     useMockReferenceDate();
     renderWithProviders(<TaskListPanel />);
     await waitForTasksLoaded();
 
     expect(
-      screen.getByRole("link", { name: /continuar a atividade: curso "como usar e-mail"/i }),
+      screen.getByRole("link", { name: /^continuar: curso "como usar e-mail"$/i }),
     ).toHaveAttribute("href", "/tarefas/task-2");
   });
 

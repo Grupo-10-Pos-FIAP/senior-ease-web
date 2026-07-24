@@ -11,6 +11,7 @@ import {
 import { AuthContext } from "@app/providers/authContext";
 import { AccessibilityProvider } from "@app/providers/AccessibilityProvider";
 import { ActivityStepPage } from "@presentation/features/tasks/execution/ActivityStepPage";
+import { ActivityCompletedPage } from "@presentation/features/tasks/execution/ActivityCompletedPage";
 import { TaskWizardEntry } from "@presentation/features/tasks/execution/TaskWizardEntry";
 import { resetTasksDb, completeStepInDb } from "@infrastructure/msw/db/tasks.db";
 import { resetPreferencesDb, updatePreferencesInDb } from "@infrastructure/msw/db/preferences.db";
@@ -18,11 +19,15 @@ import { toPreferencesDto } from "@infrastructure/mappers/preferences.mapper";
 import { applyAccessibilityTokens } from "@shared/lib/accessibilityTokens";
 import { DEMO_USER_ID } from "@shared/constants/user";
 
+function setPreferences(partial: {
+  interfaceMode?: "standard" | "simplified";
+  confirmCriticalActions?: boolean;
+}) {
+  updatePreferencesInDb(DEMO_USER_ID, toPreferencesDto(createAccessibilityPreferences(partial)));
+}
+
 function setInterfaceMode(mode: "standard" | "simplified") {
-  updatePreferencesInDb(
-    DEMO_USER_ID,
-    toPreferencesDto(createAccessibilityPreferences({ interfaceMode: mode })),
-  );
+  setPreferences({ interfaceMode: mode });
 }
 
 function renderExecutionRoute(initialRoute: string) {
@@ -34,6 +39,7 @@ function renderExecutionRoute(initialRoute: string) {
     [
       { path: "/tarefas/:id", element: <TaskWizardEntry /> },
       { path: "/tarefas/:id/passo/:stepId", element: <ActivityStepPage /> },
+      { path: "/tarefas/:id/concluida", element: <ActivityCompletedPage /> },
     ],
     { initialEntries: [initialRoute] },
   );
@@ -85,17 +91,17 @@ describe("Activity execution", () => {
     expect(screen.queryByRole("navigation", { name: /mapa de questões/i })).not.toBeInTheDocument();
     expect(
       screen.getByRole("button", {
-        name: /marcar leitura como concluída e ir para a próxima pergunta/i,
+        name: /^próximo$/i,
       }),
     ).toBeInTheDocument();
   });
 
-  it("usa Próxima pergunta como ação principal para salvar e avançar", async () => {
+  it("usa Próximo como ação principal no modo avançado", async () => {
     renderExecutionRoute("/tarefas/task-1/passo/step-1-1");
     await waitForStepLoaded();
 
     const forwardButton = screen.getByRole("button", {
-      name: /marcar leitura como concluída e ir para a próxima pergunta/i,
+      name: /^próximo$/i,
     });
     const exitButton = screen.getByRole("button", { name: /sair e voltar depois/i });
 
@@ -106,48 +112,48 @@ describe("Activity execution", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("mantém textos longos de navegação no modo básico", async () => {
+    setInterfaceMode("simplified");
+    renderExecutionRoute("/tarefas/task-1/passo/step-1-1");
+    await waitForStepLoaded();
+
+    expect(
+      screen.getByRole("button", {
+        name: /marcar leitura como concluída e ir para a próxima pergunta/i,
+      }),
+    ).toHaveTextContent("Próxima pergunta");
+  });
+
   it("permite voltar à questão 1 e avançar de novo para a questão em andamento", async () => {
     const user = userEvent.setup();
     renderExecutionRoute("/tarefas/task-1/passo/step-1-1");
     await waitForStepLoaded();
 
-    await user.click(
-      screen.getByRole("button", {
-        name: /marcar leitura como concluída e ir para a próxima pergunta/i,
-      }),
-    );
+    await user.click(screen.getByRole("button", { name: /^próximo$/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/questão 2 de 4/i)).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole("button", { name: /ir para a pergunta anterior/i }));
+    await user.click(screen.getByRole("button", { name: /^anterior$/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/questão 1 de 4/i)).toBeInTheDocument();
     });
 
-    await user.click(
-      screen.getByRole("button", {
-        name: /marcar leitura como concluída e ir para a próxima pergunta/i,
-      }),
-    );
+    await user.click(screen.getByRole("button", { name: /^próximo$/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/questão 2 de 4/i)).toBeInTheDocument();
     });
   });
 
-  it("salva resposta do quiz ao tocar em Próxima pergunta", async () => {
+  it("salva resposta do quiz ao tocar em Próximo", async () => {
     const user = userEvent.setup();
     renderExecutionRoute("/tarefas/task-1/passo/step-1-1");
     await waitForStepLoaded();
 
-    await user.click(
-      screen.getByRole("button", {
-        name: /marcar leitura como concluída e ir para a próxima pergunta/i,
-      }),
-    );
+    await user.click(screen.getByRole("button", { name: /^próximo$/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/questão 2 de 4/i)).toBeInTheDocument();
@@ -158,17 +164,13 @@ describe("Activity execution", () => {
         name: /começar com uma tarefa simples e pedir ajuda de alguém de confiança/i,
       }),
     );
-    await user.click(
-      screen.getByRole("button", {
-        name: /salvar resposta escolhida e ir para a próxima pergunta/i,
-      }),
-    );
+    await user.click(screen.getByRole("button", { name: /^próximo$/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/questão 3 de 4/i)).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole("button", { name: /ir para a pergunta anterior/i }));
+    await user.click(screen.getByRole("button", { name: /^anterior$/i }));
     await waitFor(() => {
       expect(screen.getByText(/questão 2 de 4/i)).toBeInTheDocument();
     });
@@ -204,19 +206,37 @@ describe("Activity execution", () => {
     renderExecutionRoute("/tarefas/task-1/passo/step-1-1");
     await waitForStepLoaded();
 
-    await user.click(
-      screen.getByRole("button", {
-        name: /marcar leitura como concluída e ir para a próxima pergunta/i,
-      }),
-    );
+    await user.click(screen.getByRole("button", { name: /^próximo$/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/questão 2 de 4/i)).toBeInTheDocument();
     });
   });
 
-  it("pede confirmação antes de concluir a atividade", async () => {
+  it("no modo avançado conclui a atividade sem confirmação", async () => {
     const user = userEvent.setup();
+    completeStepInDb("task-1", "step-1-1", DEMO_USER_ID);
+    completeStepInDb("task-1", "step-1-2", DEMO_USER_ID, "a");
+    completeStepInDb("task-1", "step-1-3", DEMO_USER_ID, "Quero aprender e-mail");
+
+    renderExecutionRoute("/tarefas/task-1/passo/step-1-4");
+    await waitForStepLoaded();
+
+    await user.click(
+      screen.getByRole("button", { name: /salvar resposta e concluir a atividade/i }),
+    );
+
+    expect(
+      screen.queryByRole("alertdialog", { name: /concluir esta atividade/i }),
+    ).not.toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { name: /parabéns! você concluiu a atividade/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("no modo básico pede confirmação ao concluir quando a preferência está ligada", async () => {
+    const user = userEvent.setup();
+    setPreferences({ interfaceMode: "simplified", confirmCriticalActions: true });
     completeStepInDb("task-1", "step-1-1", DEMO_USER_ID);
     completeStepInDb("task-1", "step-1-2", DEMO_USER_ID, "a");
     completeStepInDb("task-1", "step-1-3", DEMO_USER_ID, "Quero aprender e-mail");
@@ -237,5 +257,27 @@ describe("Activity execution", () => {
     await user.click(screen.getByRole("button", { name: /não, continuar na atividade/i }));
     expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
     expect(screen.getByText(/questão 4 de 4/i)).toBeInTheDocument();
+  });
+
+  it("no modo básico conclui sem confirmação quando a preferência está desligada", async () => {
+    const user = userEvent.setup();
+    setPreferences({ interfaceMode: "simplified", confirmCriticalActions: false });
+    completeStepInDb("task-1", "step-1-1", DEMO_USER_ID);
+    completeStepInDb("task-1", "step-1-2", DEMO_USER_ID, "a");
+    completeStepInDb("task-1", "step-1-3", DEMO_USER_ID, "Quero aprender e-mail");
+
+    renderExecutionRoute("/tarefas/task-1/passo/step-1-4");
+    await waitForStepLoaded();
+
+    await user.click(
+      screen.getByRole("button", { name: /salvar resposta e concluir a atividade/i }),
+    );
+
+    expect(
+      screen.queryByRole("alertdialog", { name: /concluir esta atividade/i }),
+    ).not.toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { name: /parabéns! você concluiu a atividade/i }),
+    ).toBeInTheDocument();
   });
 });

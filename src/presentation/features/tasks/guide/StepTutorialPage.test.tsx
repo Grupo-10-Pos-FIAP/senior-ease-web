@@ -211,7 +211,7 @@ describe("StepTutorialPage", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", {
-        name: /continuar a atividade: curso "como usar e-mail"/i,
+        name: /^continuar: curso "como usar e-mail"$/i,
       }),
     ).toBeInTheDocument();
   });

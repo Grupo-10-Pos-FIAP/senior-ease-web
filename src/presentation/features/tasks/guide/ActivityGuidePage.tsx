@@ -1,4 +1,5 @@
 import { Link, useParams } from "react-router-dom";
+import { useAccessibility } from "@app/providers/accessibilityContext";
 import { useTaskQuery } from "@app/hooks/useTasks";
 import { getActivityProgress } from "@domain/entities/Task";
 import { getTaskStepGuideActionLabel, getTaskStepTypeLabel } from "@shared/lib/taskStepLabels";
@@ -10,7 +11,10 @@ import "./ActivityGuidePage.css";
 
 export function ActivityGuidePage() {
   const { id = "" } = useParams();
+  const { preferences } = useAccessibility();
   const { data: task, isLoading, isError } = useTaskQuery(id);
+  const isAdvancedMode = preferences.interfaceMode === "standard";
+  const backLabel = isAdvancedMode ? "Voltar" : "Voltar para Minhas atividades";
 
   if (isLoading) {
     return <p className="activity-guide__status">Carregando guia da atividade…</p>;
@@ -26,11 +30,7 @@ export function ActivityGuidePage() {
           Não encontramos esta atividade. Volte para a lista e tente novamente.
         </p>
         <div className="activity-guide__footer">
-          <BackToTasksLink
-            to="/"
-            label="Voltar para Minhas atividades"
-            className="activity-guide__link"
-          />
+          <BackToTasksLink to="/" label={backLabel} className="activity-guide__link" />
         </div>
       </section>
     );
@@ -39,6 +39,7 @@ export function ActivityGuidePage() {
   const sortedSteps = [...task.steps].sort((a, b) => a.order - b.order);
   const totalTasks = sortedSteps.length;
   const progress = getActivityProgress(task);
+  const actionLabel = getTaskStepGuideActionLabel(preferences.interfaceMode);
 
   return (
     <section className="activity-guide" aria-labelledby="activity-guide-title">
@@ -55,7 +56,6 @@ export function ActivityGuidePage() {
       <ol className="activity-guide__list" aria-label="Tarefas desta atividade">
         {sortedSteps.map((step, index) => {
           const taskNumber = index + 1;
-          const actionLabel = getTaskStepGuideActionLabel();
 
           return (
             <li key={step.id} className="activity-guide__item">
@@ -81,11 +81,7 @@ export function ActivityGuidePage() {
       </ol>
 
       <div className="activity-guide__footer">
-        <BackToTasksLink
-          to="/"
-          label="Voltar para Minhas atividades"
-          className="activity-guide__link"
-        />
+        <BackToTasksLink to="/" label={backLabel} className="activity-guide__link" />
         <ActivityPrimaryAction
           taskId={id}
           taskTitle={task.title}
