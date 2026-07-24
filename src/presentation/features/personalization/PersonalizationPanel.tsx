@@ -179,6 +179,14 @@ export function PersonalizationPanel() {
               value={draft.interfaceMode}
               options={INTERFACE_MODE_OPTIONS}
               onChange={(interfaceMode) => {
+                if (interfaceMode === "standard") {
+                  updateDraft({
+                    interfaceMode,
+                    reinforcedVisualFeedback: false,
+                    confirmCriticalActions: false,
+                  });
+                  return;
+                }
                 updateDraft({ interfaceMode });
               }}
               labelledBy={legendId}

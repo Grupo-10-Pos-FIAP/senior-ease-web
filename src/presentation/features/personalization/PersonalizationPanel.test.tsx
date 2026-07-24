@@ -170,6 +170,48 @@ describe("PersonalizationPanel", () => {
     });
   });
 
+  it("no modo avançado desliga feedback reforçado e confirmação crítica", async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<PersonalizationPanel />);
+    const panel = await findPanel();
+
+    const modeGroup = within(panel).getByRole("radiogroup", { name: /modo de navegação/i });
+    await user.click(within(modeGroup).getByRole("radio", { name: /modo básico/i }));
+
+    const feedbackGroup = await waitFor(() =>
+      within(panel).getByRole("radiogroup", { name: /feedback visual reforçado/i }),
+    );
+    const confirmGroup = within(panel).getByRole("radiogroup", {
+      name: /confirmação em ações críticas/i,
+    });
+
+    await user.click(within(feedbackGroup).getByRole("radio", { name: /^sim$/i }));
+    await user.click(within(confirmGroup).getByRole("radio", { name: /^sim$/i }));
+
+    await user.click(within(modeGroup).getByRole("radio", { name: /modo avançado/i }));
+
+    await waitFor(() => {
+      expect(
+        within(panel).queryByRole("radiogroup", { name: /feedback visual reforçado/i }),
+      ).not.toBeInTheDocument();
+    });
+
+    expect(document.documentElement.dataset.reinforcedFeedback).toBe("false");
+
+    await user.click(within(modeGroup).getByRole("radio", { name: /modo básico/i }));
+
+    await waitFor(() => {
+      const feedback = within(panel).getByRole("radiogroup", {
+        name: /feedback visual reforçado/i,
+      });
+      const confirm = within(panel).getByRole("radiogroup", {
+        name: /confirmação em ações críticas/i,
+      });
+      expect(within(feedback).getByRole("radio", { name: /^não$/i })).toBeChecked();
+      expect(within(confirm).getByRole("radio", { name: /^não$/i })).toBeChecked();
+    });
+  });
+
   it("descreve o modo básico como mais didático", async () => {
     renderWithProviders(<PersonalizationPanel />);
     const panel = await findPanel();

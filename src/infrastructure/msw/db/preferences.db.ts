@@ -9,8 +9,8 @@ export function seedPreferencesDb(): void {
     contrast: 3,
     spacing: 3,
     interfaceMode: "standard",
-    reinforcedVisualFeedback: true,
-    confirmCriticalActions: true,
+    reinforcedVisualFeedback: false,
+    confirmCriticalActions: false,
   });
 }
 
