@@ -66,7 +66,7 @@ describe("StepTutorialPage", () => {
     await waitForTutorialLoaded();
 
     expect(
-      screen.getByRole("heading", { level: 2, name: /quiz: hábitos seguros na internet/i }),
+      screen.getByRole("heading", { level: 2, name: /hábitos seguros na internet/i }),
     ).toBeInTheDocument();
     expect(screen.getByText(/quiz de múltipla escolha/i)).toBeInTheDocument();
     expect(
@@ -102,7 +102,7 @@ describe("StepTutorialPage", () => {
     await waitForTutorialLoaded();
 
     expect(
-      screen.getByRole("heading", { level: 2, name: /quiz: partes de uma mensagem/i }),
+      screen.getByRole("heading", { level: 2, name: /partes de uma mensagem/i }),
     ).toBeInTheDocument();
     expect(
       screen.getByText(/qual campo indica para quem você está enviando o e-mail/i),
@@ -124,7 +124,7 @@ describe("StepTutorialPage", () => {
     await waitForTutorialLoaded();
 
     expect(
-      screen.getByRole("heading", { level: 2, name: /reflexão: o que você quer aprender/i }),
+      screen.getByRole("heading", { level: 2, name: /o que você quer aprender/i }),
     ).toBeInTheDocument();
     expect(screen.getByLabelText(/sua resposta/i)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /voltar para as tarefas/i })).toBeInTheDocument();
@@ -151,7 +151,7 @@ describe("StepTutorialPage", () => {
     );
 
     expect(await screen.findByRole("alertdialog")).toBeInTheDocument();
-    expect(screen.getByText(/quiz: hábitos seguros na internet/i)).toBeInTheDocument();
+    expect(screen.getByText(/hábitos seguros na internet/i)).toBeInTheDocument();
   });
 
   it("exibe vídeo em tela cheia com botão terminei de assistir", async () => {
@@ -159,7 +159,7 @@ describe("StepTutorialPage", () => {
     await waitForTutorialLoaded();
 
     expect(
-      screen.getByRole("heading", { level: 2, name: /vídeo: navegando com segurança/i }),
+      screen.getByRole("heading", { level: 2, name: /navegando com segurança/i }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /confirmar que terminou de assistir ao vídeo/i }),
@@ -179,14 +179,14 @@ describe("StepTutorialPage", () => {
       await screen.findByRole("alertdialog", { name: /parabéns! você terminou o tutorial/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/deseja iniciar a atividade agora ou voltar para minhas atividades/i),
+      screen.getByText(/deseja iniciar agora ou voltar para minhas atividades/i),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /voltar para minhas atividades/i }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", {
-        name: /^iniciar: oficina "primeiros passos no digital"$/i,
+        name: /^iniciar: primeiros passos no digital$/i,
       }),
     ).toBeInTheDocument();
   });
@@ -206,11 +206,11 @@ describe("StepTutorialPage", () => {
       await screen.findByRole("alertdialog", { name: /parabéns! você terminou o tutorial/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/deseja continuar a atividade agora ou voltar para minhas atividades/i),
+      screen.getByText(/deseja continuar agora ou voltar para minhas atividades/i),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", {
-        name: /^continuar: curso "como usar e-mail"$/i,
+        name: /^continuar: como usar o e-mail$/i,
       }),
     ).toBeInTheDocument();
   });
@@ -226,7 +226,7 @@ describe("StepTutorialPage", () => {
 
     await user.click(
       await screen.findByRole("button", {
-        name: /^iniciar: oficina "primeiros passos no digital"$/i,
+        name: /^iniciar: primeiros passos no digital$/i,
       }),
     );
 

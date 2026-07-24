@@ -4,7 +4,7 @@ import { createTask, getActivityProgress, isTaskActive } from "@domain/entities/
 describe("Task", () => {
   const baseInput = {
     id: "task-1",
-    title: 'Oficina "Primeiros Passos no Digital"',
+    title: "Primeiros passos no digital",
     startDate: "2026-06-05",
     endDate: "2026-06-14",
     status: "active" as const,
@@ -22,7 +22,7 @@ describe("Task", () => {
   it("cria atividade válida", () => {
     const task = createTask(baseInput);
 
-    expect(task.title).toBe('Oficina "Primeiros Passos no Digital"');
+    expect(task.title).toBe("Primeiros passos no digital");
     expect(task.status).toBe("active");
     expect(task.steps).toHaveLength(1);
   });

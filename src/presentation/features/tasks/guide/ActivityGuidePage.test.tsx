@@ -83,15 +83,15 @@ describe("ActivityGuidePage", () => {
     await waitForGuideLoaded();
 
     expect(
-      screen.getByRole("heading", { name: /como fazer: oficina "primeiros passos no digital"/i }),
+      screen.getByRole("heading", { name: /como fazer: primeiros passos no digital/i }),
     ).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /tarefas desta atividade/i })).toBeInTheDocument();
 
     expect(screen.getByText("Tarefa 1 de 4")).toBeInTheDocument();
     expect(screen.getByText("Conhecendo o mundo digital")).toBeInTheDocument();
-    expect(screen.getByText("Quiz: hábitos seguros na internet")).toBeInTheDocument();
-    expect(screen.getByText("Reflexão: o que você quer aprender?")).toBeInTheDocument();
-    expect(screen.getByText("Vídeo: navegando com segurança")).toBeInTheDocument();
+    expect(screen.getByText("Hábitos seguros na internet")).toBeInTheDocument();
+    expect(screen.getByText("O que você quer aprender?")).toBeInTheDocument();
+    expect(screen.getByText("Navegando com segurança")).toBeInTheDocument();
 
     expect(screen.getByText("Leitura de conteúdo")).toBeInTheDocument();
     expect(screen.getByText("Múltipla escolha")).toBeInTheDocument();
@@ -133,7 +133,7 @@ describe("ActivityGuidePage", () => {
     expect(screen.getByRole("link", { name: /^voltar$/i })).toHaveAttribute("href", "/");
     expect(
       screen.getByRole("button", {
-        name: /^iniciar: oficina "primeiros passos no digital"$/i,
+        name: /^iniciar: primeiros passos no digital$/i,
       }),
     ).toBeInTheDocument();
   });
@@ -145,7 +145,7 @@ describe("ActivityGuidePage", () => {
 
     await user.click(
       screen.getByRole("button", {
-        name: /^iniciar: oficina "primeiros passos no digital"$/i,
+        name: /^iniciar: primeiros passos no digital$/i,
       }),
     );
 
@@ -154,17 +154,17 @@ describe("ActivityGuidePage", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("lista quiz de e-mail no curso como usar e-mail", async () => {
+  it("lista pergunta de e-mail na atividade como usar o e-mail", async () => {
     renderGuideRoute("/tarefas/task-2/guia");
     await waitForGuideLoaded();
 
     expect(
-      screen.getByRole("heading", { name: /como fazer: curso "como usar e-mail"/i }),
+      screen.getByRole("heading", { name: /como fazer: como usar o e-mail/i }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Quiz: partes de uma mensagem")).toBeInTheDocument();
+    expect(screen.getByText("Partes de uma mensagem")).toBeInTheDocument();
     expect(screen.getByText("Múltipla escolha")).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: /como fazer\?: quiz: partes de uma mensagem/i }),
+      screen.getByRole("link", { name: /como fazer\?: partes de uma mensagem/i }),
     ).toHaveAttribute("href", "/tarefas/task-2/guia/step-2-3");
   });
 });

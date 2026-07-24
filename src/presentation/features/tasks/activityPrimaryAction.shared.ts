@@ -30,14 +30,14 @@ export function getTutorialCompleteDescription(
   const actionVerb =
     getEffectiveActivityProgress(progress) === "in_progress" ? "continuar" : "iniciar";
 
-  return `Você viu todas as tarefas de "${taskTitle}" e já sabe como fazer cada uma. Deseja ${actionVerb} a atividade agora ou voltar para Minhas atividades?`;
+  return `Você viu todas as tarefas de "${taskTitle}" e já sabe como fazer cada uma. Deseja ${actionVerb} agora ou voltar para Minhas atividades?`;
 }
 
 export function getStartActivityConfirmOptions(taskTitle: string) {
   return {
     title: "Iniciar esta atividade?",
-    description: `Você está prestes a começar a atividade "${taskTitle}". Deseja continuar agora?`,
-    confirmLabel: "Sim, iniciar atividade",
+    description: `Você está prestes a começar "${taskTitle}". Deseja continuar agora?`,
+    confirmLabel: "Sim, iniciar",
     cancelLabel: "Não, ainda não",
     alwaysConfirm: true as const,
   };

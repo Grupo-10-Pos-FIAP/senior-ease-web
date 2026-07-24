@@ -7,7 +7,7 @@ import { FakeTaskRepository } from "@shared/test/fakes/FakeTaskRepository";
 describe("CompleteTask", () => {
   const activeTask = createTask({
     id: "task-1",
-    title: 'Curso "Como usar E-mail"',
+    title: "Como usar o e-mail",
     startDate: "2026-06-05",
     endDate: "2026-06-22",
     status: "active",

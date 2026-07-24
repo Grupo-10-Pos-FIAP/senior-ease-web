@@ -79,6 +79,71 @@ Cuidado com o golpe do código: se alguém pedir o código de 6 dígitos que che
 Você pode usar um caderno, uma planilha simples no computador ou o aplicativo do banco. O importante é registrar e revisar todo mês.
 
 Se preferir, peça ajuda a um familiar de confiança na primeira vez.`,
+  "step-14-1": `Avisos no celular podem chegar por SMS, WhatsApp ou notificação do aplicativo. Nem todo aviso é urgente — e alguns são golpes.
+
+Leia com calma o remetente e a mensagem. Se pedir senha, código, Pix ou dados pessoais com urgência, pare e confirme por outro canal.
+
+Para avisos oficiais (banco, INSS, saúde), prefira abrir o aplicativo ou site que você já conhece, em vez de clicar em links da mensagem.`,
+  "step-15-1": `Para criar um e-mail, escolha um provedor conhecido (Gmail, Outlook ou similar) e toque em "Criar conta".
+
+Preencha seu nome, escolha um endereço fácil de lembrar e invente uma senha forte. Anote o e-mail e a senha em um lugar seguro.
+
+Ao final, confirme o cadastro com o código que chegar no celular ou por outra verificação pedida na tela.`,
+  "step-16-1": `Um link confiável costuma começar com https e mostrar um cadeado no navegador. Endereços oficiais do governo terminam em .gov.br.
+
+Desconfie de endereços com erros de escrita, números estranhos ou nomes parecidos com marcas conhecidas (ex.: "banc0" no lugar de "banco").
+
+Quando tiver dúvida, digite você mesmo o endereço no navegador ou peça ajuda a alguém de confiança.`,
+  "step-17-1": `O calendário do celular ajuda a lembrar consultas, remédios e compromissos. Abra o app Calendário e toque em "Novo" ou no sinal de +.
+
+Escolha a data, o horário e um título claro, como "Consulta no posto". Ative um lembrete alguns minutos ou horas antes.
+
+Revise a agenda no começo do dia para se preparar com calma.`,
+  "step-18-1": `No WhatsApp do celular, abra a conversa, digite a mensagem e toque em enviar. Você também pode gravar áudio segurando o microfone.
+
+Para fotos e documentos, use o clipe (anexo) ao lado do campo de texto. Confira o destinatário antes de enviar.
+
+Nunca compartilhe o código de 6 dígitos que chega por SMS — isso serve para proteger sua conta.`,
+  "step-19-1": `Ao pedir ajuda por mensagem, diga quem você é, o que precisa e até quando. Exemplo: "Oi, Maria. Preciso de ajuda para agendar a consulta amanhã de manhã."
+
+Evite mensagens muito longas. Uma pergunta clara facilita a resposta.
+
+Se for urgente, combine também uma ligação — mensagem sozinha pode demorar a ser vista.`,
+  "step-20-1": `Contatos de emergência ficam salvos na agenda do celular com nome fácil de achar, como "Filha Ana" ou "Vizinho João".
+
+Inclua o número completo com DDD. Em muitos celulares, você pode marcar o contato como favorito ou emergência.
+
+Revise a lista de tempos em tempos e peça para a pessoa confirmar se o número ainda é o mesmo.`,
+  "step-21-1": `Quando o endereço começa com https e aparece o cadeado, a conexão costuma ser mais protegida. Isso não garante sozinho que o site é honesto, mas é um bom primeiro sinal.
+
+Sites oficiais do governo usam .gov.br. Bancos e lojas grandes também têm apps oficiais nas lojas da Apple ou do Google.
+
+Se o navegador avisar que o site não é seguro, feche a página e não digite senha nem dados pessoais.`,
+  "step-22-1": `Provedores conhecidos de e-mail incluem Gmail, Outlook e similares. Escolha um que você consiga abrir com facilidade no celular.
+
+Evite sites desconhecidos que prometem "e-mail grátis" com anúncios agressivos. Prefira o site oficial digitado por você.
+
+Depois de criar a conta, anote o endereço completo (ex.: nome@gmail.com) para não esquecer.`,
+  "step-23-1": `Baixe aplicativos apenas da Play Store (Android) ou da App Store (iPhone). Evite links de instalação enviados por mensagem.
+
+Antes de instalar, confira o nome do desenvolvedor e as avaliações. Desconfie de apps com poucas avaliações pedindo muitos dados.
+
+Depois de instalar, você pode negar permissões que não fizerem sentido para o uso do app.`,
+  "step-24-1": `Para pagar boleto ou Pix no celular, abra o aplicativo oficial do seu banco. Confira o valor, o nome de quem recebe e a data de vencimento.
+
+Desconfie de boletos reenviados por WhatsApp ou e-mail de desconhecidos. Prefira gerar o pagamento dentro do app do banco ou do serviço oficial.
+
+Guarde o comprovante e, se algo parecer estranho, ligue para o banco pelo número do verso do cartão.`,
+  "step-25-1": `Para traçar um caminho no GPS, abra o mapa, digite o destino e toque em "Rotas" ou "Como chegar".
+
+Escolha carro, a pé ou transporte público conforme sua necessidade. Ouça as instruções com volume confortável.
+
+Se o caminho parecer estranho, pare em local seguro e confira o endereço digitado antes de seguir.`,
+  "step-26-1": `Cópia de segurança (backup) guarda fotos e documentos em outro lugar, caso o celular quebre ou seja perdido.
+
+Você pode usar o backup automático da conta Google ou Apple, ou copiar arquivos importantes para um pendrive ou computador de confiança.
+
+Comece pelas fotos da família e documentos de saúde. Não precisa salvar tudo de uma vez.`,
 };
 
 const MULTIPLE_CHOICE_BY_STEP: Record<string, ActivityStepContent> = {
@@ -206,6 +271,140 @@ const MULTIPLE_CHOICE_BY_STEP: Record<string, ActivityStepContent> = {
       { id: "d", label: "Instalar um aplicativo que ele indicar" },
     ],
   },
+  "step-14-2": {
+    kind: "multiple_choice",
+    question:
+      "Chegou um SMS dizendo que seu benefício será bloqueado e pedindo para clicar em um link. O que fazer?",
+    options: [
+      { id: "a", label: "Não clicar; abrir o app oficial ou ligar para o canal conhecido" },
+      { id: "b", label: "Clicar rápido no link para não perder o benefício" },
+      { id: "c", label: "Responder o SMS com CPF e senha" },
+      { id: "d", label: "Encaminhar o aviso para todos os contatos" },
+    ],
+  },
+  "step-15-2": {
+    kind: "multiple_choice",
+    question: "Qual senha é mais segura para uma conta de e-mail?",
+    options: [
+      { id: "a", label: "Uma frase longa com letras, números e símbolos, só sua" },
+      { id: "b", label: "A data de nascimento" },
+      { id: "c", label: "A palavra 'senha123'" },
+      { id: "d", label: "O mesmo número do celular" },
+    ],
+  },
+  "step-16-2": {
+    kind: "multiple_choice",
+    question: "Qual endereço parece mais confiável para um serviço do governo?",
+    options: [
+      { id: "a", label: "Um site que termina em .gov.br" },
+      { id: "b", label: "Um link curto enviado por desconhecido no WhatsApp" },
+      { id: "c", label: "Um endereço com várias letras trocadas e números estranhos" },
+      { id: "d", label: "Qualquer página que peça senha com urgência" },
+    ],
+  },
+  "step-17-2": {
+    kind: "multiple_choice",
+    question: "Para não esquecer uma consulta marcada, o que mais ajuda no calendário?",
+    options: [
+      { id: "a", label: "Ativar um lembrete antes do horário" },
+      { id: "b", label: "Criar o evento sem título" },
+      { id: "c", label: "Desligar todas as notificações do celular" },
+      { id: "d", label: "Marcar a data errada de propósito" },
+    ],
+  },
+  "step-18-2": {
+    kind: "multiple_choice",
+    question: "Para usar o WhatsApp no computador com mais segurança, o que fazer?",
+    options: [
+      { id: "a", label: "Abrir o site oficial e conectar com o QR Code do seu celular" },
+      { id: "b", label: "Baixar qualquer programa enviado por mensagem" },
+      { id: "c", label: "Passar o código do SMS para um site desconhecido" },
+      { id: "d", label: "Deixar a sessão aberta em computador público" },
+    ],
+  },
+  "step-19-2": {
+    kind: "multiple_choice",
+    question: "Quando é melhor pedir ajuda a alguém de confiança?",
+    options: [
+      { id: "a", label: "Quando a mensagem pedir dinheiro, senha ou código com urgência" },
+      { id: "b", label: "Só depois de já ter enviado o Pix" },
+      { id: "c", label: "Nunca — é melhor resolver sozinho sempre" },
+      { id: "d", label: "Quando um desconhecido disser que é da assistência técnica" },
+    ],
+  },
+  "step-20-2": {
+    kind: "multiple_choice",
+    question: "Quem faz mais sentido na lista de contatos de emergência?",
+    options: [
+      { id: "a", label: "Familiar próximo, vizinho de confiança ou serviço de saúde conhecido" },
+      { id: "b", label: "Qualquer número que mandar mensagem pedindo amizade" },
+      { id: "c", label: "Um site estrangeiro sem telefone claro" },
+      { id: "d", label: "Um perfil anônimo de rede social" },
+    ],
+  },
+  "step-21-2": {
+    kind: "multiple_choice",
+    question: "O navegador avisa que a conexão não é segura. O que fazer?",
+    options: [
+      { id: "a", label: "Fechar a página e não digitar senha nem dados pessoais" },
+      { id: "b", label: "Ignorar o aviso e continuar o login" },
+      { id: "c", label: "Enviar foto do documento para 'liberar o acesso'" },
+      { id: "d", label: "Pedir para um desconhecido digitar a senha por você" },
+    ],
+  },
+  "step-22-2": {
+    kind: "multiple_choice",
+    question: "Qual prática ajuda a proteger a senha do e-mail?",
+    options: [
+      { id: "a", label: "Não compartilhar a senha e trocá-la se suspeitar de acesso estranho" },
+      { id: "b", label: "Guardar a senha colada no monitor do trabalho" },
+      { id: "c", label: "Usar a mesma senha em todos os sites" },
+      { id: "d", label: "Enviar a senha por WhatsApp para 'não esquecer'" },
+    ],
+  },
+  "step-23-2": {
+    kind: "multiple_choice",
+    question: "Um app de lanterna pede acesso a contatos, microfone e localização. O que fazer?",
+    options: [
+      { id: "a", label: "Desconfiar e negar permissões que não fazem sentido" },
+      { id: "b", label: "Aceitar tudo para o app funcionar mais rápido" },
+      { id: "c", label: "Instalar o mesmo app por um link de SMS" },
+      { id: "d", label: "Passar a senha do e-mail para o desenvolvedor" },
+    ],
+  },
+  "step-24-2": {
+    kind: "multiple_choice",
+    question: "Alguém envia um boleto por WhatsApp pedindo pagamento urgente. O que fazer?",
+    options: [
+      {
+        id: "a",
+        label: "Confirmar o pagamento no app oficial do banco ou com a empresa conhecida",
+      },
+      { id: "b", label: "Pagar imediatamente pelo link da mensagem" },
+      { id: "c", label: "Passar a senha do banco para a pessoa 'ajudar'" },
+      { id: "d", label: "Enviar foto do comprovante antigo para desconhecidos" },
+    ],
+  },
+  "step-25-2": {
+    kind: "multiple_choice",
+    question: "O GPS indica um caminho que parece errado ou perigoso. O que fazer?",
+    options: [
+      { id: "a", label: "Parar em local seguro e conferir o endereço digitado" },
+      { id: "b", label: "Seguir sem olhar o entorno" },
+      { id: "c", label: "Desligar o celular e continuar no escuro" },
+      { id: "d", label: "Aceitar qualquer atalho sugerido por desconhecido" },
+    ],
+  },
+  "step-26-2": {
+    kind: "multiple_choice",
+    question: "Onde é mais seguro guardar cópias de documentos importantes?",
+    options: [
+      { id: "a", label: "Em backup da sua conta ou em um pendrive/computador de confiança" },
+      { id: "b", label: "Em um grupo aberto do WhatsApp" },
+      { id: "c", label: "Enviando para qualquer pessoa que pedir" },
+      { id: "d", label: "Só na memória do celular, sem nenhuma cópia" },
+    ],
+  },
 };
 
 const OPEN_QUESTION_BY_STEP: Record<string, ActivityStepContent> = {
@@ -287,7 +486,7 @@ function buildGenericContent(type: TaskStepType, label: string): ActivityStepCon
     case "content_reading":
       return {
         kind: "content_reading",
-        body: `Leia com atenção o conteúdo sobre "${label}". Role a página se precisar e toque em "Terminei de ler" quando concluir.`,
+        body: `Leia com atenção sobre ${label}. Role a página se precisar e toque em "Terminei de ler" quando concluir.`,
       };
     case "watch_content":
       return {
@@ -297,11 +496,11 @@ function buildGenericContent(type: TaskStepType, label: string): ActivityStepCon
     case "multiple_choice":
       return {
         kind: "multiple_choice",
-        question: `Pergunta sobre: ${label}`,
+        question: "Qual é a melhor escolha nesta situação?",
         options: [
-          { id: "a", label: "Primeira opção" },
-          { id: "b", label: "Segunda opção" },
-          { id: "c", label: "Terceira opção" },
+          { id: "a", label: "Pedir ajuda a alguém de confiança antes de continuar" },
+          { id: "b", label: "Clicar em qualquer link com urgência" },
+          { id: "c", label: "Compartilhar senha ou código por mensagem" },
         ],
       };
     case "open_question":

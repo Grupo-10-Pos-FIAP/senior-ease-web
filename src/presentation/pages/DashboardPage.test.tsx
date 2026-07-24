@@ -20,6 +20,6 @@ describe("DashboardPage", () => {
     });
 
     expect(screen.getByRole("tab", { name: /minhas atividades/i })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /como usar e-mail/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /como usar o e-mail/i })).toBeInTheDocument();
   });
 });

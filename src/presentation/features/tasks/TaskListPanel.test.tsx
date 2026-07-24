@@ -62,7 +62,7 @@ describe("TaskListPanel", () => {
     expect(
       screen.getByRole("heading", { name: /primeiros passos no digital/i }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /como usar e-mail/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /como usar o e-mail/i })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /videochamadas sem medo/i })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /segurança digital/i })).toBeInTheDocument();
     expect(
@@ -80,25 +80,25 @@ describe("TaskListPanel", () => {
       .map((heading) => heading.textContent);
 
     expect(titles).toEqual([
-      'Oficina "Primeiros Passos no Digital"',
-      'Curso "Como usar E-mail"',
-      'Atividade "Videochamadas sem Medo"',
-      "Oficina de Segurança Digital",
-      'Atividade "Organizando Arquivos no Computador"',
-      'Curso "Pesquisando na Internet com Segurança"',
-      'Oficina "Usando o Teclado com Confiança"',
-      'Atividade "Introdução ao WhatsApp"',
-      'Atividade "Salvando Contatos de Emergência"',
-      'Curso "Reconhecendo Links Confiáveis"',
-      'Oficina "Reconhecendo Links Seguros"',
-      'Atividade "Usando o Calendário Digital"',
-      'Atividade "Conferindo Avisos no Celular"',
-      'Oficina "WhatsApp no Celular e no Computador"',
-      'Curso "Pedindo Ajuda por Mensagem"',
-      'Oficina "Criando sua Conta de E-mail"',
-      "Simulação de Situações Reais",
-      'Atividade "Compras Online com Segurança"',
-      'Oficina "Planejando o Orçamento Mensal"',
+      "Primeiros passos no digital",
+      "Como usar o e-mail",
+      "Videochamadas sem medo",
+      "Segurança digital",
+      "Organizando arquivos no computador",
+      "Pesquisando na internet com segurança",
+      "Usando o teclado com confiança",
+      "Introdução ao WhatsApp",
+      "Salvando contatos de emergência",
+      "Reconhecendo links confiáveis",
+      "Reconhecendo links seguros",
+      "Usando o calendário digital",
+      "Conferindo avisos no celular",
+      "WhatsApp no celular e no computador",
+      "Criando sua conta de e-mail",
+      "Pedindo ajuda por mensagem",
+      "Simulação de situações reais",
+      "Compras online com segurança",
+      "Planejando o orçamento mensal",
     ]);
   });
 
@@ -173,12 +173,12 @@ describe("TaskListPanel", () => {
 
     expect(
       await screen.findByRole("link", {
-        name: /rever como fazer essa atividade: oficina "primeiros passos no digital"/i,
+        name: /rever como fazer essa atividade: primeiros passos no digital/i,
       }),
     ).toHaveAttribute("href", "/tarefas/task-1/guia");
     expect(
       screen.queryByRole("link", {
-        name: /^como fazer essa atividade: oficina "primeiros passos no digital"$/i,
+        name: /^como fazer essa atividade: primeiros passos no digital$/i,
       }),
     ).not.toBeInTheDocument();
   });
@@ -191,13 +191,13 @@ describe("TaskListPanel", () => {
 
     expect(
       screen.getByRole("button", {
-        name: /^iniciar: oficina "primeiros passos no digital"$/i,
+        name: /^iniciar: primeiros passos no digital$/i,
       }),
     ).toBeInTheDocument();
 
     await user.click(
       screen.getByRole("button", {
-        name: /^iniciar: oficina "primeiros passos no digital"$/i,
+        name: /^iniciar: primeiros passos no digital$/i,
       }),
     );
 
@@ -214,7 +214,7 @@ describe("TaskListPanel", () => {
     await waitForTasksLoaded();
 
     const startButton = await screen.findByRole("button", {
-      name: /iniciar a atividade: oficina "primeiros passos no digital"/i,
+      name: /iniciar a atividade: primeiros passos no digital/i,
     });
     await user.click(startButton);
 
@@ -222,9 +222,7 @@ describe("TaskListPanel", () => {
       await screen.findByRole("alertdialog", { name: /iniciar esta atividade/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(
-        /você está prestes a começar a atividade "oficina "primeiros passos no digital""/i,
-      ),
+      screen.getByText(/você está prestes a começar "primeiros passos no digital"/i),
     ).toBeInTheDocument();
   });
 
@@ -233,9 +231,10 @@ describe("TaskListPanel", () => {
     renderWithProviders(<TaskListPanel />);
     await waitForTasksLoaded();
 
-    expect(
-      screen.getByRole("link", { name: /^continuar: curso "como usar e-mail"$/i }),
-    ).toHaveAttribute("href", "/tarefas/task-2");
+    expect(screen.getByRole("link", { name: /^continuar: como usar o e-mail$/i })).toHaveAttribute(
+      "href",
+      "/tarefas/task-2",
+    );
   });
 
   it("não exibe botão de concluir atividade na lista", async () => {

@@ -22,7 +22,7 @@ describe("tasks MSW handlers", () => {
     const repo = new HttpTaskRepository(new HttpClient());
     const task = await repo.getById("task-1");
 
-    expect(task.title).toContain("Primeiros Passos no Digital");
+    expect(task.title).toContain("Primeiros passos no digital");
   });
 
   it("PATCH /api/tasks/:id/complete conclui atividade ativa", async () => {

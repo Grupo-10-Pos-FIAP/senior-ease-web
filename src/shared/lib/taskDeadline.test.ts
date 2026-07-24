@@ -49,28 +49,28 @@ describe("taskDeadline", () => {
     const tasks = [
       createTask({
         id: "task-13",
-        title: 'Oficina "Planejando o Orçamento Mensal"',
+        title: "Planejando o orçamento mensal",
         startDate: "2026-07-15",
         endDate: "2026-09-30",
         status: "active",
       }),
       createTask({
         id: "task-15",
-        title: 'Oficina "Criando sua Conta de E-mail"',
+        title: "Criando sua conta de e-mail",
         startDate: "2026-07-15",
         endDate: "2026-08-31",
         status: "active",
       }),
       createTask({
         id: "task-14",
-        title: 'Atividade "Conferindo Avisos no Celular"',
+        title: "Conferindo avisos no celular",
         startDate: "2026-07-15",
         endDate: "2026-08-30",
         status: "active",
       }),
       createTask({
         id: "task-1",
-        title: 'Oficina "Primeiros Passos no Digital"',
+        title: "Primeiros passos no digital",
         startDate: "2026-07-15",
         endDate: "2026-08-05",
         status: "active",
