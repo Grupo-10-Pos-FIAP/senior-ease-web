@@ -42,7 +42,7 @@ export class FakeUserRepository implements IUserRepository {
       id: current.id,
       fullName: input.fullName ?? current.fullName,
       birthDate: input.birthDate ?? current.birthDate,
-      registrationId: input.registrationId ?? current.registrationId,
+      registrationId: current.registrationId,
       disability: input.disability !== undefined ? input.disability : current.disability,
       email: input.email ?? current.email,
       phone: input.phone ?? current.phone,

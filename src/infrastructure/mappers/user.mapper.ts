@@ -4,6 +4,7 @@ import {
   type AccountStatus,
 } from "@domain/accountLifecycle";
 import { createUser, type User } from "@domain/entities/User";
+import { normalizeRegistrationId } from "@domain/registrationId";
 
 export interface UserDto {
   id: string;
@@ -53,7 +54,7 @@ export function fromUserDto(dto: UserDto): User {
     id: dto.id,
     fullName: dto.fullName.trim() || "Complete seu perfil",
     birthDate: resolveBirthDate(dto),
-    registrationId: dto.registrationId.trim() || "-",
+    registrationId: normalizeRegistrationId(dto.registrationId, dto.id),
     disability: dto.disability ?? null,
     email: dto.email.trim() || "",
     phone: normalizePhoneFromStorage(dto.phone),

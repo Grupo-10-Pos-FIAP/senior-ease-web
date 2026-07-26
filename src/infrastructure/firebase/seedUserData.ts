@@ -1,5 +1,6 @@
 import { DEFAULT_COURSE_ID } from "@domain/constants/course";
 import { createDefaultPreferences } from "@domain/entities/AccessibilityPreferences";
+import { normalizeRegistrationId } from "@domain/registrationId";
 import { getFirestoreDb } from "@infrastructure/firebase/client";
 import { ageToBirthDate } from "@infrastructure/mappers/user.mapper";
 import { toPreferencesDto } from "@infrastructure/mappers/preferences.mapper";
@@ -17,6 +18,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  setDoc,
   updateDoc,
   writeBatch,
   type Firestore,
@@ -141,7 +143,7 @@ function createNewUserDocument(uid: string, email: string | null): UserDocument 
     id: uid,
     fullName: "Complete seu perfil",
     birthDate: "",
-    registrationId: "-",
+    registrationId: normalizeRegistrationId(null, uid),
     disability: null,
     email: email ?? "",
     phone: "",
@@ -158,6 +160,8 @@ async function migrateLegacyUserDocument(
   data: Record<string, unknown>,
 ): Promise<void> {
   const patch: Record<string, unknown> = {};
+  const uid = typeof data.id === "string" && data.id ? data.id : userRef.id;
+  const registrationId = normalizeRegistrationId(data.registrationId, uid);
 
   if (!data.birthDate && typeof data.age === "number") {
     patch.birthDate = ageToBirthDate(data.age);
@@ -170,6 +174,10 @@ async function migrateLegacyUserDocument(
 
   if (!data.enrolledCourseId) {
     patch.enrolledCourseId = DEFAULT_COURSE_ID;
+  }
+
+  if (data.registrationId !== registrationId) {
+    patch.registrationId = registrationId;
   }
 
   const isIncompleteProfile =
@@ -204,10 +212,7 @@ export async function ensureUserDocument(uid: string, email: string | null): Pro
     return;
   }
 
-  const batch = writeBatch(firestore);
-  batch.set(userRef, createNewUserDocument(uid, email));
-  await batch.commit();
-
+  await setDoc(userRef, createNewUserDocument(uid, email));
   await syncActivityProgressForUser(firestore, uid, seedProgress);
 }
 

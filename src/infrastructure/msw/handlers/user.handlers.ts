@@ -38,7 +38,7 @@ export const userHandlers = [
         ...current,
         fullName: (body.fullName as string | undefined) ?? current.fullName,
         birthDate: (body.birthDate as string | undefined) ?? current.birthDate,
-        registrationId: (body.registrationId as string | undefined) ?? current.registrationId,
+        registrationId: current.registrationId,
         disability:
           body.disability !== undefined ? (body.disability as string | null) : current.disability,
         email: (body.email as string | undefined) ?? current.email,

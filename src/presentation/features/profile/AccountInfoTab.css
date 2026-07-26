@@ -86,6 +86,15 @@
   overflow-wrap: anywhere;
 }
 
+.account-info-tab__value {
+  display: block;
+}
+
+.account-info-tab__field dd .account-info-tab__field-hint {
+  margin-top: calc(var(--se-spacing, 1rem) * 0.25);
+  font-weight: 400;
+}
+
 .account-info-tab__label {
   font-size: calc(var(--se-font-size, 1rem) * 0.875);
   font-weight: 600;
@@ -115,6 +124,12 @@
 
 .account-info-tab__input--error {
   border-color: var(--se-danger);
+}
+
+.account-info-tab__input--readonly {
+  cursor: default;
+  background-color: var(--se-surface-muted, #f5f5f5);
+  color: var(--se-text-muted);
 }
 
 .account-info-tab__field-error {

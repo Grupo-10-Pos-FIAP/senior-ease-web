@@ -16,10 +16,13 @@ import "./AccountInfoTab.css";
 
 type FormFeedback = { type: "success"; message: string } | { type: "error"; message: string };
 
+const AGE_FIELD_HINT = "Calculada a partir da data de nascimento.";
+const REGISTRATION_FIELD_HINT = "Gerada automaticamente. Não pode ser alterada.";
+const BIRTH_DATE_FIELD_HINT = "Digite dia, mês e ano. A idade é calculada automaticamente.";
+
 interface UserFormState {
   fullName: string;
   birthDate: string;
-  registrationId: string;
   disability: string;
   email: string;
   phone: string;
@@ -31,14 +34,16 @@ function userToFormState(user: User): UserFormState {
   return {
     fullName: user.fullName,
     birthDate: isoToBirthDateDisplay(user.birthDate),
-    registrationId: user.registrationId,
     disability: user.disability ?? "",
     email: user.email,
     phone: formatPhoneMask(user.phone),
   };
 }
 
-function validateForm(state: UserFormState): { data: UserUpdateInput | null; errors: FieldErrors } {
+function validateForm(
+  state: UserFormState,
+  user: User,
+): { data: UserUpdateInput | null; errors: FieldErrors } {
   const errors: FieldErrors = {};
   const birthDateIso = birthDateDisplayToIso(state.birthDate.trim());
 
@@ -51,10 +56,10 @@ function validateForm(state: UserFormState): { data: UserUpdateInput | null; err
 
     if (birthDateIso) {
       createUser({
-        id: "validation",
+        id: user.id,
         fullName: state.fullName,
         birthDate: birthDateIso,
-        registrationId: state.registrationId,
+        registrationId: user.registrationId,
         disability: state.disability.trim() || null,
         email: state.email,
         phone: state.phone,
@@ -69,7 +74,6 @@ function validateForm(state: UserFormState): { data: UserUpdateInput | null; err
       data: {
         fullName: state.fullName.trim(),
         birthDate: birthDateIso,
-        registrationId: state.registrationId.trim(),
         disability: state.disability.trim() || null,
         email: state.email.trim(),
         phone: formatPhoneMask(state.phone),
@@ -81,7 +85,6 @@ function validateForm(state: UserFormState): { data: UserUpdateInput | null; err
 
     if (/nome/i.test(message)) errors.fullName = message;
     else if (/data de nascimento|idade/i.test(message)) errors.birthDate = message;
-    else if (/matrícula/i.test(message)) errors.registrationId = message;
     else if (/e-mail/i.test(message)) errors.email = message;
     else if (/telefone/i.test(message)) errors.phone = message;
     else errors.fullName = message;
@@ -195,9 +198,9 @@ export function AccountInfoTab() {
   };
 
   const handleSave = () => {
-    if (!formState) return;
+    if (!formState || !user) return;
 
-    const { data, errors } = validateForm(formState);
+    const { data, errors } = validateForm(formState, user);
     if (!data) {
       setFieldErrors(errors);
       return;
@@ -281,10 +284,7 @@ export function AccountInfoTab() {
         <h2 id="account-info-heading" className="account-info-tab__title">
           Informações da conta
         </h2>
-        <p className="account-info-tab__intro">
-          Consulte e atualize seus dados pessoais. A idade é calculada a partir da data de
-          nascimento.
-        </p>
+        <p className="account-info-tab__intro">Consulte e atualize seus dados pessoais.</p>
       </header>
 
       {isEditing && formState ? (
@@ -354,37 +354,27 @@ export function AccountInfoTab() {
               </p>
             ) : (
               <p id="account-birth-date-hint" className="account-info-tab__field-hint">
-                Digite dia, mês e ano. Sua idade será calculada automaticamente.
+                {BIRTH_DATE_FIELD_HINT}
               </p>
             )}
           </div>
 
           <div className="account-info-tab__form-field account-info-tab__form-field--full">
             <label className="account-info-tab__label" htmlFor="account-registration">
-              Matrícula
+              Número da matrícula
             </label>
             <input
               id="account-registration"
-              className={`account-info-tab__input ${fieldErrors.registrationId ? "account-info-tab__input--error" : ""}`}
+              className="account-info-tab__input account-info-tab__input--readonly"
               type="text"
-              value={formState.registrationId}
-              onChange={(event) => {
-                updateField("registrationId", event.target.value);
-              }}
-              aria-invalid={Boolean(fieldErrors.registrationId)}
-              aria-describedby={
-                fieldErrors.registrationId ? "account-registration-error" : undefined
-              }
+              value={user.registrationId}
+              readOnly
+              aria-readonly="true"
+              aria-describedby="account-registration-hint"
             />
-            {fieldErrors.registrationId ? (
-              <p
-                id="account-registration-error"
-                className="account-info-tab__field-error"
-                role="alert"
-              >
-                {fieldErrors.registrationId}
-              </p>
-            ) : null}
+            <p id="account-registration-hint" className="account-info-tab__field-hint">
+              {REGISTRATION_FIELD_HINT}
+            </p>
           </div>
 
           <div className="account-info-tab__form-field account-info-tab__form-field--full">
@@ -463,11 +453,17 @@ export function AccountInfoTab() {
           </div>
           <div className="account-info-tab__field">
             <dt>Idade</dt>
-            <dd>{formatUserAge(user.birthDate)}</dd>
+            <dd>
+              <span className="account-info-tab__value">{formatUserAge(user.birthDate)}</span>
+              <p className="account-info-tab__field-hint">{AGE_FIELD_HINT}</p>
+            </dd>
           </div>
           <div className="account-info-tab__field account-info-tab__field--full">
-            <dt>Matrícula</dt>
-            <dd>{user.registrationId}</dd>
+            <dt>Número da matrícula</dt>
+            <dd>
+              <span className="account-info-tab__value">{user.registrationId}</span>
+              <p className="account-info-tab__field-hint">{REGISTRATION_FIELD_HINT}</p>
+            </dd>
           </div>
           <div className="account-info-tab__field account-info-tab__field--full">
             <dt>Possui alguma deficiência?</dt>

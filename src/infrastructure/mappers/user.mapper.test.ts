@@ -8,7 +8,7 @@ describe("user.mapper", () => {
       id: "demo-user",
       fullName: "Antônio José Maria da Silva",
       birthDate: "1959-01-15",
-      registrationId: "2026067",
+      registrationId: "SE01001",
       disability: "Baixa visão",
       email: "antoniojose@seniorease.com.br",
       phone: "(85) 96767-6767",
@@ -38,7 +38,7 @@ describe("user.mapper", () => {
       id: "user-1",
       fullName: "Complete seu perfil",
       birthDate: "",
-      registrationId: "-",
+      registrationId: "",
       disability: null,
       email: "test@gmail.com",
       phone: "-",
@@ -46,5 +46,22 @@ describe("user.mapper", () => {
 
     expect(user.phone).toBe("");
     expect(user.birthDate).toBe("");
+    expect(user.registrationId).toMatch(/^SE\d{5}$/);
+  });
+
+  it("converte matrícula legada (UID) para formato amigável na leitura", () => {
+    const uid = "q8uxtuQAjNUOzXGYM2uJ9iXYW6P2";
+    const user = fromUserDto({
+      id: uid,
+      fullName: "Complete seu perfil",
+      birthDate: "",
+      registrationId: uid,
+      disability: null,
+      email: "admin@bloomia.com",
+      phone: "",
+    });
+
+    expect(user.registrationId).toMatch(/^SE\d{5}$/);
+    expect(user.registrationId).not.toBe(uid);
   });
 });

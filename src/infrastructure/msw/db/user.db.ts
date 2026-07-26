@@ -7,7 +7,7 @@ const DEMO_USER: UserDto = {
   id: "demo-user",
   fullName: "Antônio José Maria da Silva",
   birthDate: "1959-01-15",
-  registrationId: "2026067",
+  registrationId: "SE01001",
   disability: "Baixa visão",
   email: "antoniojose@seniorease.com.br",
   phone: "(85) 96767-6767",

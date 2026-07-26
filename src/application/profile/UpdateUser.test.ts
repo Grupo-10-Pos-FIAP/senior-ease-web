@@ -7,7 +7,7 @@ const demoUser = createUser({
   id: "demo-user",
   fullName: "Antônio José Maria da Silva",
   birthDate: "1959-01-15",
-  registrationId: "2026067",
+  registrationId: "SE01001",
   disability: "Baixa visão",
   email: "antoniojose@seniorease.com.br",
   phone: "(85) 96767-6767",
@@ -25,6 +25,7 @@ describe("UpdateUser", () => {
     expect(updated.fullName).toBe("Maria Souza");
     expect(updated.birthDate).toBe("1959-01-15");
     expect(updated.email).toBe("antoniojose@seniorease.com.br");
+    expect(updated.registrationId).toBe("SE01001");
   });
 
   it("rejeita input inválido", async () => {

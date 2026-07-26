@@ -11,7 +11,7 @@ export class UpdateUser {
       id: current.id,
       fullName: input.fullName ?? current.fullName,
       birthDate: input.birthDate ?? current.birthDate,
-      registrationId: input.registrationId ?? current.registrationId,
+      registrationId: current.registrationId,
       disability: input.disability !== undefined ? input.disability : current.disability,
       email: input.email ?? current.email,
       phone: input.phone ?? current.phone,
@@ -20,7 +20,6 @@ export class UpdateUser {
     return this.repository.update(userId, {
       fullName: updated.fullName,
       birthDate: updated.birthDate,
-      registrationId: updated.registrationId,
       disability: updated.disability,
       email: updated.email,
       phone: updated.phone,

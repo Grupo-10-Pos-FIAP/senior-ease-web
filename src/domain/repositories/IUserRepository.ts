@@ -4,7 +4,6 @@ import type { User } from "@domain/entities/User";
 export interface UserUpdateInput {
   fullName?: string;
   birthDate?: string;
-  registrationId?: string;
   disability?: string | null;
   email?: string;
   phone?: string;

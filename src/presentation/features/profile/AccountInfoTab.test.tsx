@@ -80,7 +80,7 @@ describe("AccountInfoTab", () => {
 
     expect(within(tab).getByText("Antônio José Maria da Silva")).toBeInTheDocument();
     expect(within(tab).getByText("67 anos")).toBeInTheDocument();
-    expect(within(tab).getByText("2026067")).toBeInTheDocument();
+    expect(within(tab).getByText("SE01001")).toBeInTheDocument();
     expect(within(tab).getByText("Baixa visão")).toBeInTheDocument();
     expect(within(tab).getByText("antoniojose@seniorease.com.br")).toBeInTheDocument();
     expect(within(tab).getByText("(85) 96767-6767")).toBeInTheDocument();
@@ -95,6 +95,8 @@ describe("AccountInfoTab", () => {
 
     expect(within(tab).getByLabelText(/nome completo/i)).toHaveValue("Antônio José Maria da Silva");
     expect(within(tab).getByLabelText(/data de nascimento/i)).toHaveValue("15/01/1959");
+    expect(within(tab).getByLabelText(/número da matrícula/i)).toHaveValue("SE01001");
+    expect(within(tab).getByLabelText(/número da matrícula/i)).toHaveAttribute("readonly");
     expect(within(tab).getByRole("button", { name: /salvar informações/i })).toBeInTheDocument();
   });
 
