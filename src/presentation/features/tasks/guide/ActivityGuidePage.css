@@ -130,6 +130,18 @@
   }
 }
 
+@media (max-width: 579.98px) {
+  .activity-guide__actions {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .activity-guide__actions .activity-guide__link {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 @media (min-width: 640px) {
   .activity-guide__item {
     flex-direction: row;

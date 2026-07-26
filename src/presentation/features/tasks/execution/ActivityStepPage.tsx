@@ -135,7 +135,9 @@ function ActivityStepContent({ task, step, taskId, stepId }: ActivityStepContent
       { taskId, stepId, payload },
       {
         onSuccess: (updatedTask) => {
-          setSaveMessage("Resposta salva com sucesso!");
+          if (step.type === "multiple_choice" || step.type === "open_question") {
+            setSaveMessage("Resposta salva com sucesso!");
+          }
 
           if (updatedTask.status === "completed") {
             void navigate(`/tarefas/${taskId}/concluida`);

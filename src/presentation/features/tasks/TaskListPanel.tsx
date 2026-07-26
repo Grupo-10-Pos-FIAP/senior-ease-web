@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { getActivityProgress, type Task, type TaskStatus } from "@domain/entities/Task";
 import { useAccessibility } from "@app/providers/accessibilityContext";
-import { ActivityCard, ActivityTabs, type ActivityHowToPresentation } from "@shared/ui";
+import { ActivityCard, ActivityTabs, Button, type ActivityHowToPresentation } from "@shared/ui";
 import { useTasksQuery } from "@app/hooks/useTasks";
 import { ACTIVITY_TAB_OPTIONS, EMPTY_STATE_MESSAGES } from "@shared/lib/taskLabels";
 import { sortActiveTasksByDeadline } from "@shared/lib/taskDeadline";
@@ -23,12 +23,14 @@ function TaskListContent({
   tasks,
   isLoading,
   isError,
+  onRetry,
   howToPresentation,
 }: {
   status: TaskStatus;
   tasks: Task[];
   isLoading: boolean;
   isError: boolean;
+  onRetry: () => void;
   howToPresentation: ActivityHowToPresentation;
 }) {
   const filtered = useMemo(() => filterTasksByStatus(tasks, status), [tasks, status]);
@@ -39,9 +41,14 @@ function TaskListContent({
 
   if (isError) {
     return (
-      <p className="task-list-panel__status task-list-panel__status--error" role="alert">
-        Não foi possível carregar suas atividades. Tente atualizar a página.
-      </p>
+      <div className="task-list-panel__status task-list-panel__status--error" role="alert">
+        <p className="task-list-panel__error-message">
+          Não conseguimos conectar aos seus dados agora.
+        </p>
+        <Button type="button" variant="secondary" onClick={onRetry}>
+          Tentar novamente
+        </Button>
+      </div>
     );
   }
 
@@ -79,7 +86,7 @@ export function TaskListPanel() {
   const [status, setStatus] = useState<TaskStatus>("active");
   const { preferences } = useAccessibility();
 
-  const { data: tasks = [], isLoading, isError } = useTasksQuery();
+  const { data: tasks = [], isLoading, isError, refetch } = useTasksQuery();
   const howToPresentation: ActivityHowToPresentation =
     preferences.interfaceMode === "simplified" ? "button" : "icon";
 
@@ -101,6 +108,9 @@ export function TaskListPanel() {
             tasks={tasks}
             isLoading={isLoading}
             isError={isError}
+            onRetry={() => {
+              void refetch();
+            }}
             howToPresentation={howToPresentation}
           />
         )}

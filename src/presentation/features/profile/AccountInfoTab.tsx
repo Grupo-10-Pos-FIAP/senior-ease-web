@@ -162,7 +162,7 @@ function SaveIcon() {
 }
 
 export function AccountInfoTab() {
-  const { data: user, isLoading, isError } = useUserQuery();
+  const { data: user, isLoading, isError, refetch } = useUserQuery();
   const { updateMutation, deactivateMutation } = useUserMutations();
   const { pending, runIfAllowed, confirm, cancel, isOpen } = useConfirmCriticalAction();
   const navigate = useNavigate();
@@ -254,9 +254,20 @@ export function AccountInfoTab() {
 
   if (isError || !user) {
     return (
-      <p className="account-info-tab__error" role="alert">
-        Não foi possível carregar suas informações. Tente novamente mais tarde.
-      </p>
+      <div className="account-info-tab__error" role="alert">
+        <p className="account-info-tab__error-message">
+          Não conseguimos conectar aos seus dados agora.
+        </p>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={() => {
+            void refetch();
+          }}
+        >
+          Tentar novamente
+        </Button>
+      </div>
     );
   }
 

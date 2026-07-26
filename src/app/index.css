@@ -65,7 +65,7 @@ body {
   border: 2px solid var(--se-border);
 }
 
-@media (max-width: 639px) {
+@media (max-width: 409px) {
   .activity-tabs__list,
   .profile-tabs {
     flex-direction: column;
