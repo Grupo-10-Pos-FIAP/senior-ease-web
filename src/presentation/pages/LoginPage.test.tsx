@@ -84,6 +84,7 @@ describe("LoginPage", () => {
 
     expect(screen.getByRole("heading", { name: /crie sua conta/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /^criar minha conta$/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /criar conta com google/i })).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /já tem conta\? acessar conta/i }),
     ).toBeInTheDocument();

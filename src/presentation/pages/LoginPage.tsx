@@ -230,7 +230,7 @@ export function LoginPage() {
           disabled={isLoading}
           aria-busy={isGoogleLoading}
         >
-          Entrar com Google
+          {mode === "sign-in" ? "Entrar com Google" : "Criar conta com Google"}
         </Button>
 
         <button
