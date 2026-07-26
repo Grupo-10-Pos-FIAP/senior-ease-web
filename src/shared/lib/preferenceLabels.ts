@@ -83,7 +83,7 @@ export const PREFERENCE_DESCRIPTIONS = {
   contrast:
     "Ajuste a diferença entre texto e fundo. A descrição do nível escolhido aparece abaixo.",
   interfaceMode:
-    "No modo básico, a plataforma oferece mais orientações e textos didáticos.\nJá no modo avançado, a interface fica mais enxuta, com menos ajuda na tela.",
+    "No modo padrão, a plataforma oferece mais orientações e textos didáticos.\nJá no modo simplificado, a interface fica mais enxuta, com menos ajuda na tela.",
   spacing: "Aumente o espaço entre botões e blocos se tiver dificuldade para tocar.",
   reinforcedVisualFeedback:
     "Destaca botões e foco com contornos mais visíveis ao tocar ou navegar.",

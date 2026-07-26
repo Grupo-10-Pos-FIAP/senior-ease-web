@@ -25,13 +25,13 @@ const CONTRAST_OPTIONS = getContrastOptions();
 const INTERFACE_MODE_OPTIONS: { value: InterfaceMode; label: string; ariaLabel: string }[] = [
   {
     value: "simplified",
-    label: "Básico",
-    ariaLabel: "Modo básico — mais orientações e opções didáticas",
+    label: "Padrão",
+    ariaLabel: "Modo padrão — mais orientações e opções didáticas",
   },
   {
     value: "standard",
-    label: "Avançado",
-    ariaLabel: "Modo avançado — interface mais enxuta",
+    label: "Simplificado",
+    ariaLabel: "Modo simplificado — interface mais enxuta",
   },
 ];
 

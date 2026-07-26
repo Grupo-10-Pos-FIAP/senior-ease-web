@@ -58,7 +58,7 @@ describe("PersonalizationPanel", () => {
     ).toBeInTheDocument();
   });
 
-  it("exibe banner de alterações não salvas somente no modo básico", async () => {
+  it("exibe banner de alterações não salvas somente no modo padrão", async () => {
     const user = userEvent.setup();
     renderWithProviders(<PersonalizationPanel />);
     const panel = await findPanel();
@@ -69,7 +69,7 @@ describe("PersonalizationPanel", () => {
     expect(within(panel).queryByText(/alterações não salvas/i)).not.toBeInTheDocument();
 
     const modeGroup = within(panel).getByRole("radiogroup", { name: /modo de navegação/i });
-    await user.click(within(modeGroup).getByRole("radio", { name: /modo básico/i }));
+    await user.click(within(modeGroup).getByRole("radio", { name: /modo padrão/i }));
 
     expect(await within(panel).findByText(/alterações não salvas/i)).toBeInTheDocument();
     expect(within(panel).getByRole("button", { name: /salvar agora/i })).toBeInTheDocument();
@@ -101,7 +101,7 @@ describe("PersonalizationPanel", () => {
     const panel = await findPanel();
 
     const modeGroup = within(panel).getByRole("radiogroup", { name: /modo de navegação/i });
-    await user.click(within(modeGroup).getByRole("radio", { name: /modo básico/i }));
+    await user.click(within(modeGroup).getByRole("radio", { name: /modo padrão/i }));
 
     const confirmGroup = await within(panel).findByRole("radiogroup", {
       name: /confirmação em ações críticas/i,
@@ -145,7 +145,7 @@ describe("PersonalizationPanel", () => {
     });
   });
 
-  it("oculta opções de orientação no modo avançado", async () => {
+  it("oculta opções de orientação no modo simplificado", async () => {
     const user = userEvent.setup();
     renderWithProviders(<PersonalizationPanel />);
     const panel = await findPanel();
@@ -158,7 +158,7 @@ describe("PersonalizationPanel", () => {
     ).not.toBeInTheDocument();
 
     const modeGroup = within(panel).getByRole("radiogroup", { name: /modo de navegação/i });
-    await user.click(within(modeGroup).getByRole("radio", { name: /modo básico/i }));
+    await user.click(within(modeGroup).getByRole("radio", { name: /modo padrão/i }));
 
     await waitFor(() => {
       expect(
@@ -170,13 +170,13 @@ describe("PersonalizationPanel", () => {
     });
   });
 
-  it("no modo avançado desliga feedback reforçado e confirmação crítica", async () => {
+  it("no modo simplificado desliga feedback reforçado e confirmação crítica", async () => {
     const user = userEvent.setup();
     renderWithProviders(<PersonalizationPanel />);
     const panel = await findPanel();
 
     const modeGroup = within(panel).getByRole("radiogroup", { name: /modo de navegação/i });
-    await user.click(within(modeGroup).getByRole("radio", { name: /modo básico/i }));
+    await user.click(within(modeGroup).getByRole("radio", { name: /modo padrão/i }));
 
     const feedbackGroup = await waitFor(() =>
       within(panel).getByRole("radiogroup", { name: /feedback visual reforçado/i }),
@@ -188,7 +188,7 @@ describe("PersonalizationPanel", () => {
     await user.click(within(feedbackGroup).getByRole("radio", { name: /^sim$/i }));
     await user.click(within(confirmGroup).getByRole("radio", { name: /^sim$/i }));
 
-    await user.click(within(modeGroup).getByRole("radio", { name: /modo avançado/i }));
+    await user.click(within(modeGroup).getByRole("radio", { name: /modo simplificado/i }));
 
     await waitFor(() => {
       expect(
@@ -198,7 +198,7 @@ describe("PersonalizationPanel", () => {
 
     expect(document.documentElement.dataset.reinforcedFeedback).toBe("false");
 
-    await user.click(within(modeGroup).getByRole("radio", { name: /modo básico/i }));
+    await user.click(within(modeGroup).getByRole("radio", { name: /modo padrão/i }));
 
     await waitFor(() => {
       const feedback = within(panel).getByRole("radiogroup", {
@@ -212,7 +212,7 @@ describe("PersonalizationPanel", () => {
     });
   });
 
-  it("descreve o modo básico como mais didático", async () => {
+  it("descreve o modo padrão como mais didático", async () => {
     renderWithProviders(<PersonalizationPanel />);
     const panel = await findPanel();
 

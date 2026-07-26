@@ -99,7 +99,7 @@ describe("ActivityGuidePage", () => {
     expect(screen.getByText("Assistir conteúdo")).toBeInTheDocument();
   });
 
-  it("exibe botão como fazer em cada item no modo avançado", async () => {
+  it("exibe botão como fazer em cada item no modo simplificado", async () => {
     renderGuideRoute("/tarefas/task-1/guia");
     await waitForGuideLoaded();
 
@@ -112,7 +112,7 @@ describe("ActivityGuidePage", () => {
     expect(actionLinks[0]).toHaveTextContent(GUIDE_STEP_ACTION_LABEL_ADVANCED);
   });
 
-  it("exibe textos longos do guia no modo básico", async () => {
+  it("exibe textos longos do guia no modo padrão", async () => {
     setInterfaceMode("simplified");
     renderGuideRoute("/tarefas/task-1/guia");
     await waitForGuideLoaded();
@@ -138,7 +138,7 @@ describe("ActivityGuidePage", () => {
     ).toBeInTheDocument();
   });
 
-  it("no modo avançado inicia a atividade no guia sem confirmação", async () => {
+  it("no modo simplificado inicia a atividade no guia sem confirmação", async () => {
     const user = userEvent.setup();
     renderGuideRoute("/tarefas/task-1/guia");
     await waitForGuideLoaded();

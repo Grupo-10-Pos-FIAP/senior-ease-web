@@ -218,5 +218,5 @@ export function applyAccessibilityTokens(
 }
 
 export function getInterfaceModeLabel(mode: InterfaceMode): string {
-  return mode === "standard" ? "Avançado" : "Básico";
+  return mode === "standard" ? "Simplificado" : "Padrão";
 }

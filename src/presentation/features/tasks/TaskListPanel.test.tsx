@@ -133,7 +133,7 @@ describe("TaskListPanel", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("no modo avançado exibe ajuda como ícone ao lado do título", async () => {
+  it("no modo simplificado exibe ajuda como ícone ao lado do título", async () => {
     useMockReferenceDate();
     renderWithProviders(<TaskListPanel />);
     await waitForTasksLoaded();
@@ -145,7 +145,7 @@ describe("TaskListPanel", () => {
     expect(screen.queryByText("Como fazer essa atividade?")).not.toBeInTheDocument();
   });
 
-  it("no modo básico exibe botão como fazer essa atividade", async () => {
+  it("no modo padrão exibe botão como fazer essa atividade", async () => {
     useMockReferenceDate();
     setInterfaceMode("simplified");
     renderWithProviders(<TaskListPanel />);
@@ -183,7 +183,7 @@ describe("TaskListPanel", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("no modo avançado inicia a atividade sem modal de confirmação", async () => {
+  it("no modo simplificado inicia a atividade sem modal de confirmação", async () => {
     const user = userEvent.setup();
     useMockReferenceDate();
     renderWithProviders(<TaskListPanel />);
@@ -206,7 +206,7 @@ describe("TaskListPanel", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("no modo básico mantém textos completos de iniciar atividade", async () => {
+  it("no modo padrão mantém textos completos de iniciar atividade", async () => {
     const user = userEvent.setup();
     useMockReferenceDate();
     setInterfaceMode("simplified");
@@ -226,7 +226,7 @@ describe("TaskListPanel", () => {
     ).toBeInTheDocument();
   });
 
-  it("exibe continuar quando há progresso parcial no modo avançado", async () => {
+  it("exibe continuar quando há progresso parcial no modo simplificado", async () => {
     useMockReferenceDate();
     renderWithProviders(<TaskListPanel />);
     await waitForTasksLoaded();

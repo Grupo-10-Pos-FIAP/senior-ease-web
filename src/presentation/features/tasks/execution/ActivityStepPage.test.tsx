@@ -96,7 +96,7 @@ describe("Activity execution", () => {
     ).toBeInTheDocument();
   });
 
-  it("usa Próximo como ação principal no modo avançado", async () => {
+  it("usa Próximo como ação principal no modo simplificado", async () => {
     renderExecutionRoute("/tarefas/task-1/passo/step-1-1");
     await waitForStepLoaded();
 
@@ -112,7 +112,7 @@ describe("Activity execution", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("mantém textos longos de navegação no modo básico", async () => {
+  it("mantém textos longos de navegação no modo padrão", async () => {
     setInterfaceMode("simplified");
     renderExecutionRoute("/tarefas/task-1/passo/step-1-1");
     await waitForStepLoaded();
@@ -182,7 +182,7 @@ describe("Activity execution", () => {
     ).toBeChecked();
   });
 
-  it("pede confirmação antes de sair e voltar depois no modo básico", async () => {
+  it("pede confirmação antes de sair e voltar depois no modo padrão", async () => {
     const user = userEvent.setup();
     setInterfaceMode("simplified");
     renderExecutionRoute("/tarefas/task-1/passo/step-1-1");
@@ -213,7 +213,7 @@ describe("Activity execution", () => {
     });
   });
 
-  it("no modo avançado conclui a atividade sem confirmação", async () => {
+  it("no modo simplificado conclui a atividade sem confirmação", async () => {
     const user = userEvent.setup();
     completeStepInDb("task-1", "step-1-1", DEMO_USER_ID);
     completeStepInDb("task-1", "step-1-2", DEMO_USER_ID, "a");
@@ -234,7 +234,7 @@ describe("Activity execution", () => {
     ).toBeInTheDocument();
   });
 
-  it("no modo básico pede confirmação ao concluir quando a preferência está ligada", async () => {
+  it("no modo padrão pede confirmação ao concluir quando a preferência está ligada", async () => {
     const user = userEvent.setup();
     setPreferences({ interfaceMode: "simplified", confirmCriticalActions: true });
     completeStepInDb("task-1", "step-1-1", DEMO_USER_ID);
@@ -259,7 +259,7 @@ describe("Activity execution", () => {
     expect(screen.getByText(/passo 4 de 4/i)).toBeInTheDocument();
   });
 
-  it("no modo básico conclui sem confirmação quando a preferência está desligada", async () => {
+  it("no modo padrão conclui sem confirmação quando a preferência está desligada", async () => {
     const user = userEvent.setup();
     setPreferences({ interfaceMode: "simplified", confirmCriticalActions: false });
     completeStepInDb("task-1", "step-1-1", DEMO_USER_ID);
