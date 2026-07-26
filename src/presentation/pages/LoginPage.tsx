@@ -146,8 +146,15 @@ export function LoginPage() {
 
   return (
     <main className="login-page" aria-labelledby="login-heading">
+      <img
+        className="login-page__brand"
+        src="/logo-seniorease.png"
+        alt="SeniorEASE"
+        width={180}
+        height={143}
+      />
+
       <div className="login-page__card">
-        <p className="login-page__brand">SeniorEASE</p>
         <h1 id="login-heading" className="login-page__title">
           Bem-vindo(a) ao SeniorEASE!
         </h1>
@@ -162,6 +169,12 @@ export function LoginPage() {
           onChange={setMode}
           ariaLabel="Escolha acessar minha conta ou criar minha conta"
         />
+
+        {errorMessage ? (
+          <p className="login-page__error" role="alert">
+            {errorMessage}
+          </p>
+        ) : null}
 
         <form
           className="login-page__form"
@@ -230,12 +243,6 @@ export function LoginPage() {
         >
           Entrar com Google
         </Button>
-
-        {errorMessage ? (
-          <p className="login-page__error" role="alert">
-            {errorMessage}
-          </p>
-        ) : null}
       </div>
 
       <ConfirmDialog

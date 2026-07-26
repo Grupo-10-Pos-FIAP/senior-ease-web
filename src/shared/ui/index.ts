@@ -8,5 +8,4 @@ export { SegmentedControl } from "./components/SegmentedControl";
 export { ConfirmDialog } from "./components/ConfirmDialog";
 export type { ConfirmDialogVariant } from "./components/ConfirmDialog/ConfirmDialog";
 export { SuccessDialog } from "./components/SuccessDialog";
-export { Switch } from "./primitives/Switch";
 export { Tabs } from "./primitives/Tabs";
