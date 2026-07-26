@@ -9,7 +9,7 @@ import {
   signUpWithEmail,
 } from "@infrastructure/firebase/authService";
 import { getAuthErrorCode, mapAuthError } from "@infrastructure/firebase/mapAuthError";
-import { Button, ConfirmDialog, SegmentedControl, SuccessDialog } from "@shared/ui";
+import { Button, ConfirmDialog, SuccessDialog } from "@shared/ui";
 import "./LoginPage.css";
 
 type LoginMode = "sign-in" | "sign-up";
@@ -146,29 +146,18 @@ export function LoginPage() {
 
   return (
     <main className="login-page" aria-labelledby="login-heading">
-      <img
-        className="login-page__brand"
-        src="/logo-seniorease.png"
-        alt="SeniorEASE"
-        width={180}
-        height={143}
-      />
-
       <div className="login-page__card">
-        <h1 id="login-heading" className="login-page__title">
-          Bem-vindo(a) ao SeniorEASE!
-        </h1>
-
-        <SegmentedControl
-          name="login-mode"
-          value={mode}
-          options={[
-            { value: "sign-in", label: "Acessar minha conta" },
-            { value: "sign-up", label: "Criar minha conta" },
-          ]}
-          onChange={setMode}
-          ariaLabel="Escolha acessar minha conta ou criar minha conta"
+        <img
+          className="login-page__brand"
+          src="/logo-seniorease.png"
+          alt="SeniorEASE"
+          width={180}
+          height={143}
         />
+
+        <h1 id="login-heading" className="login-page__title">
+          {mode === "sign-in" ? "Acesse sua conta para continuar." : "Crie sua conta para começar."}
+        </h1>
 
         {errorMessage ? (
           <p className="login-page__error" role="alert">
@@ -243,12 +232,24 @@ export function LoginPage() {
         >
           Entrar com Google
         </Button>
+
+        <button
+          type="button"
+          className="login-page__switch"
+          onClick={() => {
+            setErrorMessage(null);
+            setMode(mode === "sign-in" ? "sign-up" : "sign-in");
+          }}
+          disabled={isLoading}
+        >
+          {mode === "sign-in" ? "Não tem conta? Criar conta" : "Já tem conta? Acessar conta"}
+        </button>
       </div>
 
       <ConfirmDialog
         open={deactivatedDialogOpen}
         title="Conta desativada encontrada"
-        description="Existe uma conta desativada com este e-mail. Deseja reativá-la e recuperar todo o progresso e os dados anteriores?"
+        description="Encontramos uma conta desativada com este e-mail. Se quiser, podemos reativá-la agora e trazer de volta todos os seus dados e o seu progresso."
         confirmLabel="Sim, reativar minha conta"
         cancelLabel="Não, manter desativada"
         confirmVariant="primary"

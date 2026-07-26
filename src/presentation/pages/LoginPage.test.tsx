@@ -66,11 +66,27 @@ describe("LoginPage", () => {
   it("renderiza formulário de entrar", () => {
     renderLoginPage();
 
-    expect(screen.getByRole("heading", { name: /bem-vindo/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /acesse sua conta/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/e-mail/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/senha/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /acessar minha conta/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /entrar com google/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /não tem conta\? criar conta/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("alterna para o modo criar conta pelo link do rodapé", async () => {
+    const user = userEvent.setup();
+    renderLoginPage();
+
+    await user.click(screen.getByRole("button", { name: /não tem conta\? criar conta/i }));
+
+    expect(screen.getByRole("heading", { name: /crie sua conta/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^criar minha conta$/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /já tem conta\? acessar conta/i }),
+    ).toBeInTheDocument();
   });
 
   it("envia credenciais no modo entrar", async () => {
@@ -90,7 +106,7 @@ describe("LoginPage", () => {
     const user = userEvent.setup();
     renderLoginPage();
 
-    await user.click(screen.getByRole("radio", { name: /criar minha conta/i }));
+    await user.click(screen.getByRole("button", { name: /não tem conta\? criar conta/i }));
     await user.type(screen.getByLabelText(/e-mail/i), "novo@example.com");
     await user.type(screen.getByLabelText(/senha/i), "senha123");
     await user.click(screen.getByRole("button", { name: /^criar minha conta$/i }));
