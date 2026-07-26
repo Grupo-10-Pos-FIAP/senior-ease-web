@@ -128,7 +128,7 @@ src/
 │   ├── mappers/
 │   ├── repositories/             # Firestore + HTTP + fallbacks
 │   ├── seed/                     # catálogo de atividades
-│   └── msw/                      # handlers/, db/, server.ts
+│   └── msw/                      # handlers/, db/, server.ts (só em testes)
 │
 ├── presentation/                 # UI React
 │   ├── pages/

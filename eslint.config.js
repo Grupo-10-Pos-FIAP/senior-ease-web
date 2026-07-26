@@ -9,7 +9,7 @@ import eslintConfigPrettier from "eslint-config-prettier/flat";
 import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig(
-  globalIgnores(["dist", "coverage", "node_modules", "public/mockServiceWorker.js"]),
+  globalIgnores(["dist", "coverage", "node_modules"]),
 
   // ── src: strict type-checked + react hooks ──
   {
