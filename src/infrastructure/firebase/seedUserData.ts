@@ -3,13 +3,12 @@ import { createDefaultPreferences } from "@domain/entities/AccessibilityPreferen
 import { getFirestoreDb } from "@infrastructure/firebase/client";
 import { ageToBirthDate } from "@infrastructure/mappers/user.mapper";
 import { toPreferencesDto } from "@infrastructure/mappers/preferences.mapper";
-import type { ActivityDto, ActivityProgressDto } from "@infrastructure/mappers/activity.mapper";
+import type { ActivityProgressDto } from "@infrastructure/mappers/activity.mapper";
 import {
   ACTIVITY_CATALOG_SEED,
   applyCatalogExpiration,
   buildDefaultProgressForCatalog,
   cloneActivityCatalogSeed,
-  DEFAULT_COURSE_SEED,
   getDemoProgressForUser,
 } from "@infrastructure/seed/activityCatalog.seed";
 import {
@@ -43,14 +42,6 @@ export function isTaskSeedSyncEnabled(): boolean {
   return !import.meta.env.PROD;
 }
 
-function cloneCatalogSeed(): ActivityDto[] {
-  return cloneActivityCatalogSeed(new Date());
-}
-
-function activityDtoEquals(left: ActivityDto, right: ActivityDto): boolean {
-  return JSON.stringify(left) === JSON.stringify(right);
-}
-
 function progressDtoEquals(left: ActivityProgressDto, right: ActivityProgressDto): boolean {
   return JSON.stringify(left) === JSON.stringify(right);
 }
@@ -74,49 +65,6 @@ function mergeProgressFromSeed(
     currentStepId: existing.currentStepId ?? seed.currentStepId,
     stepAnswers: existing.stepAnswers ?? seed.stepAnswers,
   };
-}
-
-async function syncCourseCatalog(firestore: Firestore): Promise<void> {
-  const courseRef = doc(firestore, "courses", DEFAULT_COURSE_ID);
-  const activitiesRef = collection(firestore, "courses", DEFAULT_COURSE_ID, "activities");
-  const snapshot = await getDocs(activitiesRef);
-  const existingById = new Map(
-    snapshot.docs.map((activityDoc) => [activityDoc.id, activityDoc.data() as ActivityDto]),
-  );
-
-  const batch = writeBatch(firestore);
-
-  batch.set(courseRef, DEFAULT_COURSE_SEED, { merge: true });
-
-  for (const seedActivity of cloneCatalogSeed()) {
-    const existing = existingById.get(seedActivity.id);
-
-    if (!existing) {
-      batch.set(doc(activitiesRef, seedActivity.id), seedActivity);
-      continue;
-    }
-
-    if (!activityDtoEquals(existing, seedActivity)) {
-      batch.set(doc(activitiesRef, seedActivity.id), seedActivity);
-    }
-  }
-
-  await batch.commit();
-}
-
-/**
- * Tentativa best-effort: as regras atuais bloqueiam escrita em `courses` no client.
- * Em DEV o catálogo é lido do seed local; em produção use `npm run sync:course` (Admin SDK).
- */
-async function trySyncCourseCatalog(firestore: Firestore): Promise<void> {
-  try {
-    await syncCourseCatalog(firestore);
-  } catch (error: unknown) {
-    console.warn(
-      "[SeniorEase] Catálogo não sincronizado no Firestore (escrita em courses bloqueada pelas regras). Em DEV a lista usa o seed local.",
-      error,
-    );
-  }
 }
 
 async function listCatalogActivityIds(firestore: Firestore): Promise<string[]> {
@@ -252,11 +200,6 @@ export async function ensureUserDocument(uid: string, email: string | null): Pro
 
   if (snapshot.exists()) {
     await migrateLegacyUserDocument(userRef, snapshot.data());
-
-    if (isTaskSeedSyncEnabled()) {
-      await trySyncCourseCatalog(firestore);
-    }
-
     await syncActivityProgressForUser(firestore, uid, seedProgress);
     return;
   }
@@ -264,10 +207,6 @@ export async function ensureUserDocument(uid: string, email: string | null): Pro
   const batch = writeBatch(firestore);
   batch.set(userRef, createNewUserDocument(uid, email));
   await batch.commit();
-
-  if (isTaskSeedSyncEnabled()) {
-    await trySyncCourseCatalog(firestore);
-  }
 
   await syncActivityProgressForUser(firestore, uid, seedProgress);
 }
@@ -288,10 +227,6 @@ export async function deleteUserActivityProgress(firestore: Firestore, uid: stri
 
 export async function deleteUserLearningData(firestore: Firestore, uid: string): Promise<void> {
   await deleteUserActivityProgress(firestore, uid);
-}
-
-export async function syncCourseCatalogForDev(firestore: Firestore): Promise<void> {
-  await syncCourseCatalog(firestore);
 }
 
 export { applyCatalogExpiration, cloneActivityCatalogSeed };

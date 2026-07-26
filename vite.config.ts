@@ -4,6 +4,12 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
+  server: {
+    headers: {
+      // Mitiga avisos COOP do popup do Google Auth no Chrome (login segue via popup).
+      "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
+    },
+  },
   resolve: {
     alias: {
       "@domain": path.resolve(__dirname, "./src/domain"),

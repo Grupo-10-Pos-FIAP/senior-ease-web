@@ -10,6 +10,7 @@ const AUTH_ERROR_MESSAGES: Record<string, string> = {
     "O navegador bloqueou a janela do Google. Permita pop-ups para este site e tente de novo.",
   "auth/cancelled-popup-request":
     "Aguarde o login anterior terminar ou tente de novo em instantes.",
+  "auth/redirect-cancelled-by-user": "Login com Google cancelado.",
   "auth/unauthorized-domain":
     "Este domínio não está autorizado no Firebase. Adicione a URL da Vercel em Authentication → Settings → Authorized domains.",
   "auth/operation-not-allowed":

@@ -1,6 +1,6 @@
 import { initializeApp, type FirebaseApp } from "firebase/app";
 import { getAuth, type Auth } from "firebase/auth";
-import { getFirestore, type Firestore } from "firebase/firestore";
+import { initializeFirestore, type Firestore } from "firebase/firestore";
 
 const requiredEnvKeys = [
   "VITE_FIREBASE_API_KEY",
@@ -58,7 +58,9 @@ export function getFirebaseAuth(): Auth {
 
 export function getFirestoreDb(): Firestore {
   if (!db) {
-    db = getFirestore(getFirebaseApp());
+    // Proxies e antivírus que inspecionam TLS quebram o stream WebChannel;
+    // o long-polling usa requisições HTTP comuns e atravessa esses filtros.
+    db = initializeFirestore(getFirebaseApp(), { experimentalForceLongPolling: true });
   }
   return db;
 }
