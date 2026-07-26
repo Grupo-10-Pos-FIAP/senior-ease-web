@@ -56,6 +56,10 @@ body {
   text-underline-offset: 3px;
 }
 
+[data-contrast-level="5"] a {
+  text-decoration-color: #ffffff;
+}
+
 [data-contrast-level="5"] .segmented-control,
 [data-contrast-level="6"] .segmented-control {
   border: 2px solid var(--se-border);

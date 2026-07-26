@@ -39,6 +39,11 @@
   color: #ffffff;
 }
 
+/* Nível 5: opção ativa com fundo branco e texto preto. */
+[data-contrast-level="5"] .segmented-control__option--active {
+  color: #000000;
+}
+
 .segmented-control__option:has(:focus-visible) {
   outline: 3px solid var(--se-focus-ring);
   outline-offset: 2px;

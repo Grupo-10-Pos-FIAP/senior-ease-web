@@ -19,8 +19,22 @@ describe("accessibilityTokens — contraste", () => {
   it("descreve os 6 níveis em português", () => {
     expect(getContrastLevelDescription(1)).toMatch(/padrão/i);
     expect(getContrastLevelDescription(2)).toMatch(/reflexo|embassamento/i);
+    expect(getContrastLevelDescription(5)).toMatch(/fundo preto/i);
+    expect(getContrastLevelDescription(5)).toMatch(/letras brancas/i);
     expect(getContrastLevelDescription(6)).toMatch(/daltonismo/i);
     expect(getContrastLevelDescription(6)).toMatch(/tema escuro/i);
+  });
+
+  it("aplica tokens do nível 5 (fundo preto e letras brancas)", () => {
+    const target = document.documentElement;
+    applyAccessibilityTokens({ ...createDefaultPreferences(), contrast: 5 }, target);
+
+    expect(target.style.getPropertyValue("--se-contrast-bg")).toBe("#000000");
+    expect(target.style.getPropertyValue("--se-contrast-fg")).toBe("#ffffff");
+    expect(target.style.getPropertyValue("--se-accent")).toBe("#ffffff");
+    expect(target.style.getPropertyValue("--se-border")).toBe("#ffffff");
+    expect(target.style.getPropertyValue("--se-focus-ring")).toBe("#ffffff");
+    expect(target.dataset.contrastLevel).toBe("5");
   });
 
   it("aplica tokens do nível 6 (daltonismo e baixa visão)", () => {

@@ -71,7 +71,7 @@ function withInteractionTokens(palette: ContrastPalette): ContrastTokens {
  * - SC 1.4.11 — bordas e componentes de UI (≥ 3:1)
  * - SC 1.4.1 — accent azul no nível 6; links sublinhados nos níveis 5–6 (G183)
  * - SC 1.3.3 — feedback reforçado usa fg/bg, não accent (evita confundir toque com marca)
- * Nível 2: fundo creme anti-glare; Nível 6: tema escuro + azul (evita vermelho/verde como único diferenciador).
+ * Nível 2: fundo creme anti-glare; Nível 5: preto/branco máximo; Nível 6: tema escuro + azul.
  */
 const CONTRAST_PALETTES: Record<ContrastLevel, ContrastPalette> = {
   1: {
@@ -131,18 +131,18 @@ const CONTRAST_PALETTES: Record<ContrastLevel, ContrastPalette> = {
     feedbackErrorBorder: "#333333",
   },
   5: {
-    bg: "#ffffff",
-    fg: "#000000",
-    accent: "#000000",
-    muted: "#eeeeee",
-    border: "#000000",
-    textMuted: "#000000",
-    feedbackSuccessBg: "#eeeeee",
-    feedbackSuccessFg: "#000000",
-    feedbackSuccessBorder: "#000000",
-    feedbackErrorBg: "#ffffff",
-    feedbackErrorFg: "#000000",
-    feedbackErrorBorder: "#000000",
+    bg: "#000000",
+    fg: "#ffffff",
+    accent: "#ffffff",
+    muted: "#1a1a1a",
+    border: "#ffffff",
+    textMuted: "#ffffff",
+    feedbackSuccessBg: "#1a1a1a",
+    feedbackSuccessFg: "#ffffff",
+    feedbackSuccessBorder: "#ffffff",
+    feedbackErrorBg: "#000000",
+    feedbackErrorFg: "#ffffff",
+    feedbackErrorBorder: "#ffffff",
   },
   6: {
     bg: "#121212",
@@ -174,7 +174,7 @@ const CONTRAST_DESCRIPTIONS: Record<ContrastLevel, string> = {
   2: "Fundo suave com menos reflexo — indicado para sensibilidade à luz ou embassamento.",
   3: "Leitura mais confortável para vista cansada ou idade avançada.",
   4: "Alto contraste entre texto e fundo.",
-  5: "Contraste máximo para baixa visão.",
+  5: "Contraste máximo: fundo preto e letras brancas — indicado para baixa visão. Links, bordas e sublinhados também em branco.",
   6: "Alto contraste em tema escuro — indicado para daltonismo e baixa visão. Links e botões usam azul, não apenas cor.",
 };
 

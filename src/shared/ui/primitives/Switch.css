@@ -25,6 +25,11 @@
   background-color: var(--se-navy);
 }
 
+/* Nível 5: thumb preto sobre trilho branco. */
+[data-contrast-level="5"] .se-switch__root[data-state="checked"] .se-switch__thumb {
+  background-color: #000000;
+}
+
 .se-switch__root:focus-visible {
   outline: 3px solid var(--se-focus-ring);
   outline-offset: 2px;

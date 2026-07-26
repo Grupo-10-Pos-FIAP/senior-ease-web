@@ -189,6 +189,10 @@
   cursor: pointer;
 }
 
+[data-contrast-level="5"] .immersive-tutorial__play-button {
+  color: #000000;
+}
+
 .immersive-tutorial__play-button:focus-visible {
   outline: 3px solid var(--se-focus-ring);
   outline-offset: 2px;
