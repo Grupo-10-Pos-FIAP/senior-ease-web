@@ -44,7 +44,7 @@ function renderExecutionRoute(initialRoute: string) {
     { initialEntries: [initialRoute] },
   );
 
-  return render(
+  render(
     <QueryClientProvider client={queryClient}>
       <AuthContext.Provider
         value={{
@@ -61,6 +61,8 @@ function renderExecutionRoute(initialRoute: string) {
       </AuthContext.Provider>
     </QueryClientProvider>,
   );
+
+  return { router };
 }
 
 async function waitForStepLoaded() {
@@ -232,11 +234,24 @@ describe("Activity execution", () => {
     expect(
       await screen.findByRole("heading", { name: /parabéns! você concluiu a atividade/i }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("status")).toHaveTextContent(/você acertou 1 de 1 pergunta/i);
-    expect(screen.getByText(/^acertou$/i)).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent(
+      /parabéns! você foi muito bem\. continue assim!/i,
+    );
+    expect(
+      screen.getByText(/parabéns! você respondeu corretamente\.\s*continue assim!/i),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /^sua resposta$/i })).toBeInTheDocument();
+    expect(
+      screen.getByText(/pergunta: serviços públicos e bancos estão cada vez mais no celular/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /sua resposta: começar com uma tarefa simples e pedir ajuda de alguém de confiança/i,
+      ),
+    ).toBeInTheDocument();
   });
 
-  it("mostra na conclusão o que acertou e o que errou", async () => {
+  it("mostra na conclusão feedback acolhedor ao errar, sem contar erros", async () => {
     completeStepInDb("task-1", "step-1-1", DEMO_USER_ID);
     completeStepInDb("task-1", "step-1-2", DEMO_USER_ID, "a");
     completeStepInDb("task-1", "step-1-3", DEMO_USER_ID, "Quero aprender e-mail");
@@ -245,18 +260,64 @@ describe("Activity execution", () => {
     renderExecutionRoute("/tarefas/task-1/concluida");
 
     expect(
-      await screen.findByRole("heading", { name: /parabéns! você concluiu a atividade/i }),
+      await screen.findByRole("heading", {
+        name: /você concluiu a atividade\. veja seu resultado\./i,
+      }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("status")).toHaveTextContent(/você acertou 0 de 1 pergunta\. errou 1/i);
-    expect(screen.getByText(/^errou$/i)).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: /parabéns! você concluiu a atividade/i }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent(
+      /veja abaixo como foi a pergunta\. o importante é aprender\./i,
+    );
+    expect(screen.getByRole("status")).not.toHaveTextContent(/errou/i);
+    expect(
+      screen.getByText(/a resposta não foi a correta\. não tem problema!/i),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/próxima vez/i)).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /^sua resposta$/i })).toBeInTheDocument();
+    expect(
+      screen.getByText(/pergunta: serviços públicos e bancos estão cada vez mais no celular/i),
+    ).toBeInTheDocument();
     expect(
       screen.getByText(/sua resposta: tentar aprender tudo de uma vez sem pausa/i),
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        /resposta correta: começar com uma tarefa simples e pedir ajuda de alguém de confiança/i,
+        /resposta certa: começar com uma tarefa simples e pedir ajuda de alguém de confiança/i,
       ),
     ).toBeInTheDocument();
+  });
+
+  it("ao trocar de atividade concluída não mantém o resultado anterior", async () => {
+    completeStepInDb("task-1", "step-1-1", DEMO_USER_ID);
+    completeStepInDb("task-1", "step-1-2", DEMO_USER_ID, "a");
+    completeStepInDb("task-1", "step-1-3", DEMO_USER_ID, "Quero aprender e-mail");
+    completeStepInDb("task-1", "step-1-4", DEMO_USER_ID);
+
+    completeStepInDb("task-2", "step-2-1", DEMO_USER_ID);
+    completeStepInDb("task-2", "step-2-2", DEMO_USER_ID);
+    completeStepInDb("task-2", "step-2-3", DEMO_USER_ID, "c");
+
+    const { router } = renderExecutionRoute("/tarefas/task-1/concluida");
+
+    expect(
+      await screen.findByRole("heading", {
+        name: /você concluiu a atividade\. veja seu resultado\./i,
+      }),
+    ).toBeInTheDocument();
+
+    await router.navigate("/tarefas/task-2/concluida");
+
+    expect(
+      await screen.findByRole("heading", { name: /parabéns! você concluiu a atividade/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", {
+        name: /você concluiu a atividade\. veja seu resultado\./i,
+      }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByText(/como usar o e-mail/i)).toBeInTheDocument();
   });
 
   it("no modo padrão pede confirmação ao concluir quando a preferência está ligada", async () => {
