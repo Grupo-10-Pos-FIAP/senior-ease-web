@@ -8,6 +8,20 @@ Facilita a vida acadêmica e profissional de pessoas idosas com fluxos guiados, 
 
 ---
 
+## O que a plataforma oferece
+
+- **Login** — Firebase Auth em `/entrar`
+- **Dashboard** (`/`) — lista de atividades com abas:
+  - Minhas atividades
+  - Atividades concluídas
+  - Atividades expiradas
+- **Fluxo de atividade** — entrada → guia/tutorial → execução passo a passo → tela de conclusão com feedback positivo
+- **Perfil**
+  - **Personalização** — tamanho de fonte, contraste, espaçamento, modo de navegação, feedback visual reforçado e confirmação em ações críticas (preferências persistidas)
+  - **Conta** — dados do usuário e ciclo de vida (desativar / reativar)
+
+---
+
 ## Pré-requisitos
 
 - **Node.js** 22+ (alinhado ao CI)
@@ -169,19 +183,19 @@ src/
 
 **Rotas (presentation):**
 
-| Rota                         | Página / feature                    |
-| ---------------------------- | ----------------------------------- |
-| `/entrar`                    | Login (guest)                       |
-| `/`                          | Dashboard (lista de atividades)     |
-| `/tarefas/:id`               | Entrada do fluxo da atividade       |
-| `/tarefas/:id/guia`          | Guia / tutorial da atividade        |
-| `/tarefas/:id/guia/:stepId`  | Tutorial de um passo                |
-| `/tarefas/:id/passo/:stepId` | Execução do passo                   |
-| `/tarefas/:id/concluida`     | Atividade concluída                 |
-| `/perfil`                    | Perfil (tabs)                       |
-| `/perfil/personalizacao`     | Preferências de acessibilidade      |
-| `/perfil/conta`              | Dados da conta / ciclo de vida      |
-| `/personalizacao`            | Redirect → `/perfil/personalizacao` |
+| Rota                         | Página / feature                                                                  |
+| ---------------------------- | --------------------------------------------------------------------------------- |
+| `/entrar`                    | Login (guest)                                                                     |
+| `/`                          | Dashboard — abas Minhas atividades / Atividades concluídas / Atividades expiradas |
+| `/tarefas/:id`               | Entrada do fluxo da atividade                                                     |
+| `/tarefas/:id/guia`          | Guia / tutorial da atividade                                                      |
+| `/tarefas/:id/guia/:stepId`  | Tutorial de um passo                                                              |
+| `/tarefas/:id/passo/:stepId` | Execução do passo                                                                 |
+| `/tarefas/:id/concluida`     | Atividade concluída                                                               |
+| `/perfil`                    | Perfil (tabs)                                                                     |
+| `/perfil/personalizacao`     | Preferências de acessibilidade                                                    |
+| `/perfil/conta`              | Dados da conta / ciclo de vida                                                    |
+| `/personalizacao`            | Redirect → `/perfil/personalizacao`                                               |
 
 Rotas autenticadas usam `ProtectedRoute`; `/entrar` usa `GuestRoute`.
 
@@ -307,3 +321,9 @@ Localmente, o equivalente ao gate de qualidade é `npm run verify` (format + lin
 | `@app/*`            | `src/app/*`            |
 
 Configurados em `tsconfig.app.json`, `vite.config.ts` e `vitest.config.ts`.
+
+---
+
+## Sobre o projeto
+
+Projeto desenvolvido para o Hackathon da Pós-Graduação FIAP (POSTECH — FRNT) — plataforma SeniorEase (versão Web).
