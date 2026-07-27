@@ -1,5 +1,6 @@
 import { DEFAULT_COURSE_ID } from "@domain/constants/course";
 import { createDefaultPreferences } from "@domain/entities/AccessibilityPreferences";
+import { INCOMPLETE_PROFILE_NAME } from "@domain/entities/User";
 import { isFriendlyRegistrationId } from "@domain/registrationId";
 import { getFirestoreDb } from "@infrastructure/firebase/client";
 import { allocateNextRegistrationId } from "@infrastructure/firebase/registrationCounter";
@@ -146,7 +147,7 @@ function createNewUserDocument(
 ): UserDocument {
   return {
     id: uid,
-    fullName: "Complete seu perfil",
+    fullName: INCOMPLETE_PROFILE_NAME,
     birthDate: "",
     registrationId,
     disability: null,
@@ -185,7 +186,7 @@ async function migrateLegacyUserDocument(
   }
 
   const isIncompleteProfile =
-    data.fullName === "Complete seu perfil" || data.registrationId === "-";
+    data.fullName === INCOMPLETE_PROFILE_NAME || data.registrationId === "-";
 
   if (data.birthDate === "1960-01-01" && isIncompleteProfile) {
     patch.birthDate = "";

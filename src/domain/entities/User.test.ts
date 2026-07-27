@@ -4,6 +4,9 @@ import {
   createUser,
   formatUserAge,
   formatUserDisability,
+  INCOMPLETE_PROFILE_NAME,
+  isProfileIncomplete,
+  type User,
 } from "@domain/entities/User";
 
 const validInput = {
@@ -105,5 +108,27 @@ describe("formatUserDisability", () => {
   it("exibe Nenhuma quando vazio", () => {
     expect(formatUserDisability(null)).toBe("Nenhuma");
     expect(formatUserDisability("Baixa visão")).toBe("Baixa visão");
+  });
+});
+
+describe("isProfileIncomplete", () => {
+  const completeUser: User = {
+    id: "demo-user",
+    fullName: "Antônio José Maria da Silva",
+    birthDate: "1959-01-15",
+    registrationId: "SE01001",
+    disability: null,
+    email: "antoniojose@seniorease.com.br",
+    phone: "(85) 96767-6767",
+  };
+
+  it("retorna false para perfil completo", () => {
+    expect(isProfileIncomplete(completeUser)).toBe(false);
+  });
+
+  it("retorna true para placeholder de nome ou campos inválidos", () => {
+    expect(isProfileIncomplete({ ...completeUser, fullName: INCOMPLETE_PROFILE_NAME })).toBe(true);
+    expect(isProfileIncomplete({ ...completeUser, birthDate: "" })).toBe(true);
+    expect(isProfileIncomplete({ ...completeUser, phone: "" })).toBe(true);
   });
 });

@@ -3,7 +3,7 @@ import {
   type AccountLifecycle,
   type AccountStatus,
 } from "@domain/accountLifecycle";
-import { createUser, type User } from "@domain/entities/User";
+import { createUser, INCOMPLETE_PROFILE_NAME, type User } from "@domain/entities/User";
 import { normalizeRegistrationId } from "@domain/registrationId";
 
 export interface UserDto {
@@ -52,7 +52,7 @@ function normalizePhoneFromStorage(phone: string | undefined): string {
 export function fromUserDto(dto: UserDto): User {
   return {
     id: dto.id,
-    fullName: dto.fullName.trim() || "Complete seu perfil",
+    fullName: dto.fullName.trim() || INCOMPLETE_PROFILE_NAME,
     birthDate: resolveBirthDate(dto),
     registrationId: normalizeRegistrationId(dto.registrationId),
     disability: dto.disability ?? null,

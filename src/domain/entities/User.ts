@@ -8,6 +8,9 @@ export interface User {
   phone: string;
 }
 
+/** Placeholder de nome usado até o usuário completar o cadastro. */
+export const INCOMPLETE_PROFILE_NAME = "Complete seu perfil";
+
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const BIRTH_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const MIN_AGE = 1;
@@ -120,4 +123,18 @@ export function formatUserAge(birthDate: string): string {
 
 export function formatUserDisability(disability: string | null): string {
   return disability ?? "Nenhuma";
+}
+
+/** Perfil incompleto se o nome ainda é placeholder ou se faltam campos obrigatórios. */
+export function isProfileIncomplete(user: User): boolean {
+  if (user.fullName.trim() === INCOMPLETE_PROFILE_NAME) {
+    return true;
+  }
+
+  try {
+    createUser(user);
+    return false;
+  } catch {
+    return true;
+  }
 }

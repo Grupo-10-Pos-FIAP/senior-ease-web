@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createUser } from "@domain/entities/User";
+import { createUser, INCOMPLETE_PROFILE_NAME } from "@domain/entities/User";
 import { ageToBirthDate, fromUserDto, toUserDto } from "@infrastructure/mappers/user.mapper";
 
 describe("user.mapper", () => {
@@ -36,7 +36,7 @@ describe("user.mapper", () => {
   it("normaliza telefone placeholder de perfil incompleto", () => {
     const user = fromUserDto({
       id: "user-1",
-      fullName: "Complete seu perfil",
+      fullName: INCOMPLETE_PROFILE_NAME,
       birthDate: "",
       registrationId: "",
       disability: null,
@@ -53,7 +53,7 @@ describe("user.mapper", () => {
     const uid = "q8uxtuQAjNUOzXGYM2uJ9iXYW6P2";
     const user = fromUserDto({
       id: uid,
-      fullName: "Complete seu perfil",
+      fullName: INCOMPLETE_PROFILE_NAME,
       birthDate: "",
       registrationId: uid,
       disability: null,
