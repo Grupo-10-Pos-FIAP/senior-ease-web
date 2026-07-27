@@ -36,12 +36,12 @@
 
 .segmented-control__option--active {
   background-color: var(--se-navy);
-  color: #ffffff;
+  color: var(--se-active-fg);
 }
 
 /* Nível 5: opção ativa com fundo branco e texto preto. */
 [data-contrast-level="5"] .segmented-control__option--active {
-  color: #000000;
+  color: var(--se-contrast-max-fg);
 }
 
 .segmented-control__option:has(:focus-visible) {

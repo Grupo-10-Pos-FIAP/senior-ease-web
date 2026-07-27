@@ -3,7 +3,7 @@
   flex-direction: column;
   gap: calc(var(--se-spacing, 1rem) * 1.25);
   padding: calc(var(--se-spacing, 1rem) * 1.25);
-  background-color: var(--se-contrast-bg, #ffffff);
+  background-color: var(--se-contrast-bg);
   border: 1px solid var(--se-border);
   border-radius: 12px;
 }

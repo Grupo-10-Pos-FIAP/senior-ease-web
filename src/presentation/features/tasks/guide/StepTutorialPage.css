@@ -48,7 +48,7 @@
 }
 
 .step-tutorial--immersive .step-tutorial__bottom-bar {
-  background-color: var(--se-contrast-bg, #ffffff);
+  background-color: var(--se-contrast-bg);
 }
 
 .step-tutorial__footer {
@@ -183,14 +183,14 @@
   padding: 0;
   font-size: calc(var(--se-font-size, 1rem) * 2);
   color: var(--se-navy);
-  background-color: #ffffff;
+  background-color: var(--se-surface);
   border: none;
   border-radius: 50%;
   cursor: pointer;
 }
 
 [data-contrast-level="5"] .immersive-tutorial__play-button {
-  color: #000000;
+  color: var(--se-contrast-max-fg);
 }
 
 .immersive-tutorial__play-button:focus-visible {
@@ -200,7 +200,7 @@
 
 .immersive-tutorial__video-done {
   font-size: calc(var(--se-font-size, 1rem) * 2.5);
-  color: #ffffff;
+  color: var(--se-active-fg);
 }
 
 .immersive-tutorial__progress {
@@ -227,7 +227,7 @@
 
 .immersive-tutorial__action-bar {
   padding: calc(var(--se-spacing, 1rem) * 1.5) calc(var(--se-spacing, 1rem) * 1.5);
-  background-color: var(--se-contrast-bg, #ffffff);
+  background-color: var(--se-contrast-bg);
   border-top: 2px solid var(--se-border);
 }
 

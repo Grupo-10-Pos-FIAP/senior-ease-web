@@ -1,12 +1,17 @@
 :root {
   --se-navy: #1d2d50;
   --se-navy-dark: #152340;
+  --se-primary: #1a5f7a;
   --se-surface: #ffffff;
   --se-surface-muted: #f4f6f9;
+  --se-login-surface: #fbf9f8;
   --se-border: #d8dee9;
   --se-text-muted: #5a6478;
   --se-active-bg: #1d2d50;
   --se-active-fg: #ffffff;
+  --se-contrast-bg: #ffffff;
+  --se-contrast-fg: #1a1a1a;
+  --se-accent: #1d2d50;
   --se-focus-ring: #1a1a1a;
   --se-feedback-ring: #949494;
   --se-feedback-inset: #ffffff;
@@ -18,6 +23,13 @@
   --se-warning-border: color-mix(in srgb, var(--se-warning) 45%, transparent);
   --se-success: #2e7d32;
   --se-success-dark: #1b5e20;
+  --se-success-border: #43a047;
+  --se-feedback-success-bg: #f4f6f9;
+  --se-feedback-success-fg: #1d2d50;
+  --se-feedback-success-border: #949494;
+  --se-feedback-error-bg: #fef2f2;
+  --se-feedback-error-fg: #7f1d1d;
+  --se-feedback-error-border: #fecaca;
   --se-touch-min: 44px;
   --se-content-max-width: 1280px;
   --se-status-completed-bg: #e8f5e9;
@@ -26,4 +38,7 @@
   --se-status-expired-bg: #ffebee;
   --se-status-expired-fg: #c62828;
   --se-status-expired-border: #ef9a9a;
+  /* Contraste máximo (nível 5): tinta preta e hover sobre superfície branca */
+  --se-contrast-max-fg: #000000;
+  --se-contrast-max-hover: #e8e8e8;
 }

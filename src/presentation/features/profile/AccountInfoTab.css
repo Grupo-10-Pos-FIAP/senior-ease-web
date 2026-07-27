@@ -111,7 +111,7 @@
   font-size: var(--se-font-size, 1rem);
   font-family: inherit;
   color: var(--se-contrast-fg);
-  background-color: var(--se-surface, #ffffff);
+  background-color: var(--se-surface);
   border: 2px solid var(--se-border);
   border-radius: 8px;
 }
@@ -128,7 +128,7 @@
 
 .account-info-tab__input--readonly {
   cursor: default;
-  background-color: var(--se-surface-muted, #f5f5f5);
+  background-color: var(--se-surface-muted);
   color: var(--se-text-muted);
 }
 
@@ -156,9 +156,9 @@
 }
 
 .account-info-tab__feedback--error {
-  color: var(--se-feedback-error-fg, #c62828);
-  background-color: var(--se-feedback-error-bg, #ffebee);
-  border: 1px solid var(--se-feedback-error-border, #ef9a9a);
+  color: var(--se-feedback-error-fg);
+  background-color: var(--se-feedback-error-bg);
+  border: 1px solid var(--se-feedback-error-border);
 }
 
 .account-info-tab__footer {

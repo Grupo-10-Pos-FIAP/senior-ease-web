@@ -27,7 +27,7 @@
 
 .se-button--primary {
   background-color: var(--se-navy);
-  color: #ffffff;
+  color: var(--se-active-fg);
 }
 
 .se-button--primary:hover:not(:disabled) {
@@ -36,11 +36,11 @@
 
 /* Nível 5 (preto/branco): fundo do botão branco e texto preto — accent é branco. */
 [data-contrast-level="5"] .se-button--primary {
-  color: #000000;
+  color: var(--se-contrast-max-fg);
 }
 
 [data-contrast-level="5"] .se-button--primary:hover:not(:disabled) {
-  background-color: #e8e8e8;
+  background-color: var(--se-contrast-max-hover);
 }
 
 .se-button--secondary {
@@ -75,12 +75,12 @@
 
 .se-button--danger-filled {
   background-color: var(--se-danger);
-  color: #ffffff;
+  color: var(--se-active-fg);
   border-color: var(--se-danger);
 }
 
 .se-button--danger-filled:hover:not(:disabled) {
-  background-color: color-mix(in srgb, var(--se-danger) 88%, #000000);
+  background-color: color-mix(in srgb, var(--se-danger) 88%, var(--se-contrast-max-fg));
 }
 
 .se-button--warning-filled {
@@ -111,7 +111,7 @@
 
 .se-button--success-filled {
   background-color: var(--se-success);
-  color: #ffffff;
+  color: var(--se-active-fg);
   border-color: var(--se-success);
 }
 

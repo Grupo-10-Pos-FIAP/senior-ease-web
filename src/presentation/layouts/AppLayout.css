@@ -2,8 +2,8 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: var(--se-contrast-bg, #ffffff);
-  color: var(--se-contrast-fg, #1a1a1a);
+  background-color: var(--se-contrast-bg);
+  color: var(--se-contrast-fg);
   font-size: var(--se-font-size, 1rem);
 }
 

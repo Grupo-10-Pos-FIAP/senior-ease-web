@@ -7,7 +7,7 @@
   display: grid;
   place-items: center;
   padding: calc(var(--se-spacing, 1rem) * 1.5);
-  background-color: #fbf9f8;
+  background-color: var(--se-login-surface);
   background-image: url("/background.png");
   background-size: cover;
   background-position: center;
@@ -34,7 +34,7 @@
   padding: calc(var(--se-spacing, 1rem) * 2);
   border: 1px solid var(--se-border);
   border-radius: calc(var(--se-spacing, 1rem) * 0.75);
-  background: #fbf9f8;
+  background: var(--se-login-surface);
 }
 
 .login-page__title {
@@ -71,7 +71,7 @@
 .login-page__label {
   font-size: var(--se-font-size, 1rem);
   font-weight: 600;
-  color: var(--se-contrast-fg, #1a1a1a);
+  color: var(--se-contrast-fg);
 }
 
 .login-page__input {
@@ -81,7 +81,7 @@
   border: 1px solid var(--se-border);
   border-radius: calc(var(--se-spacing, 1rem) * 0.5);
   background: var(--se-surface);
-  color: var(--se-contrast-fg, #1a1a1a);
+  color: var(--se-contrast-fg);
 }
 
 .login-page__input:focus-visible {
@@ -143,12 +143,12 @@
   padding: calc(var(--se-spacing, 1rem) * 0.625) var(--se-spacing, 1rem);
   border: 2px solid var(--se-danger);
   border-radius: calc(var(--se-spacing, 1rem) * 0.5);
-  background: var(--se-status-expired-bg, #ffebee);
+  background: var(--se-status-expired-bg);
   font-size: var(--se-font-size, 1rem);
   font-weight: 700;
   line-height: 1.35;
   text-align: center;
-  color: var(--se-status-expired-fg, #c62828);
+  color: var(--se-status-expired-fg);
 }
 
 @media (max-width: 767.98px) {

@@ -38,7 +38,7 @@
 .preference-row__label {
   font-size: var(--se-font-size, 1rem);
   font-weight: 600;
-  color: var(--se-contrast-fg, #1a1a1a);
+  color: var(--se-contrast-fg);
 }
 
 .preference-row__description {
