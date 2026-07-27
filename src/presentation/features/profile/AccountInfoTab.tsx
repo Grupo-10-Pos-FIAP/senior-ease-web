@@ -1,6 +1,13 @@
-import { useCallback, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { createUser, formatUserAge, formatUserDisability, type User } from "@domain/entities/User";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  createUser,
+  formatUserAge,
+  formatUserDisability,
+  INCOMPLETE_PROFILE_NAME,
+  isProfileIncomplete,
+  type User,
+} from "@domain/entities/User";
 import type { UserUpdateInput } from "@domain/repositories/IUserRepository";
 import { signOutUser } from "@infrastructure/firebase/authService";
 import { formatPhoneMask } from "@shared/lib/formatPhone";
@@ -12,6 +19,7 @@ import {
 import { Button, ConfirmDialog, SuccessDialog } from "@shared/ui";
 import { useConfirmCriticalAction } from "@presentation/hooks/useConfirmCriticalAction";
 import { useUserMutations, useUserQuery } from "@presentation/hooks/useUserProfile";
+import { IncompleteProfileCallout } from "@presentation/features/profile/IncompleteProfileCallout";
 import "./AccountInfoTab.css";
 
 type FormFeedback = { type: "success"; message: string } | { type: "error"; message: string };
@@ -169,6 +177,7 @@ export function AccountInfoTab() {
   const { updateMutation, deactivateMutation } = useUserMutations();
   const { pending, runIfAllowed, confirm, cancel, isOpen } = useConfirmCriticalAction();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [isEditing, setIsEditing] = useState(false);
   const [formState, setFormState] = useState<UserFormState | null>(null);
@@ -181,12 +190,32 @@ export function AccountInfoTab() {
     setFormState((current) => (current ? { ...current, [field]: value } : current));
   }, []);
 
-  const handleEdit = () => {
-    if (!user) return;
-    setFormState(userToFormState(user));
+  const beginEditing = useCallback((currentUser: User) => {
+    const nextState = userToFormState(currentUser);
+    if (nextState.fullName === INCOMPLETE_PROFILE_NAME) {
+      nextState.fullName = "";
+    }
+    setFormState(nextState);
     setFieldErrors({});
     setFeedback(null);
     setIsEditing(true);
+  }, []);
+
+  // Deep-link ?editar=1: adjust local state while rendering (avoids setState-in-effect).
+  const wantsEditFromUrl = searchParams.get("editar") === "1";
+  if (user && wantsEditFromUrl && !isEditing) {
+    beginEditing(user);
+  }
+
+  // Sync external URL after entering edit mode from the query string.
+  useEffect(() => {
+    if (!user || searchParams.get("editar") !== "1") return;
+    setSearchParams({}, { replace: true });
+  }, [user, searchParams, setSearchParams]);
+
+  const handleEdit = () => {
+    if (!user) return;
+    beginEditing(user);
   };
 
   const handleCancel = () => {
@@ -282,10 +311,14 @@ export function AccountInfoTab() {
     <section className="account-info-tab" aria-labelledby="account-info-heading">
       <header className="account-info-tab__header">
         <h2 id="account-info-heading" className="account-info-tab__title">
-          Informações da conta
+          {isEditing ? "Editar informações da conta" : "Informações da conta"}
         </h2>
         <p className="account-info-tab__intro">Consulte e atualize seus dados pessoais.</p>
       </header>
+
+      {!isEditing && isProfileIncomplete(user) ? (
+        <IncompleteProfileCallout description='Algumas informações suas ainda estão faltando. Toque em "Editar informações" abaixo para preenchê-las.' />
+      ) : null}
 
       {isEditing && formState ? (
         <form

@@ -1,8 +1,11 @@
 import { useMemo, useState } from "react";
 import { getActivityProgress, type Task, type TaskStatus } from "@domain/entities/Task";
+import { isProfileIncomplete } from "@domain/entities/User";
 import { useAccessibility } from "@app/providers/accessibilityContext";
 import { ActivityCard, ActivityTabs, Button, type ActivityHowToPresentation } from "@shared/ui";
 import { useTasksQuery } from "@app/hooks/useTasks";
+import { useUserQuery } from "@presentation/hooks/useUserProfile";
+import { IncompleteProfileCallout } from "@presentation/features/profile/IncompleteProfileCallout";
 import { ACTIVITY_TAB_OPTIONS, EMPTY_STATE_MESSAGES } from "@shared/lib/taskLabels";
 import { sortActiveTasksByDeadline } from "@shared/lib/taskDeadline";
 import { ActivityPrimaryAction } from "./ActivityPrimaryAction";
@@ -85,16 +88,26 @@ function TaskListContent({
 export function TaskListPanel() {
   const [status, setStatus] = useState<TaskStatus>("active");
   const { preferences } = useAccessibility();
+  const { data: user } = useUserQuery();
 
   const { data: tasks = [], isLoading, isError, refetch } = useTasksQuery();
   const howToPresentation: ActivityHowToPresentation =
     preferences.interfaceMode === "simplified" ? "button" : "icon";
+  const showIncompleteProfileCallout = user ? isProfileIncomplete(user) : false;
 
   return (
     <section className="task-list-panel" aria-labelledby="activities-heading">
       <h1 id="activities-heading" className="visually-hidden">
         Minhas atividades
       </h1>
+
+      {showIncompleteProfileCallout ? (
+        <IncompleteProfileCallout
+          description='Algumas informações suas ainda estão faltando. Toque em "Completar perfil" abaixo para preenchê-las.'
+          actionLabel="Completar perfil"
+          actionTo="/perfil/conta?editar=1"
+        />
+      ) : null}
 
       <ActivityTabs
         value={status}

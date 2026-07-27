@@ -1,4 +1,7 @@
 .task-list-panel {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--se-spacing, 1rem) * 1.25);
   width: 100%;
   padding: calc(var(--se-spacing, 1rem) * 1.5);
 }

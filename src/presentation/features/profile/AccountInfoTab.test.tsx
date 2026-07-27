@@ -12,7 +12,8 @@ import { AccessibilityProvider } from "@app/providers/AccessibilityProvider";
 import { AuthContext } from "@app/providers/authContext";
 import { AccountInfoTab } from "@presentation/features/profile/AccountInfoTab";
 import { DashboardPage } from "@presentation/pages/DashboardPage";
-import { resetUserDb } from "@infrastructure/msw/db/user.db";
+import { INCOMPLETE_PROFILE_NAME } from "@domain/entities/User";
+import { resetUserDb, updateUserInDb } from "@infrastructure/msw/db/user.db";
 import { updatePreferencesInDb } from "@infrastructure/msw/db/preferences.db";
 import { toPreferencesDto } from "@infrastructure/mappers/preferences.mapper";
 import { applyAccessibilityTokens } from "@shared/lib/accessibilityTokens";
@@ -22,6 +23,20 @@ vi.mock("@infrastructure/firebase/authService", () => ({
   signOutUser: vi.fn().mockResolvedValue(undefined),
 }));
 
+function seedIncompleteUser() {
+  updateUserInDb("demo-user", {
+    id: "demo-user",
+    fullName: INCOMPLETE_PROFILE_NAME,
+    birthDate: "",
+    registrationId: "SE01001",
+    disability: null,
+    email: "antoniojose@seniorease.com.br",
+    phone: "",
+    accountStatus: "active",
+    deactivatedAt: null,
+    purgeAt: null,
+  });
+}
 async function findAccountTab() {
   await waitFor(() => {
     expect(screen.queryByText(/carregando informações/i)).not.toBeInTheDocument();
@@ -84,6 +99,45 @@ describe("AccountInfoTab", () => {
     expect(within(tab).getByText("Baixa visão")).toBeInTheDocument();
     expect(within(tab).getByText("antoniojose@seniorease.com.br")).toBeInTheDocument();
     expect(within(tab).getByText("(85) 96767-6767")).toBeInTheDocument();
+    expect(
+      within(tab).queryByText(/algumas informações suas ainda estão faltando/i),
+    ).not.toBeInTheDocument();
+  });
+
+  it("exibe aviso quando o perfil está incompleto", async () => {
+    seedIncompleteUser();
+    renderWithProviders(<AccountInfoTab />);
+    const tab = await findAccountTab();
+
+    expect(within(tab).getByRole("status")).toHaveTextContent(/complete seu perfil/i);
+    expect(
+      within(tab).getByText(/algumas informações suas ainda estão faltando/i),
+    ).toBeInTheDocument();
+    expect(within(tab).getByRole("button", { name: /editar informações/i })).toBeInTheDocument();
+  });
+
+  it("oculta aviso e limpa placeholder ao editar perfil incompleto", async () => {
+    seedIncompleteUser();
+    const user = userEvent.setup();
+    renderWithProviders(<AccountInfoTab />);
+    const tab = await findAccountTab();
+
+    expect(within(tab).getByRole("status")).toBeInTheDocument();
+
+    await user.click(within(tab).getByRole("button", { name: /editar informações/i }));
+
+    expect(within(tab).queryByRole("status")).not.toBeInTheDocument();
+    expect(within(tab).getByLabelText(/nome completo/i)).toHaveValue("");
+  });
+
+  it("abre edição automaticamente com ?editar=1", async () => {
+    seedIncompleteUser();
+    renderWithProviders(<AccountInfoTab />, { route: "/perfil/conta?editar=1" });
+    const tab = await findAccountTab();
+
+    expect(await within(tab).findByLabelText(/nome completo/i)).toHaveValue("");
+    expect(within(tab).getByRole("button", { name: /salvar informações/i })).toBeInTheDocument();
+    expect(within(tab).queryByRole("status")).not.toBeInTheDocument();
   });
 
   it("abre formulário ao clicar em Editar informações", async () => {

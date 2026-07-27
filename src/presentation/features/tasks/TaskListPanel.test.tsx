@@ -5,6 +5,7 @@ import {
   createAccessibilityPreferences,
   createDefaultPreferences,
 } from "@domain/entities/AccessibilityPreferences";
+import { INCOMPLETE_PROFILE_NAME } from "@domain/entities/User";
 import { TaskListPanel } from "@presentation/features/tasks/TaskListPanel";
 import { toPreferencesDto } from "@infrastructure/mappers/preferences.mapper";
 import {
@@ -13,6 +14,7 @@ import {
   TASK_MOCK_REFERENCE_DATE,
 } from "@infrastructure/msw/db/tasks.db";
 import { resetPreferencesDb, updatePreferencesInDb } from "@infrastructure/msw/db/preferences.db";
+import { resetUserDb, updateUserInDb } from "@infrastructure/msw/db/user.db";
 import { applyAccessibilityTokens } from "@shared/lib/accessibilityTokens";
 import { renderWithProviders } from "@shared/test/renderWithProviders";
 
@@ -34,10 +36,26 @@ function setInterfaceMode(mode: "standard" | "simplified") {
   );
 }
 
+function seedIncompleteUser() {
+  updateUserInDb("demo-user", {
+    id: "demo-user",
+    fullName: INCOMPLETE_PROFILE_NAME,
+    birthDate: "",
+    registrationId: "SE01001",
+    disability: null,
+    email: "antoniojose@seniorease.com.br",
+    phone: "",
+    accountStatus: "active",
+    deactivatedAt: null,
+    purgeAt: null,
+  });
+}
+
 describe("TaskListPanel", () => {
   beforeEach(() => {
     resetTasksDb();
     resetPreferencesDb();
+    resetUserDb();
     applyAccessibilityTokens(createDefaultPreferences());
   });
 
@@ -52,6 +70,27 @@ describe("TaskListPanel", () => {
     expect(screen.getByRole("tab", { name: /minhas atividades/i })).toBeInTheDocument();
     expect(screen.getByRole("tab", { name: /atividades concluídas/i })).toBeInTheDocument();
     expect(screen.getByRole("tab", { name: /atividades expiradas/i })).toBeInTheDocument();
+  });
+
+  it("não exibe aviso de perfil quando o cadastro está completo", async () => {
+    renderWithProviders(<TaskListPanel />);
+    await waitForTasksLoaded();
+
+    expect(
+      screen.queryByText(/algumas informações suas ainda estão faltando/i),
+    ).not.toBeInTheDocument();
+  });
+
+  it("exibe aviso de perfil incompleto com link para a conta", async () => {
+    seedIncompleteUser();
+    renderWithProviders(<TaskListPanel />);
+    await waitForTasksLoaded();
+
+    expect(screen.getByRole("status")).toHaveTextContent(/complete seu perfil/i);
+    expect(screen.getByRole("link", { name: /completar perfil/i })).toHaveAttribute(
+      "href",
+      "/perfil/conta?editar=1",
+    );
   });
 
   it("lista atividades ativas do mockup", async () => {
