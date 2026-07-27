@@ -108,8 +108,6 @@ Firebase / HttpClient → Repositories → UseCases → Hooks (presentation)
 - **Runtime (dev/prod):** repositórios Firestore + Firebase Auth
 - **Testes:** repositórios HTTP + MSW (`MODE === "test"`)
 
-Detalhes por camada: pasta [`docs/`](docs/).
-
 ---
 
 ## Estrutura de pastas
