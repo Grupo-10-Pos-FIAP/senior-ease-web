@@ -46,10 +46,10 @@ describe("user.mapper", () => {
 
     expect(user.phone).toBe("");
     expect(user.birthDate).toBe("");
-    expect(user.registrationId).toMatch(/^SE\d{5}$/);
+    expect(user.registrationId).toBe("");
   });
 
-  it("converte matrícula legada (UID) para formato amigável na leitura", () => {
+  it("descarta matrícula inválida na leitura (alocação sequencial é na infraestrutura)", () => {
     const uid = "q8uxtuQAjNUOzXGYM2uJ9iXYW6P2";
     const user = fromUserDto({
       id: uid,
@@ -61,7 +61,6 @@ describe("user.mapper", () => {
       phone: "",
     });
 
-    expect(user.registrationId).toMatch(/^SE\d{5}$/);
-    expect(user.registrationId).not.toBe(uid);
+    expect(user.registrationId).toBe("");
   });
 });

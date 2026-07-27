@@ -54,7 +54,7 @@ export function fromUserDto(dto: UserDto): User {
     id: dto.id,
     fullName: dto.fullName.trim() || "Complete seu perfil",
     birthDate: resolveBirthDate(dto),
-    registrationId: normalizeRegistrationId(dto.registrationId, dto.id),
+    registrationId: normalizeRegistrationId(dto.registrationId),
     disability: dto.disability ?? null,
     email: dto.email.trim() || "",
     phone: normalizePhoneFromStorage(dto.phone),

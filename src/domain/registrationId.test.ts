@@ -1,22 +1,36 @@
 import { describe, expect, it } from "vitest";
-import { normalizeRegistrationId } from "./registrationId";
+import {
+  formatRegistrationId,
+  isFriendlyRegistrationId,
+  normalizeRegistrationId,
+} from "./registrationId";
 
-describe("normalizeRegistrationId", () => {
-  const uid = "q8uxtuQAjNUOzXGYM2uJ9iXYW6P2";
-
-  it("mantém matrícula SE + 5 dígitos", () => {
-    expect(normalizeRegistrationId("SE12345", uid)).toBe("SE12345");
-    expect(normalizeRegistrationId("se00001", uid)).toBe("SE00001");
+describe("registrationId", () => {
+  it("formata sequência numérica como SE + 5 dígitos", () => {
+    expect(formatRegistrationId(1)).toBe("SE00001");
+    expect(formatRegistrationId(42)).toBe("SE00042");
+    expect(formatRegistrationId(99999)).toBe("SE99999");
   });
 
-  it("deriva SE***** estável a partir do UID e formatos legados", () => {
-    const fromUid = normalizeRegistrationId(null, uid);
+  it("rejeita sequência fora do intervalo", () => {
+    expect(() => formatRegistrationId(0)).toThrow(/intervalo/i);
+    expect(() => formatRegistrationId(100_000)).toThrow(/intervalo/i);
+    expect(() => formatRegistrationId(1.5)).toThrow(/intervalo/i);
+  });
 
-    expect(fromUid).toMatch(/^SE\d{5}$/);
-    expect(normalizeRegistrationId(uid, uid)).toBe(fromUid);
-    expect(normalizeRegistrationId("-", uid)).toBe(fromUid);
-    expect(normalizeRegistrationId("SE999", uid)).toBe(fromUid);
-    expect(normalizeRegistrationId(null, uid)).toBe(fromUid);
-    expect(normalizeRegistrationId(null, "outro-uid")).not.toBe(fromUid);
+  it("reconhece matrícula amigável", () => {
+    expect(isFriendlyRegistrationId("SE12345")).toBe(true);
+    expect(isFriendlyRegistrationId("se00001")).toBe(true);
+    expect(isFriendlyRegistrationId("SE999")).toBe(false);
+    expect(isFriendlyRegistrationId("-")).toBe(false);
+  });
+
+  it("normaliza matrícula SE + 5 dígitos e descarta valores inválidos", () => {
+    expect(normalizeRegistrationId("SE12345")).toBe("SE12345");
+    expect(normalizeRegistrationId("se00001")).toBe("SE00001");
+    expect(normalizeRegistrationId(null)).toBe("");
+    expect(normalizeRegistrationId("-")).toBe("");
+    expect(normalizeRegistrationId("SE999")).toBe("");
+    expect(normalizeRegistrationId("q8uxtuQAjNUOzXGYM2uJ9iXYW6P2")).toBe("");
   });
 });

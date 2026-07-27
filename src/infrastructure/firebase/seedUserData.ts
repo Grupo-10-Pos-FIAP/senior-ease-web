@@ -1,7 +1,8 @@
 import { DEFAULT_COURSE_ID } from "@domain/constants/course";
 import { createDefaultPreferences } from "@domain/entities/AccessibilityPreferences";
-import { normalizeRegistrationId } from "@domain/registrationId";
+import { isFriendlyRegistrationId } from "@domain/registrationId";
 import { getFirestoreDb } from "@infrastructure/firebase/client";
+import { allocateNextRegistrationId } from "@infrastructure/firebase/registrationCounter";
 import { ageToBirthDate } from "@infrastructure/mappers/user.mapper";
 import { toPreferencesDto } from "@infrastructure/mappers/preferences.mapper";
 import type { ActivityProgressDto } from "@infrastructure/mappers/activity.mapper";
@@ -18,7 +19,7 @@ import {
   doc,
   getDoc,
   getDocs,
-  setDoc,
+  runTransaction,
   updateDoc,
   writeBatch,
   type Firestore,
@@ -138,12 +139,16 @@ async function syncActivityProgressForUser(
   }
 }
 
-function createNewUserDocument(uid: string, email: string | null): UserDocument {
+function createNewUserDocument(
+  uid: string,
+  email: string | null,
+  registrationId: string,
+): UserDocument {
   return {
     id: uid,
     fullName: "Complete seu perfil",
     birthDate: "",
-    registrationId: normalizeRegistrationId(null, uid),
+    registrationId,
     disability: null,
     email: email ?? "",
     phone: "",
@@ -155,13 +160,16 @@ function createNewUserDocument(uid: string, email: string | null): UserDocument 
   };
 }
 
+function needsRegistrationId(value: unknown): boolean {
+  return typeof value !== "string" || !isFriendlyRegistrationId(value);
+}
+
 async function migrateLegacyUserDocument(
+  firestore: Firestore,
   userRef: ReturnType<typeof doc>,
   data: Record<string, unknown>,
 ): Promise<void> {
   const patch: Record<string, unknown> = {};
-  const uid = typeof data.id === "string" && data.id ? data.id : userRef.id;
-  const registrationId = normalizeRegistrationId(data.registrationId, uid);
 
   if (!data.birthDate && typeof data.age === "number") {
     patch.birthDate = ageToBirthDate(data.age);
@@ -174,10 +182,6 @@ async function migrateLegacyUserDocument(
 
   if (!data.enrolledCourseId) {
     patch.enrolledCourseId = DEFAULT_COURSE_ID;
-  }
-
-  if (data.registrationId !== registrationId) {
-    patch.registrationId = registrationId;
   }
 
   const isIncompleteProfile =
@@ -193,11 +197,52 @@ async function migrateLegacyUserDocument(
     patch.purgeAt = null;
   }
 
-  if (Object.keys(patch).length === 0) {
+  const shouldAllocateRegistrationId = needsRegistrationId(data.registrationId);
+
+  if (!shouldAllocateRegistrationId && Object.keys(patch).length === 0) {
+    return;
+  }
+
+  if (shouldAllocateRegistrationId) {
+    await runTransaction(firestore, async (transaction) => {
+      const latest = await transaction.get(userRef);
+      if (!latest.exists()) {
+        return;
+      }
+
+      const latestData = latest.data();
+      if (!needsRegistrationId(latestData.registrationId)) {
+        if (Object.keys(patch).length > 0) {
+          transaction.update(userRef, patch);
+        }
+        return;
+      }
+
+      const registrationId = await allocateNextRegistrationId(firestore, transaction);
+      transaction.update(userRef, { ...patch, registrationId });
+    });
     return;
   }
 
   await updateDoc(userRef, patch);
+}
+
+async function createUserDocumentWithRegistrationId(
+  firestore: Firestore,
+  uid: string,
+  email: string | null,
+): Promise<void> {
+  const userRef = doc(firestore, "users", uid);
+
+  await runTransaction(firestore, async (transaction) => {
+    const snapshot = await transaction.get(userRef);
+    if (snapshot.exists()) {
+      return;
+    }
+
+    const registrationId = await allocateNextRegistrationId(firestore, transaction);
+    transaction.set(userRef, createNewUserDocument(uid, email, registrationId));
+  });
 }
 
 export async function ensureUserDocument(uid: string, email: string | null): Promise<void> {
@@ -207,12 +252,12 @@ export async function ensureUserDocument(uid: string, email: string | null): Pro
   const seedProgress = isTaskSeedSyncEnabled() ? getDemoProgressForUser(uid) : [];
 
   if (snapshot.exists()) {
-    await migrateLegacyUserDocument(userRef, snapshot.data());
+    await migrateLegacyUserDocument(firestore, userRef, snapshot.data());
     await syncActivityProgressForUser(firestore, uid, seedProgress);
     return;
   }
 
-  await setDoc(userRef, createNewUserDocument(uid, email));
+  await createUserDocumentWithRegistrationId(firestore, uid, email);
   await syncActivityProgressForUser(firestore, uid, seedProgress);
 }
 
