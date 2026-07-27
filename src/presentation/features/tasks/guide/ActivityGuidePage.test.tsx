@@ -100,6 +100,7 @@ describe("ActivityGuidePage", () => {
   });
 
   it("exibe botão como fazer em cada item no modo simplificado", async () => {
+    setInterfaceMode("standard");
     renderGuideRoute("/tarefas/task-1/guia");
     await waitForGuideLoaded();
 
@@ -127,6 +128,7 @@ describe("ActivityGuidePage", () => {
   });
 
   it("exibe ações de voltar e iniciar atividade", async () => {
+    setInterfaceMode("standard");
     renderGuideRoute("/tarefas/task-1/guia");
     await waitForGuideLoaded();
 
@@ -140,6 +142,7 @@ describe("ActivityGuidePage", () => {
 
   it("no modo simplificado inicia a atividade no guia sem confirmação", async () => {
     const user = userEvent.setup();
+    setInterfaceMode("standard");
     renderGuideRoute("/tarefas/task-1/guia");
     await waitForGuideLoaded();
 
@@ -164,7 +167,7 @@ describe("ActivityGuidePage", () => {
     expect(screen.getByText("Partes de uma mensagem")).toBeInTheDocument();
     expect(screen.getByText("Múltipla escolha")).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: /como fazer\?: partes de uma mensagem/i }),
+      screen.getByRole("link", { name: /como fazer esta tarefa\?: partes de uma mensagem/i }),
     ).toHaveAttribute("href", "/tarefas/task-2/guia/step-2-3");
   });
 });

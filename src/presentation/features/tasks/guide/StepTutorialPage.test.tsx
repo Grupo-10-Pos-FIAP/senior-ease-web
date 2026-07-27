@@ -4,7 +4,10 @@ import userEvent from "@testing-library/user-event";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Suspense } from "react";
-import { createDefaultPreferences } from "@domain/entities/AccessibilityPreferences";
+import {
+  createDefaultPreferences,
+  createAccessibilityPreferences,
+} from "@domain/entities/AccessibilityPreferences";
 import { AuthContext } from "@app/providers/authContext";
 import { AccessibilityProvider } from "@app/providers/AccessibilityProvider";
 import { ActivityGuidePage } from "@presentation/features/tasks/guide/ActivityGuidePage";
@@ -12,8 +15,17 @@ import { StepTutorialPage } from "@presentation/features/tasks/guide/StepTutoria
 import { TaskWizardEntry } from "@presentation/features/tasks/execution/TaskWizardEntry";
 import { ActivityStepPage } from "@presentation/features/tasks/execution/ActivityStepPage";
 import { resetTasksDb, startActivityInDb } from "@infrastructure/msw/db/tasks.db";
+import { resetPreferencesDb, updatePreferencesInDb } from "@infrastructure/msw/db/preferences.db";
+import { toPreferencesDto } from "@infrastructure/mappers/preferences.mapper";
 import { applyAccessibilityTokens } from "@shared/lib/accessibilityTokens";
 import { DEMO_USER_ID } from "@shared/constants/user";
+
+function setInterfaceMode(mode: "standard" | "simplified") {
+  updatePreferencesInDb(
+    DEMO_USER_ID,
+    toPreferencesDto(createAccessibilityPreferences({ interfaceMode: mode })),
+  );
+}
 
 function renderGuideRoute(initialRoute: string) {
   const queryClient = new QueryClient({
@@ -58,6 +70,7 @@ async function waitForTutorialLoaded() {
 describe("StepTutorialPage", () => {
   beforeEach(() => {
     resetTasksDb();
+    resetPreferencesDb();
     applyAccessibilityTokens(createDefaultPreferences());
   });
 
@@ -186,7 +199,7 @@ describe("StepTutorialPage", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", {
-        name: /^iniciar: primeiros passos no digital$/i,
+        name: /iniciar a atividade: primeiros passos no digital/i,
       }),
     ).toBeInTheDocument();
   });
@@ -210,13 +223,14 @@ describe("StepTutorialPage", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", {
-        name: /^continuar: como usar o e-mail$/i,
+        name: /continuar a atividade: como usar o e-mail/i,
       }),
     ).toBeInTheDocument();
   });
 
   it("vai direto para a atividade ao iniciar pelo modal do tutorial", async () => {
     const user = userEvent.setup();
+    setInterfaceMode("standard");
     renderGuideRoute("/tarefas/task-1/guia/step-1-4");
     await waitForTutorialLoaded();
 

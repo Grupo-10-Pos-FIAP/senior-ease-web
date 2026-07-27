@@ -14,7 +14,7 @@ describe("AccessibilityPreferences", () => {
       fontSize: 3,
       contrast: 3,
       spacing: 3,
-      interfaceMode: "standard",
+      interfaceMode: "simplified",
       reinforcedVisualFeedback: false,
       confirmCriticalActions: false,
     });

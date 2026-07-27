@@ -80,6 +80,7 @@ describe("Activity execution", () => {
   });
 
   it("redireciona do wizard para o primeiro passo e exibe progresso", async () => {
+    setInterfaceMode("standard");
     renderExecutionRoute("/tarefas/task-1");
 
     await waitFor(() => {
@@ -99,6 +100,7 @@ describe("Activity execution", () => {
   });
 
   it("usa Próximo como ação principal no modo simplificado", async () => {
+    setInterfaceMode("standard");
     renderExecutionRoute("/tarefas/task-1/passo/step-1-1");
     await waitForStepLoaded();
 
@@ -128,6 +130,7 @@ describe("Activity execution", () => {
 
   it("permite voltar ao passo 1 e avançar de novo para o passo em andamento", async () => {
     const user = userEvent.setup();
+    setInterfaceMode("standard");
     renderExecutionRoute("/tarefas/task-1/passo/step-1-1");
     await waitForStepLoaded();
 
@@ -152,6 +155,7 @@ describe("Activity execution", () => {
 
   it("salva resposta do quiz ao tocar em Próximo", async () => {
     const user = userEvent.setup();
+    setInterfaceMode("standard");
     renderExecutionRoute("/tarefas/task-1/passo/step-1-1");
     await waitForStepLoaded();
 
@@ -205,6 +209,7 @@ describe("Activity execution", () => {
 
   it("conclui leitura e avança para o próximo passo", async () => {
     const user = userEvent.setup();
+    setInterfaceMode("standard");
     renderExecutionRoute("/tarefas/task-1/passo/step-1-1");
     await waitForStepLoaded();
 
@@ -217,6 +222,7 @@ describe("Activity execution", () => {
 
   it("no modo simplificado conclui a atividade sem confirmação", async () => {
     const user = userEvent.setup();
+    setInterfaceMode("standard");
     completeStepInDb("task-1", "step-1-1", DEMO_USER_ID);
     completeStepInDb("task-1", "step-1-2", DEMO_USER_ID, "b");
     completeStepInDb("task-1", "step-1-3", DEMO_USER_ID, "Quero aprender e-mail");

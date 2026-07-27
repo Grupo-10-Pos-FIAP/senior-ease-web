@@ -174,6 +174,7 @@ describe("TaskListPanel", () => {
 
   it("no modo simplificado exibe ajuda como ícone ao lado do título", async () => {
     useMockReferenceDate();
+    setInterfaceMode("standard");
     renderWithProviders(<TaskListPanel />);
     await waitForTasksLoaded();
 
@@ -225,6 +226,7 @@ describe("TaskListPanel", () => {
   it("no modo simplificado inicia a atividade sem modal de confirmação", async () => {
     const user = userEvent.setup();
     useMockReferenceDate();
+    setInterfaceMode("standard");
     renderWithProviders(<TaskListPanel />);
     await waitForTasksLoaded();
 
@@ -267,6 +269,7 @@ describe("TaskListPanel", () => {
 
   it("exibe continuar quando há progresso parcial no modo simplificado", async () => {
     useMockReferenceDate();
+    setInterfaceMode("standard");
     renderWithProviders(<TaskListPanel />);
     await waitForTasksLoaded();
 

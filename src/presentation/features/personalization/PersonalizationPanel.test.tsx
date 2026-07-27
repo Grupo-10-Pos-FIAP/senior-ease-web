@@ -66,13 +66,15 @@ describe("PersonalizationPanel", () => {
     const fontSizeGroup = within(panel).getByRole("radiogroup", { name: /tamanho da letra/i });
     await user.click(within(fontSizeGroup).getByRole("radio", { name: /letra grande/i }));
 
-    expect(within(panel).queryByText(/alterações não salvas/i)).not.toBeInTheDocument();
-
-    const modeGroup = within(panel).getByRole("radiogroup", { name: /modo de navegação/i });
-    await user.click(within(modeGroup).getByRole("radio", { name: /modo padrão/i }));
-
     expect(await within(panel).findByText(/alterações não salvas/i)).toBeInTheDocument();
     expect(within(panel).getByRole("button", { name: /salvar agora/i })).toBeInTheDocument();
+
+    const modeGroup = within(panel).getByRole("radiogroup", { name: /modo de navegação/i });
+    await user.click(within(modeGroup).getByRole("radio", { name: /modo simplificado/i }));
+
+    await waitFor(() => {
+      expect(within(panel).queryByText(/alterações não salvas/i)).not.toBeInTheDocument();
+    });
   });
 
   it("Reset com confirmação ligada exige dialog", async () => {
@@ -99,9 +101,6 @@ describe("PersonalizationPanel", () => {
     const user = userEvent.setup();
     renderWithProviders(<PersonalizationPanel />);
     const panel = await findPanel();
-
-    const modeGroup = within(panel).getByRole("radiogroup", { name: /modo de navegação/i });
-    await user.click(within(modeGroup).getByRole("radio", { name: /modo padrão/i }));
 
     const confirmGroup = await within(panel).findByRole("radiogroup", {
       name: /confirmação em ações críticas/i,
@@ -151,22 +150,22 @@ describe("PersonalizationPanel", () => {
     const panel = await findPanel();
 
     expect(
-      within(panel).queryByRole("radiogroup", { name: /feedback visual reforçado/i }),
-    ).not.toBeInTheDocument();
+      within(panel).getByRole("radiogroup", { name: /feedback visual reforçado/i }),
+    ).toBeInTheDocument();
     expect(
-      within(panel).queryByRole("radiogroup", { name: /confirmação em ações críticas/i }),
-    ).not.toBeInTheDocument();
+      within(panel).getByRole("radiogroup", { name: /confirmação em ações críticas/i }),
+    ).toBeInTheDocument();
 
     const modeGroup = within(panel).getByRole("radiogroup", { name: /modo de navegação/i });
-    await user.click(within(modeGroup).getByRole("radio", { name: /modo padrão/i }));
+    await user.click(within(modeGroup).getByRole("radio", { name: /modo simplificado/i }));
 
     await waitFor(() => {
       expect(
-        within(panel).getByRole("radiogroup", { name: /feedback visual reforçado/i }),
-      ).toBeInTheDocument();
+        within(panel).queryByRole("radiogroup", { name: /feedback visual reforçado/i }),
+      ).not.toBeInTheDocument();
       expect(
-        within(panel).getByRole("radiogroup", { name: /confirmação em ações críticas/i }),
-      ).toBeInTheDocument();
+        within(panel).queryByRole("radiogroup", { name: /confirmação em ações críticas/i }),
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -176,11 +175,10 @@ describe("PersonalizationPanel", () => {
     const panel = await findPanel();
 
     const modeGroup = within(panel).getByRole("radiogroup", { name: /modo de navegação/i });
-    await user.click(within(modeGroup).getByRole("radio", { name: /modo padrão/i }));
 
-    const feedbackGroup = await waitFor(() =>
-      within(panel).getByRole("radiogroup", { name: /feedback visual reforçado/i }),
-    );
+    const feedbackGroup = within(panel).getByRole("radiogroup", {
+      name: /feedback visual reforçado/i,
+    });
     const confirmGroup = within(panel).getByRole("radiogroup", {
       name: /confirmação em ações críticas/i,
     });

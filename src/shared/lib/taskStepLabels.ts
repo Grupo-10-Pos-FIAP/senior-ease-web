@@ -26,6 +26,6 @@ export function getTaskStepTypeDescription(type: TaskStepType): string {
 export const GUIDE_STEP_ACTION_LABEL = "Como fazer esta tarefa?";
 export const GUIDE_STEP_ACTION_LABEL_ADVANCED = "Como fazer?";
 
-export function getTaskStepGuideActionLabel(interfaceMode: InterfaceMode = "standard"): string {
+export function getTaskStepGuideActionLabel(interfaceMode: InterfaceMode = "simplified"): string {
   return interfaceMode === "standard" ? GUIDE_STEP_ACTION_LABEL_ADVANCED : GUIDE_STEP_ACTION_LABEL;
 }
