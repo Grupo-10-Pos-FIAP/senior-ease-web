@@ -222,6 +222,7 @@ function buildFallbackContent(step: TaskStep): ActivityStepContent {
           { id: "a", label: "Opção A" },
           { id: "b", label: "Opção B" },
         ],
+        correctOptionId: "a",
       };
     case "open_question":
       return { kind: "open_question", question: step.label };

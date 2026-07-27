@@ -10,6 +10,7 @@ export type ActivityStepContent =
       kind: "multiple_choice";
       question: string;
       options: MultipleChoiceOption[];
+      correctOptionId: string;
     }
   | { kind: "open_question"; question: string };
 
@@ -36,4 +37,15 @@ export function canCompleteStepContent(
     default:
       return false;
   }
+}
+
+export function isMultipleChoiceAnswerCorrect(
+  content: Extract<ActivityStepContent, { kind: "multiple_choice" }>,
+  answer: string | undefined,
+): boolean {
+  if (typeof answer !== "string" || answer.trim().length === 0) {
+    return false;
+  }
+
+  return answer.trim() === content.correctOptionId;
 }
