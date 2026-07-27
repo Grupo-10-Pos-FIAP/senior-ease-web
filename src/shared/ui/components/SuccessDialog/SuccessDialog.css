@@ -73,9 +73,32 @@
   min-width: calc(var(--se-spacing, 1rem) * 9);
 }
 
-/* Contraste máximo: botão branco/preto usa a mesma borda verde do dialog */
+/* Fundo branco no secondary — legível sobre o modal verde em todos os níveis */
+.success-dialog__button.se-button--secondary {
+  background-color: #ffffff;
+  color: var(--se-navy);
+  border-color: var(--se-navy);
+}
+
+.success-dialog__button.se-button--secondary:hover:not(:disabled) {
+  background-color: var(--se-contrast-max-hover);
+  color: var(--se-navy);
+}
+
+/* Contraste máximo: fundo preto, texto branco e borda verde do dialog */
 [data-contrast-level="5"] .success-dialog__button {
   border-color: var(--se-success-border);
+}
+
+[data-contrast-level="5"] .success-dialog__button.se-button--secondary {
+  background-color: var(--se-contrast-bg);
+  color: var(--se-contrast-fg);
+  border-color: var(--se-success-border);
+}
+
+[data-contrast-level="5"] .success-dialog__button.se-button--secondary:hover:not(:disabled) {
+  background-color: var(--se-surface-muted);
+  color: var(--se-contrast-fg);
 }
 
 .success-dialog__content:focus {
