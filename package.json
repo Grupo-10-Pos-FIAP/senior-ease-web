@@ -22,7 +22,9 @@
     "sync:course": "tsx --tsconfig tsconfig.app.json scripts/sync-course-catalog.mts",
     "reset:course": "tsx --tsconfig tsconfig.app.json scripts/reset-course-catalog.mts --wipe-activities",
     "purge:accounts": "tsx --tsconfig tsconfig.app.json scripts/purge-deactivated-accounts.mts",
-    "purge:accounts:dry": "tsx --tsconfig tsconfig.app.json scripts/purge-deactivated-accounts.mts --dry-run"
+    "purge:accounts:dry": "tsx --tsconfig tsconfig.app.json scripts/purge-deactivated-accounts.mts --dry-run",
+    "migrate:registration-ids": "tsx --tsconfig tsconfig.app.json scripts/migrate-registration-ids.mts",
+    "migrate:registration-ids:dry": "tsx --tsconfig tsconfig.app.json scripts/migrate-registration-ids.mts --dry-run"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.101.0",
