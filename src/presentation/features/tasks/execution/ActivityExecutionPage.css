@@ -70,7 +70,12 @@
   font-weight: 600;
   color: var(--se-navy);
   background-color: var(--se-surface-muted);
+  border: 1px solid transparent;
   border-radius: 999px;
+}
+
+[data-contrast-level="5"] .activity-execution__step-type {
+  border-color: var(--se-border);
 }
 
 .activity-execution__step-title {

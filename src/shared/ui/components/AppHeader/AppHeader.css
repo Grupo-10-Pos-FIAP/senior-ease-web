@@ -54,6 +54,17 @@
   outline-offset: 2px;
 }
 
+/* Contraste máximo e tema escuro: Sair acompanha links com sublinhado (G183). */
+[data-contrast-level="5"] .app-header__action--secondary,
+[data-contrast-level="6"] .app-header__action--secondary {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+[data-contrast-level="5"] .app-header__action--secondary {
+  text-decoration-color: var(--se-active-fg);
+}
+
 @media (max-width: 639px) {
   .app-header {
     padding-block: calc(var(--se-spacing, 1rem) * 0.75);

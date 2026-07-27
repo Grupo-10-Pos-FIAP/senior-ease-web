@@ -74,7 +74,12 @@
   font-weight: 600;
   color: var(--se-navy);
   background-color: var(--se-surface-muted);
+  border: 1px solid transparent;
   border-radius: 999px;
+}
+
+[data-contrast-level="5"] .step-tutorial__badge {
+  border-color: var(--se-border);
 }
 
 .step-tutorial__status {
