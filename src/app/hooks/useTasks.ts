@@ -1,11 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  completeTask,
   completeGuideStep,
   completeTaskStep,
   getTask,
   listTasks,
-  resetActivity,
   startActivity,
   updateCurrentStep,
 } from "@app/composition/useCases";
@@ -61,17 +59,6 @@ export function useTaskQuery(taskId: string) {
   });
 }
 
-export function useCompleteTaskMutation() {
-  const invalidate = useInvalidateTasks();
-
-  return useMutation({
-    mutationFn: (taskId: string) => completeTask.execute(taskId),
-    onSuccess: (_data, taskId) => {
-      invalidate(taskId);
-    },
-  });
-}
-
 export function useStartActivityMutation() {
   const invalidate = useInvalidateTasks();
 
@@ -85,6 +72,7 @@ export function useStartActivityMutation() {
 }
 
 export function useCompleteStepMutation() {
+  const queryClient = useQueryClient();
   const invalidate = useInvalidateTasks();
 
   return useMutation({
@@ -97,7 +85,8 @@ export function useCompleteStepMutation() {
       stepId: string;
       payload?: StepCompletionPayload;
     }) => completeTaskStep.execute(taskId, stepId, payload),
-    onSuccess: (_data, { taskId }) => {
+    onSuccess: (data, { taskId }) => {
+      queryClient.setQueryData(taskQueryKey(taskId), data);
       invalidate(taskId);
     },
   });
@@ -122,17 +111,6 @@ export function useUpdateCurrentStepMutation() {
     mutationFn: ({ taskId, stepId }: { taskId: string; stepId: string }) =>
       updateCurrentStep.execute(taskId, stepId),
     onSuccess: (_data, { taskId }) => {
-      invalidate(taskId);
-    },
-  });
-}
-
-export function useResetActivityMutation() {
-  const invalidate = useInvalidateTasks();
-
-  return useMutation({
-    mutationFn: (taskId: string) => resetActivity.execute(taskId),
-    onSuccess: (_data, taskId) => {
       invalidate(taskId);
     },
   });
