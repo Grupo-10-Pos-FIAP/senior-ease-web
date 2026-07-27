@@ -216,7 +216,7 @@ describe("Activity execution", () => {
   it("no modo simplificado conclui a atividade sem confirmação", async () => {
     const user = userEvent.setup();
     completeStepInDb("task-1", "step-1-1", DEMO_USER_ID);
-    completeStepInDb("task-1", "step-1-2", DEMO_USER_ID, "a");
+    completeStepInDb("task-1", "step-1-2", DEMO_USER_ID, "b");
     completeStepInDb("task-1", "step-1-3", DEMO_USER_ID, "Quero aprender e-mail");
 
     renderExecutionRoute("/tarefas/task-1/passo/step-1-4");
@@ -232,13 +232,38 @@ describe("Activity execution", () => {
     expect(
       await screen.findByRole("heading", { name: /parabéns! você concluiu a atividade/i }),
     ).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent(/você acertou 1 de 1 pergunta/i);
+    expect(screen.getByText(/^acertou$/i)).toBeInTheDocument();
+  });
+
+  it("mostra na conclusão o que acertou e o que errou", async () => {
+    completeStepInDb("task-1", "step-1-1", DEMO_USER_ID);
+    completeStepInDb("task-1", "step-1-2", DEMO_USER_ID, "a");
+    completeStepInDb("task-1", "step-1-3", DEMO_USER_ID, "Quero aprender e-mail");
+    completeStepInDb("task-1", "step-1-4", DEMO_USER_ID);
+
+    renderExecutionRoute("/tarefas/task-1/concluida");
+
+    expect(
+      await screen.findByRole("heading", { name: /parabéns! você concluiu a atividade/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent(/você acertou 0 de 1 pergunta\. errou 1/i);
+    expect(screen.getByText(/^errou$/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/sua resposta: tentar aprender tudo de uma vez sem pausa/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /resposta correta: começar com uma tarefa simples e pedir ajuda de alguém de confiança/i,
+      ),
+    ).toBeInTheDocument();
   });
 
   it("no modo padrão pede confirmação ao concluir quando a preferência está ligada", async () => {
     const user = userEvent.setup();
     setPreferences({ interfaceMode: "simplified", confirmCriticalActions: true });
     completeStepInDb("task-1", "step-1-1", DEMO_USER_ID);
-    completeStepInDb("task-1", "step-1-2", DEMO_USER_ID, "a");
+    completeStepInDb("task-1", "step-1-2", DEMO_USER_ID, "b");
     completeStepInDb("task-1", "step-1-3", DEMO_USER_ID, "Quero aprender e-mail");
 
     renderExecutionRoute("/tarefas/task-1/passo/step-1-4");
@@ -263,7 +288,7 @@ describe("Activity execution", () => {
     const user = userEvent.setup();
     setPreferences({ interfaceMode: "simplified", confirmCriticalActions: false });
     completeStepInDb("task-1", "step-1-1", DEMO_USER_ID);
-    completeStepInDb("task-1", "step-1-2", DEMO_USER_ID, "a");
+    completeStepInDb("task-1", "step-1-2", DEMO_USER_ID, "b");
     completeStepInDb("task-1", "step-1-3", DEMO_USER_ID, "Quero aprender e-mail");
 
     renderExecutionRoute("/tarefas/task-1/passo/step-1-4");
